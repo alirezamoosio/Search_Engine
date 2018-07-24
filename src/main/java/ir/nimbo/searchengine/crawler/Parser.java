@@ -1,8 +1,9 @@
 package ir.nimbo.searchengine.crawler;
 
-import ir.nimbo.searchengine.WebDocument;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
-import java.util.List;
+import java.io.IOException;
 
 public class Parser {
     private String url;
@@ -11,8 +12,10 @@ public class Parser {
         this.url = url;
     }
 
-    public WebDocument parse() {
-        return null;
+    public WebDocument parse() throws IOException {
+        Document document= Jsoup.connect(url).validateTLSCertificates(false).get();
+        return new WebDocument(document);
+
     }
 
 

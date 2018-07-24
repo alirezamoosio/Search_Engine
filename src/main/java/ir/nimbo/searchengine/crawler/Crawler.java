@@ -1,7 +1,5 @@
 package ir.nimbo.searchengine.crawler;
 
-import ir.nimbo.searchengine.WebDocument;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
