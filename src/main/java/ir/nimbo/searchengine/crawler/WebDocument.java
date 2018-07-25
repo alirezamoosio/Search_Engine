@@ -12,5 +12,8 @@ public class WebDocument {
         links =(String[]) document.getElementsByTag("a").stream().map(element -> element.attr("href")).toArray();
         title=document.title();
         cashedHtml=document.outerHtml();
+
     }
+
+
 }

@@ -15,7 +15,6 @@ public class Parser {
     public WebDocument parse() throws IOException {
         Document document= Jsoup.connect(url).validateTLSCertificates(false).get();
         return new WebDocument(document);
-
     }
 
 
