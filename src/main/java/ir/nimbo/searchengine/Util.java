@@ -1,17 +1,10 @@
 package ir.nimbo.searchengine;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import java.io.IOException;
 
 public class Util {
-    
-    public static Document getPage(String url){
-        try {
-            return Jsoup.connect(url).get();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static Connection getUrlConnection(String url){
+        return Jsoup.connect(url).validateTLSCertificates(false);
     }
 }
