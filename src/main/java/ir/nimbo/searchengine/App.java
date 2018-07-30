@@ -7,7 +7,6 @@ import ir.nimbo.searchengine.hbaseistead.WebPageHandler;
 import ir.nimbo.searchengine.kafkainstead.URLQueue;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 

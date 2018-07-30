@@ -18,6 +18,13 @@
   </properties>
 
   <dependencies>
+    <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka -->
+    <dependency>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>kafka_2.11</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+
     <dependency>
       <groupId>com.cybozu.labs</groupId>
       <artifactId>langdetect</artifactId>
