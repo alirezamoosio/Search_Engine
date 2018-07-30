@@ -7,11 +7,11 @@ import java.io.IOException;
 
 public class Util {
     
-    public static Document getPage(String url){
-        try {
-            return Jsoup.connect(url).get();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static Document getPage(String url){
+//        try {
+//            return Jsoup.connect(url).get();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
