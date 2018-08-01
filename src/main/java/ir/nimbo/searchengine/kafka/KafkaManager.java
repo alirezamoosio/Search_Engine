@@ -13,11 +13,10 @@ import java.util.Collections;
 import java.util.Properties;
 
 public class KafkaManager implements QueueCommunicable {
-    private final String topic = "finalTest";
+    private final String topic;
     private Properties props = null;
-    private KafkaConsumer<Integer, String> consumer;
-
-    public KafkaManager(){
+    public KafkaManager(String topic){
+        this.topic = topic;
         props = new Properties();
         props.put("bootstrap.servers", "192.168.122.143:9092,192.168.122.138:9092");
         props.put("group.id", "test");
@@ -27,15 +26,16 @@ public class KafkaManager implements QueueCommunicable {
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("key.serializer", "org.apache.kafka.common.serialization.IntegerSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("max.poll.records", "20");
-        consumer = new KafkaConsumer<>(props);
-        consumer.subscribe(Collections.singletonList(topic));
+        props.put("max.poll.records", "50");
     }
 
-    public ArrayList<String> getUrls(){
+    public synchronized ArrayList<String> getUrls(){
+        KafkaConsumer<Integer, String> consumer = new KafkaConsumer<>(props);
+        consumer.subscribe(Collections.singletonList(topic));
         ArrayList<String> result = new ArrayList<>();
-        ConsumerRecords<Integer, String> records = consumer.poll(10000);
+        ConsumerRecords<Integer, String> records = consumer.poll(1000);
         consumer.commitSync();
+        consumer.close();
         for (ConsumerRecord<Integer, String> record : records) {
             result.add(record.value());
         }
