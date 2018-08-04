@@ -12,13 +12,12 @@ import java.util.ArrayList;
 
 public class kafkaTest {
     public static void main(String[] args) throws IOException {
-        KafkaManager kafkaManager = new KafkaManager("links", "localhost:9092");
+        KafkaManager kafkaManager = new KafkaManager("links", "localhost:9092,localhost:9093");
         while (true) {
             ArrayList<String> temp = kafkaManager.getUrls();
             for (String e : temp) {
                 try {
                     WebDocument webDocument = Parser.parse(e);
-                    webDocument.getLinks().forEach(System.out::println);
                     webDocument.getLinks().forEach(link->kafkaManager.pushNewURL(link.getUrl()));
                 } catch (RuntimeException | IllegalLanguageException | IOException exception) {
                     exception.printStackTrace();

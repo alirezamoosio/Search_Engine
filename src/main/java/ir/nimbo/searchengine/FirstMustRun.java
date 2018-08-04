@@ -2,25 +2,29 @@ package ir.nimbo.searchengine;
 
 import ir.nimbo.searchengine.kafka.KafkaManager;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 public class FirstMustRun {
     public static void main(String[] args) {
-        KafkaManager kafkaManager = new KafkaManager("links", "localhost:9092");
-        kafkaManager.pushNewURL("https://www.alexa.com/");
-        kafkaManager.pushNewURL("https://en.wikipedia.org/wiki/Main_Page");
-        kafkaManager.pushNewURL("http://docs.google.com/");
-        kafkaManager.pushNewURL("http://softwaregarden.com/");
-        kafkaManager.pushNewURL("https://basecamp.com/");
-        kafkaManager.pushNewURL("https://www.synacor.com/");
-        kafkaManager.pushNewURL("https://newsgator.com/");
-        kafkaManager.pushNewURL("https://alternativeto.net/");
-        kafkaManager.pushNewURL("https://en-maktoob.yahoo.com/");
-        kafkaManager.pushNewURL("https://eurekalert.org/");
-        kafkaManager.pushNewURL("https://www.space.com/");
-        kafkaManager.pushNewURL("http://www.realclimate.org/");
-        kafkaManager.pushNewURL("https://www.alphagalileo.org/en-gb/");
-        kafkaManager.pushNewURL("https://www.nasa.gov/");
-        kafkaManager.pushNewURL("https://www.encyclopedia.com/");
-        kafkaManager.pushNewURL("https://www.theyworkforyou.com/");
-    }
-}
+        KafkaManager kafkaManager = new KafkaManager("links", "localhost:9092,localhost:9093");
+        LinkedList<String> linkedList =new LinkedList<>();
+        linkedList.add("https://www.alexa.com/");
+        linkedList.add("https://en.wikipedia.org/wiki/Main_Page");
+        linkedList.add("http://docs.google.com/");
+        linkedList.add("http://softwaregarden.com/");
+        linkedList.add("https://basecamp.com/");
+        linkedList.add("https://www.synacor.com/");
+        linkedList.add("https://newsgator.com/");
+        linkedList.add("https://alternativeto.net/");
+        linkedList.add("https://en-maktoob.yahoo.com/");
+        linkedList.add("https://eurekalert.org/");
+        linkedList.add("https://www.space.com/");
+        linkedList.add("http://www.realclimate.org/");
+        linkedList.add("https://www.alphagalileo.org/en-gb/");
+        linkedList.add("https://www.nasa.gov/");
+        linkedList.add("https://www.encyclopedia.com/");
+        linkedList.add("https://www.theyworkforyou.com/");
+        kafkaManager.pushNewURL(linkedList.toArray(new String [0]));
+    }}
 

@@ -10,10 +10,10 @@ import static org.junit.Assert.*;
 public class KafkaManagerTest {
     @Test
     public void testKafka() {
-        KafkaManager kafkaManager = new KafkaManager("test","localhost:9092,localhost:9093");
+        KafkaManager kafkaManager = new KafkaManager("links","localhost:9092,localhost:9093");
 
         ArrayList<String> results = new ArrayList<>();
-        for(int i = 1; i < 6; i++){
+        for(int i = 6; i < 11; i++){
             ArrayList<String> testMessages = new ArrayList<>();
             for(int j = 0; j < 100; j++){
                 testMessages.add("testMessage" + i + "_" + j);
