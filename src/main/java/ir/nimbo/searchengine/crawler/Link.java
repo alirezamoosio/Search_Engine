@@ -2,15 +2,24 @@ package ir.nimbo.searchengine.crawler;
 
 import org.jsoup.nodes.Element;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class Link {
     private String anchorLink;
     private String url;
     private String domain;
 
-    public Link(Element element, Link mainLink) {
+    public Link(Element element, String mainUrl) {
         this.anchorLink = element.text();
-        this.url = UrlHandler.normalizeLink(element.attr("href"), mainLink.getUrl());
-        this.domain = this.url.split("/")[2];
+        this.url = UrlHandler.normalizeLink(element.attr("href"), mainUrl);
+        try {
+            domain=new URL(url).getHost();
+        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+            System.out.println("Error!" + url);
+
+        }
     }
 
     public Link(String anchorLink, String url, String domain) {

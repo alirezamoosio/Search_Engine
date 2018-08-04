@@ -18,17 +18,24 @@ public class UrlHandler {
         return link;
     }
 
-    public Link[] getLinks(Elements links, Link mainLink) {
+    public static Link[] getLinks(Elements links, String mainUrl) {
          Link[] finalLinks=links.stream().filter(element -> !element.attr("href").equals("#"))
-                .map(element -> new Link(element, mainLink)).toArray(Link[]::new);
+                .map(element -> new Link(element, mainUrl)).toArray(Link[]::new);
         for (Link link : finalLinks) {
-            System.out.println(link.getAnchorLink() + link.getUrl() + link.getDomain());
+            System.out.println(link.getAnchorLink() + "\t" + link.getUrl() + "\t" + link.getDomain());
         }
         return finalLinks;
     }
 
-    public static void returnFinalLinks(ArrayList<Link> links, ArrayList<Link> internalLinks, ArrayList<Link> externalLinks) {
-
+    public static void returnFinalLinks(ArrayList<Link> links, ArrayList<Link> internalLinks, ArrayList<Link> externalLinks, String mainDomain) {
+        for(Link link: links){
+            if(link.getDomain().equals(mainDomain)){
+                internalLinks.add(link);
+            }
+            else{
+                externalLinks.add(link);
+            }
+        }
     }
 }
 

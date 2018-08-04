@@ -18,7 +18,7 @@ public class UrlHandlerTest {
         try {
             Document document = Jsoup.connect("https://piazza.com/").get();
             Elements links = document.getElementsByTag("a");
-            urlHandler.getLinks(links,new Link("ghjk","https://piazza.com/", "piazza.com"));
+            urlHandler.getLinks(links, "https://piazza.com/");
         } catch (IOException e) {
             e.printStackTrace();
         }
