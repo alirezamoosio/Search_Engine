@@ -12,6 +12,5 @@ public class WebPageHandler  implements FinishedRequestHandler {
     @Override
     public void accept(WebDocument webDocument) {
         webDocuments.add(webDocument);
-
     }
 }

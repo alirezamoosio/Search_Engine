@@ -1,6 +1,6 @@
 package ir.nimbo.searchengine.crawler;
 
-import ir.nimbo.searchengine.exception.IllegalLangaugeException;
+import ir.nimbo.searchengine.exception.IllegalLanguageException;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -13,13 +13,14 @@ public class Crawler {
     private QueueCommunicable queueCommunicable;
     private ExecutorService executor;
     private boolean isWorking = true;
+    private int numberOfCrawled=0;
 
     public Crawler(FinishedRequestHandler request, QueueCommunicable queueCommunicable, int threadPoolSize) {
         this.request = request;
         this.queueCommunicable = queueCommunicable;
         executor = Executors.newFixedThreadPool(threadPoolSize);
     }
-    public void start() throws InterruptedException {
+    public void start() {
         WebDocument documento = null;
         for (int i = 0; i < 1000; i++) {
             int finalI = i;
@@ -35,9 +36,10 @@ public class Crawler {
                         request.accept(webDocument);
                         queueCommunicable.pushNewURL(webDocument.getLinks().toArray(new String[0]));
                         System.out.println("parsed "+url);
+                        numberOfCrawled++;
                     } catch (IOException e) {
                         System.out.println("cant parse "+url);
-                    } catch (IllegalLangaugeException e) {
+                    } catch (IllegalLanguageException e) {
                         System.out.println("not english page "+url);
                     }
                 }
@@ -57,6 +59,14 @@ public class Crawler {
 
     public void shutDown() {
         isWorking = false;
+    }
+
+    public int getNumberOfCrawled() {
+        return numberOfCrawled;
+    }
+
+    public void setNumberOfCrawled(int numberOfCrawled) {
+        this.numberOfCrawled = numberOfCrawled;
     }
 }
 

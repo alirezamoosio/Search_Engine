@@ -8,27 +8,17 @@ import java.util.Arrays;
 import java.util.List;
 
 public class WebDocument {
-
+    private static final int NUMBER_OF_OWN_LINK_READ = 5;
     private String textDoc;
-    private List<String> links;
+    private List<Link> links;
     private String title;
     private String pagelink;
-    public WebDocument(Document document,String pageLink) {
-        this.pagelink=pagelink;
-        links = Arrays.asList(document.getElementsByTag("a").stream()
-                .map(element -> element.attr("href")).filter(e->e.startsWith("http")||e.contains("www."))
-                .toArray(String[]::new));
-        links.forEach(System.out::println);
-        title = document.title();
-        textDoc = document.body().text();
 
-    }
-
-    public List<String> getLinks() {
+    public List<Link> getLinks() {
         return links;
     }
 
-    public void setLinks(List<String> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 
@@ -55,4 +45,6 @@ public class WebDocument {
     public void setPagelink(String pagelink) {
         this.pagelink = pagelink;
     }
+
+
 }
