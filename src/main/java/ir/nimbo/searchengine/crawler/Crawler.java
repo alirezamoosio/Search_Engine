@@ -1,6 +1,7 @@
 package ir.nimbo.searchengine.crawler;
 
 import ir.nimbo.searchengine.exception.IllegalLanguageException;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -14,6 +15,7 @@ public class Crawler {
     private ExecutorService executor;
     private boolean isWorking = true;
     private int numberOfCrawled=0;
+    private static Logger logger = Logger.getLogger(Crawler.class);
 
     public Crawler(FinishedRequestHandler request, QueueCommunicable queueCommunicable, int threadPoolSize) {
         this.request = request;
@@ -38,9 +40,8 @@ public class Crawler {
                         System.out.println("parsed "+url);
                         numberOfCrawled++;
                     } catch (IOException e) {
-                        System.out.println("cant parse "+url);
-                    } catch (IllegalLanguageException e) {
-                        System.out.println("not english page "+url);
+                        logger.error("cant parse "+url);
+                    } catch (IllegalLanguageException ignored) {
                     }
                 }
 

@@ -12,14 +12,13 @@ import java.util.*;
 
 public class KafkaManager implements QueueCommunicable {
     private final String topic;
-    private Properties props;
     private final LinkedList<String> tempList = new LinkedList<>();
     private KafkaConsumer<Integer, String> consumer;
     private Producer<Integer, String> producer;
 
     public KafkaManager(String topic, String portsWithIp) {
         this.topic = topic;
-        props = new Properties();
+        Properties props = new Properties();
         props.put("bootstrap.servers", portsWithIp);
         props.put("group.id", "test");
         props.put("enable.auto.commit", "true");

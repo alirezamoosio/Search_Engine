@@ -11,14 +11,14 @@ import java.util.Arrays;
 
 public class UrlHandler {
 
-    public static String normalizeLink(String link, String mainUrl) {
+    static String normalizeLink(String link, String mainUrl) {
         if(link.startsWith("/")){
             return mainUrl + link;
         }
         return link;
     }
 
-    public static Link[] getLinks(Elements links, String mainUrl) {
+    static Link[] getLinks(Elements links, String mainUrl) {
          Link[] finalLinks=links.stream().filter(element -> !element.attr("href").equals("#"))
                 .map(element -> new Link(element, mainUrl)).toArray(Link[]::new);
         for (Link link : finalLinks) {

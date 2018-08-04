@@ -1,5 +1,6 @@
 package ir.nimbo.searchengine.crawler;
 
+import org.apache.log4j.Logger;
 import org.jsoup.nodes.Element;
 
 import java.net.MalformedURLException;
@@ -9,15 +10,15 @@ public class Link {
     private String anchorLink;
     private String url;
     private String domain;
+    private static Logger logger = Logger.getLogger(Crawler.class);
 
-    public Link(Element element, String mainUrl) {
+    Link(Element element, String mainUrl) {
         this.anchorLink = element.text();
         this.url = UrlHandler.normalizeLink(element.attr("href"), mainUrl);
         try {
-            domain=new URL(url).getHost();
+            this.domain=new URL(url).getHost();
         } catch (MalformedURLException e) {
-//            e.printStackTrace();
-            System.out.println("Error!" + url);
+            logger.error("Couldn't fetch domain of " + this.url);
 
         }
     }
