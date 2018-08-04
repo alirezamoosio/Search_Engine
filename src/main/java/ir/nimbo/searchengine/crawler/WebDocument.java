@@ -13,7 +13,7 @@ public class WebDocument {
     private List<String> links;
     private String title;
     private String pagelink;
-    public WebDocument(Document document,String pagelink) {
+    public WebDocument(Document document,String pageLink) {
         this.pagelink=pagelink;
         links = Arrays.asList(document.getElementsByTag("a").stream()
                 .map(element -> element.attr("href")).filter(e->e.startsWith("http")||e.contains("www."))
