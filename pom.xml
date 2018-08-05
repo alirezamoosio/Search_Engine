@@ -37,11 +37,7 @@
             <artifactId>tomcat-catalina-jmx-remote</artifactId>
             <version>9.0.10</version>
         </dependency>
-        <dependency>
-            <groupId>javax.management</groupId>
-            <artifactId>jmxremote</artifactId>
-            <version>1.0.1_04</version>
-        </dependency>
+
     <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka -->
     <dependency>
       <groupId>org.apache.kafka</groupId>
@@ -51,11 +47,6 @@
     <dependency>
     <groupId>org.apache.hbase</groupId>
     <artifactId>hbase-client</artifactId>
-    <version>2.1.0</version>
-  </dependency>
-  <dependency>
-    <groupId>org.apache.hbase</groupId>
-    <artifactId>hbase</artifactId>
     <version>2.1.0</version>
   </dependency>
     <dependency>
