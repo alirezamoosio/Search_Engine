@@ -27,11 +27,12 @@ public class Crawler implements Runnable {
 //    private String portsWithId;
 //    private int threadPoolSize;
 
-    public Crawler(String topic, String portsWithId, int threadPoolSize) {
+    public Crawler(String topic, String portsWithId) {
         kafkaExecuter = Executors.newScheduledThreadPool(2);
         parserPool = Executors.newFixedThreadPool(200);
         inputUrls = new ArrayList<>();
         newPages = new ArrayList<>();
+        kafkaManager = new KafkaManager(topic,portsWithId);
 //        this.topic = topic;
 //        this.portsWithId = portsWithId;
 //        this.threadPoolSize = threadPoolSize;
@@ -99,14 +100,18 @@ public class Crawler implements Runnable {
     @Override
     public void run() {
         kafkaExecuter.scheduleAtFixedRate(new Thread(() -> {
+            System.out.println("here");
             inputUrls = kafkaManager.getUrls();
+            System.out.println("pull");
             for (String url:inputUrls) {
+                System.out.println(url);
                 parserPool.execute(new Parser(url,this));
             }
             inputUrls.clear();
         }), 0, 100, TimeUnit.MILLISECONDS);
 
         kafkaExecuter.scheduleAtFixedRate(new Thread(() -> {
+            System.out.println("add");
             kafkaManager.pushNewURL(newPages);
             newPages.clear();
         }), 0, 1000, TimeUnit.MILLISECONDS);

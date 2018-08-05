@@ -40,6 +40,7 @@ public class Parser implements Runnable {
 
     @Override
     public void run() {
+        System.out.println(url);
         if (url == null)
             logger.error("null url");
         Document document = null;

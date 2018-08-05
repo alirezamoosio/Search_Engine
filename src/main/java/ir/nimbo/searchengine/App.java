@@ -31,35 +31,38 @@ public class App {
 
     public static Scanner scanner=new Scanner(System.in);
     public static void main( String[] args ) {
-        while (true){
-            String input=scanner.nextLine();
+//        Crawler crawler = new Crawler("links","master-node:9092,worker-node:9092",200);
+        Thread crawl = new Thread(new Crawler("links","master-node:9092,worker-node:9092"));
+        crawl.start();
+//        while (true){
+//            String input=scanner.nextLine();
 //            String methodName=input[0];
 //            for (int i = 1; i < input.length; i++) {
 //                methodName.concat(input[i].)
 //            }
-            try {
-                Method method=App.class.getMethod(input);
-                method.invoke(null);
-            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                System.out.println(e.getMessage());
-            }
-        }
+//            try {
+//                Method method=App.class.getMethod(input);
+//                method.invoke(null);
+//            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+//                System.out.println(e.getMessage());
+//            }
+//        }
     }
-    public static void startFirstMustRun(){
-        FirstMustRun.initializer("links","master-node:9092,worker-node:9092");
-    }
-    public static void start(){
-        System.out.println("start");
-        new Thread(()->new Crawler("links","master-node:9092,worker-node:9092",200).start()).start();
-    }
-    public static void runForUpdateKafka(){
-        FirstMustRun.updateKafka();
-    }
-    public static void timeOfSystemUp(){
-        System.out.println(System.currentTimeMillis()-timeOFStart);
-    }
-    public static void countOfCrawledPage(){
-        System.out.println(Parser.i);
-    }
+//    public static void startFirstMustRun(){
+//        FirstMustRun.initializer("links","master-node:9092,worker-node:9092");
+//    }
+//    public static void start(){
+//        System.out.println("start");
+//        new Thread(()->new Crawler("links","master-node:9092,worker-node:9092",200).start()).start();
+//    }
+//    public static void runForUpdateKafka(){
+//        FirstMustRun.updateKafka();
+//    }
+//    public static void timeOfSystemUp(){
+//        System.out.println(System.currentTimeMillis()-timeOFStart);
+//    }
+//    public static void countOfCrawledPage(){
+//        System.out.println(Parser.i);
+//    }
 }
 

@@ -38,6 +38,7 @@ public class KafkaManager implements QueueCommunicable {
     }
     @Override
     public synchronized ArrayList<String> getUrls() {
+        System.out.println("here2");
         ArrayList<String> result = new ArrayList<>();
         ConsumerRecords<Integer, String> records = consumer.poll(10000);
         consumer.commitSync();
@@ -51,6 +52,7 @@ public class KafkaManager implements QueueCommunicable {
             tempList.addAll(Arrays.asList(page.getLinks().stream().map(Link::getUrl).toArray(String[]::new)));
             shuffle();
             for (String url: tempList) {
+                System.out.println(url);
                 producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
             }
             tempList.clear();
