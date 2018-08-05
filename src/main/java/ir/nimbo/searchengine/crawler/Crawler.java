@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 
 import static java.lang.Thread.MAX_PRIORITY;
+import static java.lang.Thread.sleep;
 
 public class Crawler {
     private FinishedRequestHandler request;
@@ -26,7 +27,17 @@ public class Crawler {
         System.out.println("crawler initialized");
     }
     public void start() {
+
         KafkaManager kafkaManager = new KafkaManager(topic, portsWithId);
+        new Thread(()->{
+            try {
+                sleep(8000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            kafkaManager.shuffle();
+            kafkaManager.addTempListToQueue();
+        }).start();
         for (int i = 0; i < threadPoolSize; i++) {
             System.out.println("thread "+ i + "started");
             Thread thread = new Thread(() -> {
@@ -42,11 +53,10 @@ public class Crawler {
                     });
 
                     System.out.println(Parser.i);
-                    kafkaManager.shuffle();
-                    kafkaManager.addTempListToQueue();
+
                 }
             });
-            thread.setPriority(MAX_PRIORITY);
+            thread.setPriority(MAX_PRIORITY-2);
             thread.start();
         }
     }
