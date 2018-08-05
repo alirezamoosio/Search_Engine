@@ -1,6 +1,4 @@
-package ir.nimbo.searchengine.politecrawling;
-
-import org.apache.kafka.common.protocol.types.Field;
+package ir.nimbo.searchengine.crawler.politecrawling;
 
 public class DomainFrequencyHandler {
     private static DomainFrequencyHandler ourInstance = new DomainFrequencyHandler();

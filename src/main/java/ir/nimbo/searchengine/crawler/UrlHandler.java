@@ -1,14 +1,9 @@
 package ir.nimbo.searchengine.crawler;
 
-import ir.nimbo.searchengine.politecrawling.DomainFrequencyHandler;
-import org.jsoup.nodes.Element;
+import ir.nimbo.searchengine.crawler.politecrawling.DomainFrequencyHandler;
 import org.jsoup.select.Elements;
-import sun.awt.image.ImageWatched;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class UrlHandler {
     static DomainFrequencyHandler domainTimeHandler = DomainFrequencyHandler.getInstance();
