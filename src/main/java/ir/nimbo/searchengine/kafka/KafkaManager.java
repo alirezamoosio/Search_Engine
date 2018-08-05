@@ -1,6 +1,8 @@
 package ir.nimbo.searchengine.kafka;
 
+import ir.nimbo.searchengine.crawler.Link;
 import ir.nimbo.searchengine.crawler.QueueCommunicable;
+import ir.nimbo.searchengine.crawler.WebDocument;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -44,10 +46,14 @@ public class KafkaManager implements QueueCommunicable {
         }
         return result;
     }
-    @Override
-    public void pushNewURL(String... urls) {
-        for (String url : urls) {
-            producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
+    public void pushNewURL(ArrayList<WebDocument> pages) {
+        for (WebDocument page : pages) {
+            tempList.addAll(Arrays.asList(page.getLinks().stream().map(Link::getUrl).toArray(String[]::new)));
+            shuffle();
+            for (String url: tempList) {
+                producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
+            }
+            tempList.clear();
         }
     }
 
@@ -64,12 +70,12 @@ public class KafkaManager implements QueueCommunicable {
         Collections.shuffle(tempList);
     }
 
-    public void addTempListToQueue() {
-        synchronized (tempList) {
-            pushNewURL(tempList.toArray(new String[0]));
-            tempList.clear();
-        }
-    }
+//    public void addTempListToQueue() {
+//        synchronized (tempList) {
+//            pushNewURL(tempList.toArray(new String[0]));
+//            tempList.clear();
+//        }
+//    }
 
     @Override
     protected void finalize() throws Throwable {
@@ -77,9 +83,10 @@ public class KafkaManager implements QueueCommunicable {
         consumer.close();
     }
 
-    public void pushNewURLInTempQueue(String url) {
-        tempList.add(url);
-    }
+//    @Override
+//    public void pushNewURLInTempQueue(String... url) {
+//        tempList.add(url);
+//    }
 
     public void flush() {
         producer.flush();
