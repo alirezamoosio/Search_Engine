@@ -25,7 +25,7 @@ public class Parser {
             return null;
         Document document = null;
         try {
-            document = Jsoup.connect(url).get();
+            document = Jsoup.connect(url).validateTLSCertificates(false).get();
         } catch (IOException e) {
             logger.error("Jsoup connection to " + url + " failed");
         }

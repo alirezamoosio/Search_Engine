@@ -23,15 +23,16 @@ public class Crawler {
         this.topic = topic;
         this.portsWithId = portsWithId;
         this.threadPoolSize = threadPoolSize;
+        System.out.println("crawler initialized");
     }
-
     public void start() {
         KafkaManager kafkaManager = new KafkaManager(topic, portsWithId);
         for (int i = 0; i < threadPoolSize; i++) {
+            System.out.println("thread "+ i + "started");
             Thread thread = new Thread(() -> {
                 while (isWorking) {
                     ArrayList<String> temp = kafkaManager.getUrls();
-                    temp.parallelStream().forEach(e -> {
+                    temp.forEach(e -> {
                         try {
                             WebDocument webDocument = Parser.parse(e);
                             webDocument.getLinks().forEach(link -> kafkaManager.pushNewURLInTempQueue(link.getUrl()));
@@ -39,6 +40,8 @@ public class Crawler {
                             logger.error("error while pushing links of " + e);
                         }
                     });
+
+                    System.out.println(Parser.i);
                     kafkaManager.shuffle();
                     kafkaManager.addTempListToQueue();
                 }

@@ -25,4 +25,12 @@ public class UrlHandlerTest {
 //            e.printStackTrace();
 //        }
     }
+
+    @Test
+    public void normalizeLink() {
+    }
+
+    @Test
+    public void getLinks1() {
+    }
 }
