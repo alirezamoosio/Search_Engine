@@ -17,21 +17,18 @@ public class Crawler {
     private QueueCommunicable queueCommunicable;
     private ExecutorService executor;
     private boolean isWorking = true;
-    private int numberOfCrawled=0;
+    private int numberOfCrawled = 0;
     private static Logger logger = Logger.getLogger(Crawler.class);
 
     public Crawler(FinishedRequestHandler request, QueueCommunicable queueCommunicable, int threadPoolSize) {
         this.request = request;
         this.queueCommunicable = queueCommunicable;
     }
-    public void start() {
-        WebDocument documento = null;
-        KafkaManager kafkaManager = new KafkaManager("links", "localhost:9092,localhost:9093");
-        int[] rate=new int[1];
 
+    public void start() {
+        KafkaManager kafkaManager = new KafkaManager("links", "localhost:9092,localhost:9093");
         for (int i = 0; i < 500; i++) {
-            int finalI = i;
-            Thread thread=new Thread( () -> {
+            Thread thread = new Thread(() -> {
                 while (isWorking) {
                     ArrayList<String> temp = kafkaManager.getUrls();
                     temp.forEach(e -> {
@@ -42,13 +39,7 @@ public class Crawler {
                             logger.error("error while pushing links of " + e);
                         }
                     });
-                    System.out.println(Parser.i);
-                    System.out.println();
-                    System.out.println();
-                    System.out.println();
                     kafkaManager.shuffle();
-                    System.out.println();
-                    System.out.println();
                     kafkaManager.addTempListToQueue();
                 }
             });
