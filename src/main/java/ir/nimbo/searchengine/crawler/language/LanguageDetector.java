@@ -8,7 +8,8 @@ import ir.nimbo.searchengine.exception.IllegalLanguageException;
 public class LanguageDetector {
     static {
         try {
-            DetectorFactory.loadProfile("src/main/java/ir/nimbo/searchengine/crawler/language/profiles");
+            String path = LanguageDetector.class.getClassLoader().getResource("profiles").getPath();
+            DetectorFactory.loadProfile(path);
         } catch (LangDetectException e) {
             e.printStackTrace();
         }
