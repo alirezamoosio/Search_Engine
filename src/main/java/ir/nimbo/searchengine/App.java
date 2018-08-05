@@ -34,7 +34,7 @@ public class App {
     }
     public static void start(){
         System.out.println("start");
-        new Thread(()->new Crawler("links","localhost:9092,localhost:9093",200).start()).start();
+        new Thread(()->new Crawler("links","master-node:9092,worker-node:9092",200).start()).start();
     }
     public static void runForUpdateKafka(){
         FirstMustRun.updateKafka();

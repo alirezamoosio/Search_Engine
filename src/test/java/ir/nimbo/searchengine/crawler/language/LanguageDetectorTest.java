@@ -5,8 +5,8 @@ import org.junit.Test;
 
 public class LanguageDetectorTest {
 
-    @Test(expected = IllegalLanguageException.class)
+    @Test
     public void languageCheck() throws IllegalLanguageException {
-        LanguageDetector.languageCheck("سلام خوبی؟");
+        LanguageDetector.languageCheck("hi how are you");
     }
 }
