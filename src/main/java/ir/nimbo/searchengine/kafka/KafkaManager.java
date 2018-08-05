@@ -34,7 +34,7 @@ public class KafkaManager implements QueueCommunicable {
         consumer.subscribe(Collections.singletonList(topic));
         producer = new KafkaProducer<>(props);
     }
-
+    @Override
     public synchronized ArrayList<String> getUrls() {
         ArrayList<String> result = new ArrayList<>();
         ConsumerRecords<Integer, String> records = consumer.poll(10000);
@@ -44,12 +44,6 @@ public class KafkaManager implements QueueCommunicable {
         }
         return result;
     }
-
-    @Override
-    public String pollNewURL() {
-        return null;
-    }
-
     @Override
     public void pushNewURL(String... urls) {
         for (String url : urls) {

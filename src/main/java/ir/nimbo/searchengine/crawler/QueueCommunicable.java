@@ -1,7 +1,9 @@
 package ir.nimbo.searchengine.crawler;
 
+import java.util.List;
+
 public interface QueueCommunicable {
-    String pollNewURL();
+    List<String> getUrls();
 
     void pushNewURL(String... url);
 }

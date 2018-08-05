@@ -1,16 +1,12 @@
 package ir.nimbo.searchengine.crawler;
 
-import ir.nimbo.searchengine.exception.IllegalLanguageException;
 import ir.nimbo.searchengine.kafka.KafkaManager;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static java.lang.Thread.MAX_PRIORITY;
-import static java.lang.Thread.sleep;
 
 public class Crawler {
     private FinishedRequestHandler request;
@@ -19,19 +15,23 @@ public class Crawler {
     private boolean isWorking = true;
     private int numberOfCrawled = 0;
     private static Logger logger = Logger.getLogger(Crawler.class);
+    private String topic;
+    private String portsWithId;
+    private int threadPoolSize;
 
-    public Crawler(FinishedRequestHandler request, QueueCommunicable queueCommunicable, int threadPoolSize) {
-        this.request = request;
-        this.queueCommunicable = queueCommunicable;
+    public Crawler(String topic, String portsWithId, int threadPoolSize) {
+        this.topic = topic;
+        this.portsWithId = portsWithId;
+        this.threadPoolSize = threadPoolSize;
     }
 
     public void start() {
-        KafkaManager kafkaManager = new KafkaManager("links", "localhost:9092,localhost:9093");
-        for (int i = 0; i < 500; i++) {
+        KafkaManager kafkaManager = new KafkaManager(topic, portsWithId);
+        for (int i = 0; i < threadPoolSize; i++) {
             Thread thread = new Thread(() -> {
                 while (isWorking) {
                     ArrayList<String> temp = kafkaManager.getUrls();
-                    temp.forEach(e -> {
+                    temp.parallelStream().forEach(e -> {
                         try {
                             WebDocument webDocument = Parser.parse(e);
                             webDocument.getLinks().forEach(link -> kafkaManager.pushNewURLInTempQueue(link.getUrl()));

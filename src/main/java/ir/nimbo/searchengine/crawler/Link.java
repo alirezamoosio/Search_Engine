@@ -17,7 +17,6 @@ public class Link {
         this.url = UrlHandler.normalizeLink(element.attr("href"), mainUrl);
         try {
             domain=new URL(url).getHost();
-
             this.domain=new URL(url).getHost();
         } catch (MalformedURLException e) {
 //            e.printStackTrace();
