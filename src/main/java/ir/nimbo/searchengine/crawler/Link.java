@@ -16,8 +16,12 @@ public class Link {
         this.anchorLink = element.text();
         this.url = UrlHandler.normalizeLink(element.attr("href"), mainUrl);
         try {
+            domain=new URL(url).getHost();
+
             this.domain=new URL(url).getHost();
         } catch (MalformedURLException e) {
+//            e.printStackTrace();
+            domain="ERROR";
             logger.error("Couldn't fetch domain of " + this.url);
 
         }

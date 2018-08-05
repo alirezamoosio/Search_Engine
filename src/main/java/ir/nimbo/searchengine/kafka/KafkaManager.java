@@ -27,7 +27,7 @@ public class KafkaManager implements QueueCommunicable {
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("key.serializer", "org.apache.kafka.common.serialization.IntegerSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("max.poll.records", "50");
+        props.put("max.poll.records", "40");
         props.put("auto.offset.reset", "earliest");
         System.out.println(props.toString());
         consumer = new KafkaConsumer<>(props);
@@ -81,5 +81,13 @@ public class KafkaManager implements QueueCommunicable {
     protected void finalize() throws Throwable {
         producer.close();
         consumer.close();
+    }
+
+    public void pushNewURLInTempQueue(String url) {
+        tempList.add(url);
+    }
+
+    public void flush() {
+        producer.flush();
     }
 }

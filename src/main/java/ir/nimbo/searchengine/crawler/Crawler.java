@@ -1,12 +1,15 @@
 package ir.nimbo.searchengine.crawler;
 
 import ir.nimbo.searchengine.exception.IllegalLanguageException;
+import ir.nimbo.searchengine.kafka.KafkaManager;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static java.lang.Thread.MAX_PRIORITY;
 import static java.lang.Thread.sleep;
 
 public class Crawler {
@@ -20,33 +23,37 @@ public class Crawler {
     public Crawler(FinishedRequestHandler request, QueueCommunicable queueCommunicable, int threadPoolSize) {
         this.request = request;
         this.queueCommunicable = queueCommunicable;
-        executor = Executors.newFixedThreadPool(threadPoolSize);
     }
     public void start() {
         WebDocument documento = null;
-        for (int i = 0; i < 1000; i++) {
+        KafkaManager kafkaManager = new KafkaManager("links", "localhost:9092,localhost:9093");
+        int[] rate=new int[1];
+
+        for (int i = 0; i < 500; i++) {
             int finalI = i;
-            new Thread( () -> {
-                final int id= finalI;
+            Thread thread=new Thread( () -> {
                 while (isWorking) {
-                    String url = null;
-                    WebDocument webDocument;
-                    try {
-                        url = queueCommunicable.pollNewURL();
-                        System.out.println("started"+id);
-                        webDocument = Parser.parse(url);
-                        request.accept(webDocument);
-                        queueCommunicable.pushNewURL(webDocument.getLinks().toArray(new String[0]));
-                        System.out.println("parsed "+url);
-                        numberOfCrawled++;
-                    } catch (IOException e) {
-                        logger.error("cant parse "+url);
-                    } catch (IllegalLanguageException ignored) {
-                    }
+                    ArrayList<String> temp = kafkaManager.getUrls();
+                    temp.forEach(e -> {
+                        try {
+                            WebDocument webDocument = Parser.parse(e);
+                            webDocument.getLinks().forEach(link -> kafkaManager.pushNewURLInTempQueue(link.getUrl()));
+                        } catch (RuntimeException e1) {
+                            logger.error("error while pushing links of " + e);
+                        }
+                    });
+                    System.out.println(Parser.i);
+                    System.out.println();
+                    System.out.println();
+                    System.out.println();
+                    kafkaManager.shuffle();
+                    System.out.println();
+                    System.out.println();
+                    kafkaManager.addTempListToQueue();
                 }
-
-            }).start();
-
+            });
+            thread.setPriority(MAX_PRIORITY);
+            thread.start();
         }
     }
 

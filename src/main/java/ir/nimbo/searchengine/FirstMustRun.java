@@ -26,5 +26,6 @@ public class FirstMustRun {
         linkedList.add("https://www.encyclopedia.com/");
         linkedList.add("https://www.theyworkforyou.com/");
         kafkaManager.pushNewURL(linkedList.toArray(new String [0]));
+        kafkaManager.flush();
     }}
 

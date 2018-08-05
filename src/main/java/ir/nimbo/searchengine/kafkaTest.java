@@ -10,22 +10,25 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
 
 
 public class kafkaTest {
     private static Logger logger = Logger.getLogger(Crawler.class);
+    private ExecutorService executor;
+
     public static void main(String[] args) {
         KafkaManager kafkaManager = new KafkaManager("links", "localhost:9092,localhost:9093");
-        while (true) {
+         {
             ArrayList<String> temp = kafkaManager.getUrls();
-            for (String e : temp) {
+            temp.parallelStream().forEach(e -> {
                 try {
                     WebDocument webDocument = Parser.parse(e);
-                    webDocument.getLinks().forEach(link->kafkaManager.pushNewURL(link.getUrl()));
-                } catch (RuntimeException | IllegalLanguageException | IOException exception) {
+                    webDocument.getLinks().forEach(link -> kafkaManager.pushNewURLInTempQueue(link.getUrl()));
+                } catch (RuntimeException e1) {
                     logger.error("error while pushing links of " + e);
                 }
-            }
+            });
             System.out.println();
             System.out.println();
             kafkaManager.getUrlTempList().forEach(System.out::println);

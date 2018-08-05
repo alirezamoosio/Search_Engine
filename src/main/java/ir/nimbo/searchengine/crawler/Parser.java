@@ -19,12 +19,13 @@ import java.util.List;
 
 public class Parser {
     private static Logger logger = Logger.getLogger(Crawler.class);
+    public static int i=0;
     public static  WebDocument parse(String url) {
         if (url == null)
             return null;
         Document document = null;
         try {
-            document = Jsoup.connect(url).validateTLSCertificates(false).get();
+            document = Jsoup.connect(url).validateTLSCertificates(false).timeout(1000).get();
         } catch (IOException e) {
             logger.error("Jsoup connection to " + url + " failed");
         }
@@ -45,6 +46,7 @@ public class Parser {
         webDocument.setTitle(document.title());
         webDocument.setPagelink(url);
         webDocument.setLinks(Arrays.asList(links));
+        i++;
         return webDocument;
     }
 }
