@@ -10,6 +10,6 @@ public class ParserTest {
 
     @Test
     public void parse() throws IOException, IllegalLanguageException {
-        Assert.assertTrue(10<Parser.parse("https://alexa.com/topsites").getLinks().size());
+        Assert.assertTrue(1<Parser.parse("https://zoomg.ir/").getLinks().size());
     }
 }
