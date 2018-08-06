@@ -19,6 +19,7 @@ public class Crawler implements Runnable {
     private List<WebDocument> newPages;
     private ScheduledExecutorService kafkaExecutor;
     private ExecutorService parserPool;
+
     public Crawler(URLQueue urlQueue) {
         kafkaExecutor = Executors.newScheduledThreadPool(2);
         parserPool = Executors.newFixedThreadPool(200);

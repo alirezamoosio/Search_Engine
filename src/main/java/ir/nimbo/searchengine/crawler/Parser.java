@@ -24,7 +24,7 @@ public class Parser implements Runnable {
     public static int numberOFCrawledPage = 0;
     private String url;
     private Crawler observer;
-
+    private static long lastTime=System.currentTimeMillis();
     public Parser(String url, Crawler observer) {
         this.url = url;
         this.observer = observer;
@@ -32,12 +32,14 @@ public class Parser implements Runnable {
 
     static {
         new Thread(() -> {
-            System.out.println(numberOFCrawledPage);
-            try {
-                sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            while (true)
+                try {
+                    System.out.println("crawledPage="+numberOFCrawledPage);
+                    System.out.println(numberOFCrawledPage/(System.currentTimeMillis()-lastTime));
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
         }).start();
     }
 
@@ -60,7 +62,6 @@ public class Parser implements Runnable {
             webDocument.setPagelink(url);
             webDocument.setLinks(Arrays.asList(links));
             notify(webDocument);
-            System.out.println(numberOFCrawledPage++);
         } catch (MalformedURLException e) {
             logger.error(url + " is malformatted!");
         } catch (IOException e) {
