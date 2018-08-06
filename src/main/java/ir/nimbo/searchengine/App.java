@@ -33,7 +33,7 @@ public class App {
     public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        KafkaManager kafkaManager=new KafkaManager("links","localhost:9092,localhost:9093");
+        KafkaManager kafkaManager=new KafkaManager(scanner.next(),scanner.next(),scanner.next());
         Thread crawl = new Thread(new Crawler(kafkaManager));
         crawl.start();
     }

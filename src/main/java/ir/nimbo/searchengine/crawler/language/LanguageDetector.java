@@ -7,11 +7,12 @@ import ir.nimbo.searchengine.exception.IllegalLanguageException;
 
 public class LanguageDetector {
     static {
+        String path = LanguageDetector.class.getClassLoader().getResource("profiles").getPath();
         try {
-            String path = LanguageDetector.class.getClassLoader().getResource("profiles").getPath();
             DetectorFactory.loadProfile(path);
         } catch (LangDetectException e) {
             e.printStackTrace();
+            System.out.println(path);
         }
     }
 

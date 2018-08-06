@@ -1,9 +1,6 @@
 
 package ir.nimbo.searchengine;
 
-import ir.nimbo.searchengine.crawler.Crawler;
-import ir.nimbo.searchengine.crawler.Parser;
-import ir.nimbo.searchengine.crawler.WebDocument;
 import ir.nimbo.searchengine.kafka.KafkaManager;
 import org.apache.log4j.Logger;
 
@@ -18,7 +15,7 @@ public class FirstMustRun {
     public static void initializer(String topic,String portsWithId) {
         FirstMustRun.topic = topic;
         FirstMustRun.portsWithId = portsWithId;
-        KafkaManager kafkaManager = new KafkaManager(topic, portsWithId);
+        KafkaManager kafkaManager = new KafkaManager(topic, portsWithId, "test4");
         LinkedList<String> linkedList =new LinkedList<>();
         linkedList.add("https://www.alexa.com/");
         linkedList.add("https://en.wikipedia.org/wiki/Main_Page");
@@ -40,7 +37,7 @@ public class FirstMustRun {
     }
 
     public static void updateKafka() {
-        KafkaManager kafkaManager = new KafkaManager(topic, portsWithId);
+        KafkaManager kafkaManager = new KafkaManager(topic, portsWithId, "test4");
         ArrayList<String> temp = kafkaManager.getUrls();
     }
 }

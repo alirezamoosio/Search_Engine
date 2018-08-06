@@ -66,7 +66,7 @@ public class Crawler implements Runnable {
             inputUrls.clear();
         });
         thread.setPriority(MAX_PRIORITY - 2);
-        kafkaExecutor.scheduleAtFixedRate(thread, 0, 100, TimeUnit.MILLISECONDS);
+        kafkaExecutor.scheduleAtFixedRate(thread, 0, 50, TimeUnit.MILLISECONDS);
         kafkaExecutor.scheduleAtFixedRate(new Thread(() -> {
             urlQueue.pushNewURL(newPages);
 
