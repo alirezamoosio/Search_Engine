@@ -1,66 +1,42 @@
 package ir.nimbo.searchengine.crawler;
 
-import ir.nimbo.searchengine.kafka.KafkaManager;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.Thread.MAX_PRIORITY;
 import static java.lang.Thread.sleep;
 
 public class Crawler implements Runnable {
-    //    private FinishedRequestHandler request;
-//    private QueueCommunicable queueCommunicable;
-//    private ExecutorService executor;
-//    private boolean isWorking = true;
-//    private int numberOfCrawled = 0;
     private static Logger logger = Logger.getLogger(Crawler.class);
-    private KafkaManager kafkaManager;
-    private ArrayList<String> inputUrls;
-    private ArrayList<WebDocument> newPages;
-    private ScheduledExecutorService kafkaExecuter;
+    private URLQueue urlQueue;
+    private List<String> inputUrls;
+    private List<WebDocument> newPages;
+    private ScheduledExecutorService kafkaExecutor;
     private ExecutorService parserPool;
-//    private String topic;
-//    private String portsWithId;
-//    private int threadPoolSize;
-
-    public Crawler(String topic, String portsWithId) {
-        kafkaExecuter = Executors.newScheduledThreadPool(2);
+    public Crawler(URLQueue urlQueue) {
+        kafkaExecutor = Executors.newScheduledThreadPool(2);
         parserPool = Executors.newFixedThreadPool(200);
+        this.urlQueue = urlQueue;
         inputUrls = new ArrayList<>();
         newPages = new ArrayList<>();
-        kafkaManager = new KafkaManager(topic,portsWithId);
-//        this.topic = topic;
-//        this.portsWithId = portsWithId;
-//        this.threadPoolSize = threadPoolSize;
-//        System.out.println("crawler initialized");
     }
 
     public void start() {
-//        KafkaManager kafkaManager = new KafkaManager(topic, portsWithId);
-//        new Thread(()->{
-//            try {
-//                sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            kafkaManager.shuffle();
-//            kafkaManager.addTempListToQueue();
-//            kafkaManager.flush();
-//
-//        }).start();
 //        for (int i = 0; i < threadPoolSize; i++) {
 //            System.out.println("thread "+ i + "started");
 //            Thread thread = new Thread(() -> {
 //                while (isWorking) {
-//                    ArrayList<String> temp = kafkaManager.getUrls();
+//                    ArrayList<String> temp = urlQueue.getUrls();
 //                    temp.forEach(e -> {
 //                        try {
 //                            WebDocument webDocument = Parser.parse(e);
-//                            webDocument.getLinks().forEach(link -> kafkaManager.pushNewURLInTempQueue(link.getUrl()));
+//                            webDocument.getLinks().forEach(link -> urlQueue.pushNewURLInTempQueue(link.getUrl()));
 //                        } catch (RuntimeException e1) {
 //                            logger.error("error while pushing links of " + e);
 //                        }
@@ -75,44 +51,25 @@ public class Crawler implements Runnable {
 //        }
     }
 
-//    public void setFinishedRequest(FinishedRequestHandler request) {
-//        this.request = request;
-//    }
-//
-//    public void setQueueCommunicable(QueueCommunicable queueCommunicable) {
-//        this.queueCommunicable = queueCommunicable;
-//    }
-//
-//    public void shutDown() {
-//        isWorking = false;
-//    }
-//
-//    public int getNumberOfCrawled() {
-//        return numberOfCrawled;
-//    }
-//
-//    public void setNumberOfCrawled(int numberOfCrawled) {
-//        this.numberOfCrawled = numberOfCrawled;
-//    }
-    public void addPage(WebDocument page){
+    public void addPage(WebDocument page) {
         newPages.add(page);
     }
+
     @Override
     public void run() {
-        kafkaExecuter.scheduleAtFixedRate(new Thread(() -> {
-            System.out.println("here");
-            inputUrls = kafkaManager.getUrls();
-            System.out.println("pull");
-            for (String url:inputUrls) {
+        Thread thread = new Thread(() -> {
+            inputUrls = urlQueue.getUrls();
+            for (String url : inputUrls) {
                 System.out.println(url);
-                parserPool.execute(new Parser(url,this));
+                parserPool.execute(new Parser(url, this));
             }
             inputUrls.clear();
-        }), 0, 100, TimeUnit.MILLISECONDS);
+        });
+        thread.setPriority(MAX_PRIORITY - 2);
+        kafkaExecutor.scheduleAtFixedRate(thread, 0, 100, TimeUnit.MILLISECONDS);
+        kafkaExecutor.scheduleAtFixedRate(new Thread(() -> {
+            urlQueue.pushNewURL(newPages);
 
-        kafkaExecuter.scheduleAtFixedRate(new Thread(() -> {
-            System.out.println("add");
-            kafkaManager.pushNewURL(newPages);
             newPages.clear();
         }), 0, 1000, TimeUnit.MILLISECONDS);
 

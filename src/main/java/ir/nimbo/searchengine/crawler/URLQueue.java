@@ -3,8 +3,8 @@ package ir.nimbo.searchengine.crawler;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface QueueCommunicable {
+public interface URLQueue {
     List<String> getUrls();
 
-//    void pushNewURLInTempQueue(String... urls);
+    void pushNewURL(List<WebDocument> pages);
 }

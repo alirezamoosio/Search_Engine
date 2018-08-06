@@ -19,53 +19,38 @@ import java.util.List;
 
 public class Parser implements Runnable {
     private static Logger logger = Logger.getLogger(Crawler.class);
-    public static int i = 0;
+    public static int  numberOFCrawledPage = 0;
     private String url;
     private Crawler observer;
-
     public Parser(String url, Crawler observer) {
         this.url = url;
         this.observer = observer;
     }
-
-//    public WebDocument parse(String url) {
-//
-//        i++;
-//        return webDocument;
-//    }
-
     private void notify(WebDocument webDocument) {
         observer.addPage(webDocument);
     }
-
     @Override
     public void run() {
-        System.out.println(url);
+        System.out.println(numberOFCrawledPage++);
         if (url == null)
             logger.error("null url");
-        Document document = null;
         try {
-            document = Jsoup.connect(url).validateTLSCertificates(false).get();
+            Document document = Jsoup.connect(url).validateTLSCertificates(false).get();
+            WebDocument webDocument = new WebDocument();
+            String text = document.text();
+            LanguageDetector.languageCheck(text);
+            Link[] links = UrlHandler.getLinks(document.getElementsByTag("a"), new URL(url).getHost());
+            webDocument.setTextDoc(text);
+            webDocument.setTitle(document.title());
+            webDocument.setPagelink(url);
+            webDocument.setLinks(Arrays.asList(links));
+            notify(webDocument);
+        } catch (MalformedURLException e) {
+            logger.error(url + " is malformatted!");
         } catch (IOException e) {
             logger.error("Jsoup connection to " + url + " failed");
-        }
-        WebDocument webDocument = new WebDocument();
-        String text = document.text();
-        try {
-            LanguageDetector.languageCheck(text);
         } catch (IllegalLanguageException e) {
             logger.error("Couldn't recognize url language!");
         }
-        Link[] links = new Link[0];
-        try {
-            links = UrlHandler.getLinks(document.getElementsByTag("a"), new URL(url).getHost());
-        } catch (MalformedURLException e) {
-            logger.error(url + " is malformatted!");
-        }
-        webDocument.setTextDoc(text);
-        webDocument.setTitle(document.title());
-        webDocument.setPagelink(url);
-        webDocument.setLinks(Arrays.asList(links));
-        notify(webDocument);
     }
 }

@@ -18,19 +18,15 @@ public class Link {
         try {
             this.domain=new URL(url).getHost();
         } catch (MalformedURLException e) {
-//            e.printStackTrace();
             domain="ERROR";
             logger.error("Couldn't fetch domain of " + this.url);
-
         }
     }
-
     public Link(String anchorLink, String url, String domain) {
         this.anchorLink = anchorLink;
         this.url = url;
         this.domain = domain;
     }
-
     public String getAnchorLink() {
         return anchorLink;
     }
