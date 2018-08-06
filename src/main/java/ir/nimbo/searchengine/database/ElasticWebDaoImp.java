@@ -21,20 +21,20 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class ElasticWebDaoImp  {
+public class ElasticWebDaoImp implements WebDoa {
     private RestHighLevelClient client;
     private String index = "pages";
     private Logger logger = Logger.getLogger(ElasticWebDaoImp.class);
     public ElasticWebDaoImp(){
         client = new RestHighLevelClient(
                 RestClient.builder(
-                        new HttpHost("master-node", 9200, "http"),
-                        new HttpHost("worker-node", 9200, "http")));
-
+                        new HttpHost("94.23.214.93", 9200, "http")));
     }
-    public boolean add(ArrayList<WebDocument> documents){
+    @Override
+    public void put(List<WebDocument> documents){
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder();
             IndexRequest indexRequest = new IndexRequest(index, "doc");
@@ -51,14 +51,11 @@ public class ElasticWebDaoImp  {
                     bulkRequest.add(indexRequest);
                 } catch (IOException e) {
                     logger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
-                    return false;
                 }
             }
             BulkResponse bulkResponse = client.bulk(bulkRequest);
-            return bulkResponse.status().toString().equals("OK");
         } catch (IOException e) {
             logger.error("ERROR! couldn't add bulk to elastic");
-            return false;
         }
     }
     public Map<String, Float> search(String text) throws IOException {
@@ -79,5 +76,6 @@ public class ElasticWebDaoImp  {
         }
         return results;
     }
+
 }
 

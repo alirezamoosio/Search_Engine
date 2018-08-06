@@ -10,6 +10,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class HbaseWebDaoImp implements WebDoa {
@@ -45,11 +46,11 @@ public class HbaseWebDaoImp implements WebDoa {
         return flag;
     }
     @Override
-    public void put(WebDocument document) {
-        Put put = new Put(Bytes.toBytes(invertUrl(document.getPagelink())));
-        put.addColumn(contextFamily.getBytes(), "pageLink".getBytes(), document.getPagelink().getBytes());
-//        put.addColumn(contextFamily.getBytes(), "anchors".getBytes(), document.ge);
-
+    public void put(List<WebDocument> documents) {
+        for(WebDocument document : documents){
+            Put put = new Put(Bytes.toBytes(document.getPagelink()));
+            put.addColumn(contextFamily.getBytes(), "pageLink".getBytes(), document.getPagelink().getBytes());
+        }
     }
 
     public String invertUrl(String url){

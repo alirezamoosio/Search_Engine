@@ -23,7 +23,11 @@
 //
 //    @Before
 //    public void setUp() {
+<<<<<<< Updated upstream
 //        calculator = new RankCalculator("Test", "master-node", 3);
+=======
+//        calculator = new RankCalculator("Test", "local", 3);
+>>>>>>> Stashed changes
 //    }
 //
 //    @Test
@@ -34,7 +38,11 @@
 //        Value value2 = new Value(Collections.singletonList("site3"), 1.0 / 3);
 //        String site3 = "site3";
 //        Value value3 = new Value(Collections.singletonList("site2"), 1.0 / 3);
+<<<<<<< Updated upstream
 //        SparkConf conf = new SparkConf().setAppName("Test").setMaster("master-node");
+=======
+//        SparkConf conf = new SparkConf().setAppName("Test").setMaster("local");
+>>>>>>> Stashed changes
 //        JavaSparkContext sparkContext = new JavaSparkContext(conf);
 //        List<Tuple2<String, Value>> list = Arrays.asList(new Tuple2<>(site1, value1),
 //                new Tuple2<>(site2, value2),
