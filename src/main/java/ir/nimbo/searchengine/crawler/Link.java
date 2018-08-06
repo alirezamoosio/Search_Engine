@@ -19,7 +19,7 @@ public class Link {
             this.domain=new URL(url).getHost();
         } catch (MalformedURLException e) {
             domain="ERROR";
-            logger.error("Couldn't fetch domain of " + this.url);
+//            logger.error("Couldn't fetch domain of " + this.url);
         }
     }
     public Link(String anchorLink, String url, String domain) {

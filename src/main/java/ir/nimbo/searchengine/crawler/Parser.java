@@ -60,7 +60,7 @@ public class Parser implements Runnable {
             webDocument.setPagelink(url);
             webDocument.setLinks(Arrays.asList(links));
             notify(webDocument);
-            numberOFCrawledPage++;
+            System.out.println(numberOFCrawledPage++);
         } catch (MalformedURLException e) {
             logger.error(url + " is malformatted!");
         } catch (IOException e) {
