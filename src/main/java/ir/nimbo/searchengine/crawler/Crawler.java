@@ -1,5 +1,6 @@
 package ir.nimbo.searchengine.crawler;
 
+import ir.nimbo.searchengine.crawler.language.LangDetector;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -19,8 +20,10 @@ public class Crawler implements Runnable {
     private List<WebDocument> newPages;
     private ScheduledExecutorService kafkaExecutor;
     private ExecutorService parserPool;
-
+    private LangDetector langDetector;
     public Crawler(URLQueue urlQueue) {
+        langDetector = new LangDetector();
+        langDetector.profileLoad();
         kafkaExecutor = Executors.newScheduledThreadPool(2);
         parserPool = Executors.newFixedThreadPool(200);
         this.urlQueue = urlQueue;
@@ -38,7 +41,7 @@ public class Crawler implements Runnable {
         Thread thread = new Thread(() -> {
             inputUrls = urlQueue.getUrls();
             for (String url : inputUrls) {
-                parserPool.execute(new Parser(url, this));
+                parserPool.execute(new Parser(url, this,langDetector));
             }
             inputUrls.clear();
         });

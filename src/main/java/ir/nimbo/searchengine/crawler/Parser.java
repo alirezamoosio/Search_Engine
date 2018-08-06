@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.WatchEvent;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,25 +27,25 @@ public class Parser implements Runnable {
     private Crawler observer;
     private LangDetector langDetector;
     private static long lastTime=System.currentTimeMillis();
-    public Parser(String url, Crawler observer) {
-        langDetector = new LangDetector();
+    public Parser(String url, Crawler observer , LangDetector langDetector) {
+        this.langDetector = langDetector;
         this.url = url;
         this.observer = observer;
-        langDetector.profileLoad();
+
     }
 
-    static {
-        new Thread(() -> {
-            while (true)
-                try {
-                    System.out.println("crawledPage="+numberOFCrawledPage);
-                    System.out.println(numberOFCrawledPage/(System.currentTimeMillis()-lastTime));
-                    sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-        }).start();
-    }
+//    static {
+//        new Thread(() -> {
+//            while (true)
+//                try {
+//                    System.out.println("crawledPage="+numberOFCrawledPage);
+//                    System.out.println(numberOFCrawledPage/(System.currentTimeMillis()-lastTime));
+//                    sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//        }).start();
+//    }
 
     private void notify(WebDocument webDocument) {
         observer.addPage(webDocument);
@@ -65,6 +66,7 @@ public class Parser implements Runnable {
             webDocument.setPagelink(url);
             webDocument.setLinks(Arrays.asList(links));
             notify(webDocument);
+            System.out.println(++numberOFCrawledPage);
         } catch (MalformedURLException e) {
             logger.error(url + " is malformatted!");
         } catch (IOException e) {
