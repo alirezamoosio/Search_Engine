@@ -27,29 +27,6 @@ public class Crawler implements Runnable {
         newPages = new ArrayList<>();
     }
 
-    public void start() {
-//        for (int i = 0; i < threadPoolSize; i++) {
-//            System.out.println("thread "+ i + "started");
-//            Thread thread = new Thread(() -> {
-//                while (isWorking) {
-//                    ArrayList<String> temp = urlQueue.getUrls();
-//                    temp.forEach(e -> {
-//                        try {
-//                            WebDocument webDocument = Parser.parse(e);
-//                            webDocument.getLinks().forEach(link -> urlQueue.pushNewURLInTempQueue(link.getUrl()));
-//                        } catch (RuntimeException e1) {
-//                            logger.error("error while pushing links of " + e);
-//                        }
-//                    });
-//
-//                    System.out.println(Parser.i);
-//
-//                }
-//            });
-//            thread.setPriority(MAX_PRIORITY-2);
-//            thread.start();
-//        }
-    }
 
     public void addPage(WebDocument page) {
         newPages.add(page);
@@ -60,7 +37,6 @@ public class Crawler implements Runnable {
         Thread thread = new Thread(() -> {
             inputUrls = urlQueue.getUrls();
             for (String url : inputUrls) {
-                System.out.println(url);
                 parserPool.execute(new Parser(url, this));
             }
             inputUrls.clear();
@@ -69,7 +45,6 @@ public class Crawler implements Runnable {
         kafkaExecutor.scheduleAtFixedRate(thread, 0, 50, TimeUnit.MILLISECONDS);
         kafkaExecutor.scheduleAtFixedRate(new Thread(() -> {
             urlQueue.pushNewURL(newPages);
-
             newPages.clear();
         }), 0, 1000, TimeUnit.MILLISECONDS);
 

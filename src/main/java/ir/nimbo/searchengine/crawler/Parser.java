@@ -17,18 +17,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
 public class Parser implements Runnable {
     private static Logger logger = Logger.getLogger(Crawler.class);
-    public static int  numberOFCrawledPage = 0;
+    public static int numberOFCrawledPage = 0;
     private String url;
     private Crawler observer;
+
     public Parser(String url, Crawler observer) {
         this.url = url;
         this.observer = observer;
     }
+
+    static {
+        new Thread(() -> {
+            System.out.println(numberOFCrawledPage);
+            try {
+                sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
     private void notify(WebDocument webDocument) {
         observer.addPage(webDocument);
     }
+
     @Override
     public void run() {
         if (url == null)
@@ -44,7 +60,7 @@ public class Parser implements Runnable {
             webDocument.setPagelink(url);
             webDocument.setLinks(Arrays.asList(links));
             notify(webDocument);
-            System.out.println(numberOFCrawledPage++);
+            numberOFCrawledPage++;
         } catch (MalformedURLException e) {
             logger.error(url + " is malformatted!");
         } catch (IOException e) {
