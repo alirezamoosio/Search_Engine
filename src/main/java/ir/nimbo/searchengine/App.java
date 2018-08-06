@@ -40,10 +40,8 @@ public class App {
         KafkaManager kafkaManager;
         if (scanner.next().equals("server")) {
             kafkaManager = new KafkaManager("links", "master-node:9092,worker-node:9092",scanner.next());
-            LanguageDetector.profileLoad("/home/search/profiles");
         }else {
             kafkaManager = new KafkaManager("links","localhost:9092,localhost:9093","test");
-            LanguageDetector.profileLoad("/home/mohammadreza/IdeaProjects/Search_Engine/target/classes/profiles");
         }
         scanner.close();
         Thread crawl = new Thread(new Crawler(kafkaManager));

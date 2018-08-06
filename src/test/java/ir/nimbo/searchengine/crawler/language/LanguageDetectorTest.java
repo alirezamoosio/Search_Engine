@@ -7,7 +7,7 @@ public class LanguageDetectorTest {
 
     @Test
     public void languageCheck() throws IllegalLanguageException {
-
+        LanguageDetector.profileLoad();
         LanguageDetector.languageCheck("hello everybody. i am a sentence. nice to meet you");
     }
 }
