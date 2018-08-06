@@ -22,7 +22,7 @@ public class UrlHandler {
         return finalLinks;
     }
 
-    public static void returnFinalLinks(ArrayList<Link> links, ArrayList<Link> internalLinks, ArrayList<Link> externalLinks, String mainDomain) {
+    public static void splitter(ArrayList<Link> links, ArrayList<Link> internalLinks, ArrayList<Link> externalLinks, String mainDomain) {
         for (Link link : links) {
             if (link.getDomain().equals(mainDomain)) {
                 internalLinks.add(link);

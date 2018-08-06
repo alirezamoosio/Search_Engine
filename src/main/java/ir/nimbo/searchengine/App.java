@@ -1,5 +1,6 @@
 package ir.nimbo.searchengine;
 
+import ir.nimbo.searchengine.crawler.language.LanguageDetector;
 import ir.nimbo.searchengine.kafka.KafkaManager;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -19,12 +20,15 @@ import java.io.IOException;
  */
 import ir.nimbo.searchengine.crawler.Crawler;
 import ir.nimbo.searchengine.crawler.Parser;
+import org.jsoup.Jsoup;
 
 import javax.swing.table.TableRowSorter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Scanner;
 
 public class App {
@@ -33,9 +37,17 @@ public class App {
     public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        KafkaManager kafkaManager=new KafkaManager(scanner.next(),scanner.next(),scanner.next());
-
+        KafkaManager kafkaManager;
+        if (scanner.next().equals("server")) {
+            kafkaManager = new KafkaManager("links", "master-node:9092,worker-node:9092",scanner.next());
+            LanguageDetector.profileLoad("/home/search/profiles");
+        }else {
+            kafkaManager = new KafkaManager("links","localhost:9092,localhost:9093","test");
+            LanguageDetector.profileLoad("/home/mohammadreza/IdeaProjects/Search_Engine/target/classes/profiles");
+        }
+        scanner.close();
         Thread crawl = new Thread(new Crawler(kafkaManager));
         crawl.start();
     }
+
 }
