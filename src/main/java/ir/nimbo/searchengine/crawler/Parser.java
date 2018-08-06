@@ -1,6 +1,6 @@
 package ir.nimbo.searchengine.crawler;
 
-import ir.nimbo.searchengine.crawler.language.LanguageDetector;
+import ir.nimbo.searchengine.crawler.language.LangDetector;
 import ir.nimbo.searchengine.exception.IllegalLanguageException;
 import org.apache.kafka.common.protocol.types.Field;
 import org.apache.log4j.Logger;
@@ -24,10 +24,13 @@ public class Parser implements Runnable {
     public static int numberOFCrawledPage = 0;
     private String url;
     private Crawler observer;
+    private LangDetector langDetector;
     private static long lastTime=System.currentTimeMillis();
     public Parser(String url, Crawler observer) {
+        langDetector = new LangDetector();
         this.url = url;
         this.observer = observer;
+        langDetector.profileLoad();
     }
 
     static {
@@ -55,7 +58,7 @@ public class Parser implements Runnable {
             Document document = Jsoup.connect(url).get();
             WebDocument webDocument = new WebDocument();
             String text = document.text();
-            LanguageDetector.languageCheck(text);
+            langDetector.languageCheck(text);
             Link[] links = UrlHandler.getLinks(document.getElementsByTag("a"), new URL(url).getHost());
             webDocument.setTextDoc(text);
             webDocument.setTitle(document.title());

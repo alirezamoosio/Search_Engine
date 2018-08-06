@@ -50,11 +50,6 @@
             <version>2.1.0</version>
         </dependency>
         <dependency>
-            <groupId>com.cybozu.labs</groupId>
-            <artifactId>langdetect</artifactId>
-            <version>1.1-20120112</version>
-        </dependency>
-        <dependency>
             <groupId>javax.measure</groupId>
             <artifactId>unit-api</artifactId>
             <version>1.0</version>
@@ -64,11 +59,7 @@
             <artifactId>unit-ri</artifactId>
             <version>1.0.2</version>
         </dependency>
-        <dependency>
-            <groupId>com.cybozu.labs</groupId>
-            <artifactId>langdetect</artifactId>
-            <version>1.1-20120112</version>
-        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -109,6 +100,11 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.optimaize.languagedetector</groupId>
+            <artifactId>language-detector</artifactId>
+            <version>0.6</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

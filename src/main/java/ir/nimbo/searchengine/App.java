@@ -1,6 +1,5 @@
 package ir.nimbo.searchengine;
 
-import ir.nimbo.searchengine.crawler.language.LanguageDetector;
 import ir.nimbo.searchengine.kafka.KafkaManager;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;

@@ -18,11 +18,7 @@
 //
 //    @Before
 //    public void setUp() {
-<<<<<<< Updated upstream
-//        SparkConf conf = new SparkConf().setAppName("Test").setMaster("master-node");
-=======
 //        SparkConf conf = new SparkConf().setAppName("Test").setMaster("local[2]");
->>>>>>> Stashed changes
 //        sparkContext = new JavaSparkContext(conf);
 //    }
 //
