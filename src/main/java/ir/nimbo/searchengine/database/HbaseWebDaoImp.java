@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class HbaseWebDaoImp implements WebDoa {
-    private TableName webPageTable = TableName.valueOf("webpage");
+    private TableName webPageTable = TableName.valueOf("webpage2");
     private String linkFamily = "link";
     private String anchorFamliy = "anchor";
     private String timeStamp = "timestamp";
-
+    private boolean flag =false;
     public HbaseWebDaoImp() {
         Configuration configuration = HBaseConfiguration.create();
         String path = this.getClass().getClassLoader().getResource("hbase-site.xml").getPath();
@@ -43,11 +43,14 @@ public class HbaseWebDaoImp implements WebDoa {
             tableDescriptorBuilder.setColumnFamily(anchorFamilyBuilder.build());
             tableDescriptorBuilder.setColumnFamily(timeStampFamilyBuilder.build());
             admin.createTable(tableDescriptorBuilder.build());
+            flag = true;
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
+    public boolean isFlag(){
+        return flag;
+    }
     @Override
     public void put(WebDocument document) {
 
