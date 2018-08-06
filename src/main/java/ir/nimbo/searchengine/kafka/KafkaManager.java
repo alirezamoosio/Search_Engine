@@ -1,7 +1,7 @@
 package ir.nimbo.searchengine.kafka;
 
 import ir.nimbo.searchengine.crawler.Link;
-import ir.nimbo.searchengine.crawler.QueueCommunicable;
+import ir.nimbo.searchengine.crawler.URLQueue;
 import ir.nimbo.searchengine.crawler.WebDocument;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -12,7 +12,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.util.*;
 
-public class KafkaManager implements QueueCommunicable {
+public class KafkaManager implements URLQueue {
     private final String topic;
     private final LinkedList<String> tempList = new LinkedList<>();
     private KafkaConsumer<Integer, String> consumer;
@@ -36,6 +36,7 @@ public class KafkaManager implements QueueCommunicable {
         consumer.subscribe(Collections.singletonList(topic));
         producer = new KafkaProducer<>(props);
     }
+
     @Override
     public synchronized ArrayList<String> getUrls() {
         ArrayList<String> result = new ArrayList<>();
@@ -46,48 +47,27 @@ public class KafkaManager implements QueueCommunicable {
         }
         return result;
     }
-    public void pushNewURL(ArrayList<WebDocument> pages) {
+    @Override
+    public void pushNewURL(List<WebDocument> pages) {
         for (WebDocument page : pages) {
             tempList.addAll(Arrays.asList(page.getLinks().stream().map(Link::getUrl).toArray(String[]::new)));
-            shuffle();
-            for (String url: tempList) {
-                producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
-            }
-            tempList.clear();
         }
-    }
-
-    public void pushNewURLInTempQueue(List<String> links) {
-        tempList.addAll(links);
-    }
-
-    public LinkedList<String> getUrlTempList() {
-        return tempList;
-
+        shuffle();
+        for (String url : tempList) {
+            producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
+        }
+        tempList.clear();
     }
 
     public void shuffle() {
         Collections.shuffle(tempList);
     }
 
-//    public void addTempListToQueue() {
-//        synchronized (tempList) {
-//            pushNewURL(tempList.toArray(new String[0]));
-//            tempList.clear();
-//        }
-//    }
-
     @Override
-    protected void finalize() throws Throwable {
+    protected void finalize() {
         producer.close();
         consumer.close();
     }
-
-//    @Override
-//    public void pushNewURLInTempQueue(String... url) {
-//        tempList.add(url);
-//    }
-
     public void flush() {
         producer.flush();
     }

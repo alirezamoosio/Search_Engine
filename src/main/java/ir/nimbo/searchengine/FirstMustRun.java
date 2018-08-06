@@ -35,22 +35,12 @@ public class FirstMustRun {
         linkedList.add("https://www.nasa.gov/");
         linkedList.add("https://www.encyclopedia.com/");
         linkedList.add("https://www.theyworkforyou.com/");
-        kafkaManager.pushNewURL(linkedList.toArray(new String [0]));
         kafkaManager.flush();
     }
 
     public static void updateKafka() {
-        KafkaManager kafkaManager = new KafkaManager(topic,portsWithId);
+        KafkaManager kafkaManager = new KafkaManager(topic, portsWithId);
         ArrayList<String> temp = kafkaManager.getUrls();
-        temp.stream().parallel().forEach(e -> {
-            try {
-                WebDocument webDocument = Parser.parse(e);
-                webDocument.getLinks().forEach(link -> kafkaManager.pushNewURLInTempQueue(link.getUrl()));
-            } catch (RuntimeException e1) {
-                logger.error("error while pushing links of " + e);
-            }
-        });
-        kafkaManager.shuffle();
-        kafkaManager.addTempListToQueue();}
+    }
 }
 

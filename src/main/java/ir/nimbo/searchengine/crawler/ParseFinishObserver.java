@@ -1,6 +1,6 @@
 package ir.nimbo.searchengine.crawler;
 
 @FunctionalInterface
-public interface FinishedRequestHandler {
+public interface ParseFinishObserver {
     void accept(WebDocument webDocument);
 }
