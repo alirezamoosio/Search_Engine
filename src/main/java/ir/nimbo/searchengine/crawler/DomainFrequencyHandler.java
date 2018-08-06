@@ -1,4 +1,4 @@
-package ir.nimbo.searchengine.crawler.politecrawling;
+package ir.nimbo.searchengine.crawler;
 
 public class DomainFrequencyHandler {
     private static DomainFrequencyHandler ourInstance = new DomainFrequencyHandler();

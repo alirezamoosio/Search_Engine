@@ -1,4 +1,4 @@
-package ir.nimbo.searchengine.crawler.politecrawling;
+package ir.nimbo.searchengine.crawler;
 
 public class DuplicateLinkHandler {
     private static DuplicateLinkHandler ourInstance = new DuplicateLinkHandler();

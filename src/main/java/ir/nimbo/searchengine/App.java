@@ -34,6 +34,7 @@ public class App {
 
     public static void main(String[] args) {
         KafkaManager kafkaManager=new KafkaManager(scanner.next(),scanner.next(),scanner.next());
+
         Thread crawl = new Thread(new Crawler(kafkaManager));
         crawl.start();
     }

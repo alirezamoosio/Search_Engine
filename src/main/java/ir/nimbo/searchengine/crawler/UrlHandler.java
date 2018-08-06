@@ -1,6 +1,5 @@
 package ir.nimbo.searchengine.crawler;
 
-import ir.nimbo.searchengine.crawler.politecrawling.DomainFrequencyHandler;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
