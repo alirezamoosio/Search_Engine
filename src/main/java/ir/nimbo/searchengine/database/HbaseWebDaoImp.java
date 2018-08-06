@@ -6,6 +6,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,10 +14,7 @@ import java.util.Objects;
 
 public class HbaseWebDaoImp implements WebDoa {
     private TableName webPageTable = TableName.valueOf("webpage");
-    private String linkFamily = "link";
-    private String anchorFamliy = "anchor";
-    private String timeStamp = "timestamp";
-
+    private String contextFamily = "context";
     public HbaseWebDaoImp() {
         Configuration configuration = HBaseConfiguration.create();
         String path = this.getClass().getClassLoader().getResource("hbase-site.xml").getPath();
@@ -33,15 +31,9 @@ public class HbaseWebDaoImp implements WebDoa {
         try (Connection connection = ConnectionFactory.createConnection(conf)) {
             Admin admin = connection.getAdmin();
             TableDescriptorBuilder tableDescriptorBuilder = TableDescriptorBuilder.newBuilder(webPageTable);
-            ColumnFamilyDescriptorBuilder linkFamilyBuilder = ColumnFamilyDescriptorBuilder
-                    .newBuilder(linkFamily.getBytes());
             ColumnFamilyDescriptorBuilder anchorFamilyBuilder = ColumnFamilyDescriptorBuilder
-                    .newBuilder(anchorFamliy.getBytes());
-            ColumnFamilyDescriptorBuilder timeStampFamilyBuilder = ColumnFamilyDescriptorBuilder
-                    .newBuilder(timeStamp.getBytes());
-            tableDescriptorBuilder.setColumnFamily(linkFamilyBuilder.build());
+                    .newBuilder(contextFamily.getBytes());
             tableDescriptorBuilder.setColumnFamily(anchorFamilyBuilder.build());
-            tableDescriptorBuilder.setColumnFamily(timeStampFamilyBuilder.build());
             admin.createTable(tableDescriptorBuilder.build());
         } catch (IOException e) {
             e.printStackTrace();
@@ -50,6 +42,13 @@ public class HbaseWebDaoImp implements WebDoa {
 
     @Override
     public void put(WebDocument document) {
+        Put put = new Put(Bytes.toBytes(invertUrl(document.getPagelink())));
+        put.addColumn(contextFamily.getBytes(), "pageLink".getBytes(), document.getPagelink().getBytes());
+//        put.addColumn(contextFamily.getBytes(), "anchors".getBytes(), document.ge);
 
+    }
+
+    public String invertUrl(String url){
+        return null;
     }
 }
