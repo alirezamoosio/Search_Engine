@@ -41,8 +41,8 @@ public class Crawler implements Runnable {
 
     public void addPage(WebDocument page) {
 //        newPages.add(page);
-        elasticDao.put(page);
         urlQueue.pushNewURL(page);
+        elasticDao.put(page);
     }
 
     @Override

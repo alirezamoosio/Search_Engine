@@ -44,11 +44,11 @@ public class HbaseWebDaoImp implements WebDoa {
         }
     }
     @Override
-    public void put(List<WebDocument> documents) {
-        for(WebDocument document : documents){
-            Put put = new Put(Bytes.toBytes(document.getPagelink()));
-            put.addColumn(contextFamily.getBytes(), "pageLink".getBytes(), document.getPagelink().getBytes());
-        }
+    public void put(WebDocument document) {
+//        for(WebDocument document : documents){
+//            Put put = new Put(Bytes.toBytes(document.getPagelink()));
+//            put.addColumn(contextFamily.getBytes(), "pageLink".getBytes(), document.getPagelink().getBytes());
+//        }
     }
 
     public String invertUrl(String url){

@@ -59,7 +59,7 @@ public class ElasticWebDaoImp implements WebDoa {
                     logger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
                 }
 //            }
-            System.out.println("added");
+//            System.out.println("added");
             BulkResponse bulkResponse = client.bulk(bulkRequest);
         } catch (IOException e) {
             logger.error("ERROR! couldn't add bulk to elastic");
