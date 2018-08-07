@@ -20,33 +20,39 @@ public class Crawler implements Runnable {
     private static Logger logger = Logger.getLogger(Crawler.class);
     private URLQueue urlQueue;
     private List<String> inputUrls;
-    private List<WebDocument> newPages;
+    private ExecutorService hbasepool;
+    private ExecutorService elasticpool;
     private ScheduledExecutorService taskPool;
     private ExecutorService parserPool;
-    private ScheduledExecutorService writerPool;
     private LangDetector langDetector;
-    private WebDoa elasticDao;
-    private WebDoa hbaseDoa;
+//    private WebDoa elasticDao;
+//    private WebDoa hbaseDoa;
     public Crawler(URLQueue urlQueue) {
-        elasticDao = new ElasticWebDaoImp();
-        hbaseDoa = new HbaseWebDaoImp();
+//        WebDoa elasticDao = new ElasticWebDaoImp();
+        WebDoa hbaseDoa = new HbaseWebDaoImp();
         hbaseDoa.createTable();
         langDetector = new LangDetector();
         langDetector.profileLoad();
         taskPool = Executors.newScheduledThreadPool(1);
-        writerPool = Executors.newScheduledThreadPool(1);
         parserPool = Executors.newFixedThreadPool(200);
+        hbasepool = Executors.newFixedThreadPool(100);
+        elasticpool = Executors.newFixedThreadPool(100);
         this.urlQueue = urlQueue;
         inputUrls = new ArrayList<>();
-        newPages = new ArrayList<>();
     }
 
 
     public void addPage(WebDocument page) {
-//        newPages.add(page);
-//        urlQueue.pushNewURL(page);
-        hbaseDoa.put(page);
-        elasticDao.put(page);
+        hbasepool.execute(new Thread(()->{
+            WebDoa hbase = new HbaseWebDaoImp();
+            hbase.put(page);
+        }));
+        elasticpool.execute(new Thread(()->{
+            WebDoa elasticpool = new HbaseWebDaoImp();
+            elasticpool.put(page);
+        }));
+//        hbaseDoa.put(page);
+//        elasticDao.put(page);
 
     }
 
@@ -61,14 +67,6 @@ public class Crawler implements Runnable {
         });
         inputThread.setPriority(MAX_PRIORITY - 2);
         taskPool.scheduleAtFixedRate(inputThread, 0, 50, TimeUnit.MILLISECONDS);
-//        Thread writer = new Thread(() -> {
-//            elasticDao.put(newPages);
-//            System.out.println("here");
-//            System.out.println(newPages.size());
-//            newPages.clear();
-//        });
-//        writer.setPriority(MAX_PRIORITY-2);
-//        writerPool.scheduleAtFixedRate(writer, 0, 50, TimeUnit.MILLISECONDS);
     }
 }
 

@@ -48,7 +48,7 @@ public class Parser implements Runnable {
 //        }).start();
 //    }
 
-    private synchronized void  notify(WebDocument webDocument) {
+    private  void  notify(WebDocument webDocument) {
         observer.addPage(webDocument);
     }
 
