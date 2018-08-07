@@ -26,8 +26,11 @@ public class Crawler implements Runnable {
     private ScheduledExecutorService writerPool;
     private LangDetector langDetector;
     private WebDoa elasticDao;
+    private WebDoa hbaseDoa;
     public Crawler(URLQueue urlQueue) {
         elasticDao = new ElasticWebDaoImp();
+        hbaseDoa = new HbaseWebDaoImp();
+        hbaseDoa.createTable();
         langDetector = new LangDetector();
         langDetector.profileLoad();
         taskPool = Executors.newScheduledThreadPool(1);
@@ -41,8 +44,10 @@ public class Crawler implements Runnable {
 
     public void addPage(WebDocument page) {
 //        newPages.add(page);
-        urlQueue.pushNewURL(page);
+//        urlQueue.pushNewURL(page);
         //elasticDao.put(page);
+        hbaseDoa.put(page);
+
     }
 
     @Override
