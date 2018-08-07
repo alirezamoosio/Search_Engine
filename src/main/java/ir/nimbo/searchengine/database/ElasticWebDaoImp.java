@@ -54,7 +54,6 @@ public class ElasticWebDaoImp implements WebDoa {
                     builder.endObject();
                     indexRequest.source(builder);
                     bulkRequest.add(indexRequest);
-                    System.out.println("done");
                 } catch (IOException e) {
                     logger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
                 }

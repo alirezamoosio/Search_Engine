@@ -21,7 +21,7 @@ public class Crawler implements Runnable {
     private URLQueue urlQueue;
     private List<String> inputUrls;
     private ExecutorService hbasepool;
-    private ExecutorService elasticpool;
+//    private ExecutorService elasticpool;
     private ScheduledExecutorService taskPool;
     private ExecutorService parserPool;
     private LangDetector langDetector;
@@ -34,9 +34,9 @@ public class Crawler implements Runnable {
         langDetector = new LangDetector();
         langDetector.profileLoad();
         taskPool = Executors.newScheduledThreadPool(1);
-        parserPool = Executors.newFixedThreadPool(200);
-        hbasepool = Executors.newFixedThreadPool(100);
-        elasticpool = Executors.newFixedThreadPool(100);
+        parserPool = Executors.newFixedThreadPool(400);
+        hbasepool = Executors.newFixedThreadPool(200);
+//        elasticpool = Executors.newFixedThreadPool(100);
         this.urlQueue = urlQueue;
         inputUrls = new ArrayList<>();
     }
