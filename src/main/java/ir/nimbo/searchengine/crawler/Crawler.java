@@ -47,6 +47,7 @@ public class Crawler implements Runnable {
             WebDoa hbase = new HbaseWebDaoImp();
             hbase.put(page);
         }));
+        urlQueue.pushNewURL(page);
 //        hbaseDoa.put(page);
        // elasticDao.put(page);
 
