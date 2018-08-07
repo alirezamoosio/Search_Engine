@@ -38,54 +38,54 @@ import java.util.Date;
 public class elastictexampleTest {
     @Test
     public void ElasticTest() throws IOException {
-//        RestHighLevelClient client = new RestHighLevelClient(
-//                RestClient.builder(
-//                        new HttpHost("94.23.214.93", 9200, "http")));
-////                        new HttpHost("worker-node", 9200, "http")));
-//        XContentBuilder builder = XContentFactory.jsonBuilder();
-//        builder.startObject();
-//        {
-//            builder.field("user", "Amirsaeed");
-//            builder.timeField("postDate", new Date());
-//            builder.field("message", "i am different different");
-//        }
-//        builder.endObject();
-//        IndexRequest indexRequest = new IndexRequest("test2", "doc", "5" )
-//                .source(builder);
-//        IndexRequest indexRequest1 = new IndexRequest("test2", "doc", "6")
-//                .source("user", "Mohammadreza",
-//                        "postDate", new Date(),
-//                        "message", "different elasticsearch different different");
-//        BulkRequest bulkRequest = new BulkRequest();
-//        bulkRequest.add(indexRequest);
-//        bulkRequest.add(indexRequest1);
-//        BulkResponse bulkResponse = client.bulk(bulkRequest);
-//        System.out.println(bulkResponse.status());
-//        GetRequest getRequest = new GetRequest("test2", "doc", "5");
-//        GetRequest getRequest2 = new GetRequest("test2", "doc", "6");
-//        GetResponse getResponse = client.get(getRequest);
-//        System.out.println(getResponse.getSourceAsString());
-//        GetResponse getResponse2 = client.get(getRequest2);
-//        System.out.println(getResponse2.getSourceAsString());
-//        getRequest = new GetRequest("test2", "doc", "5");
-//        getRequest.fetchSourceContext(new FetchSourceContext(false));
-//        getRequest.storedFields("_none_");
-//        System.out.println(client.exists(getRequest));
-//        SearchRequest searchRequest = new SearchRequest("test2");
-//        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-//        QueryBuilder matchQueryBuilder = QueryBuilders.matchQuery("message", "different")
-//                .fuzziness(Fuzziness.AUTO)
-//                .prefixLength(3)
-//                .maxExpansions(10);
-//        searchSourceBuilder.query(matchQueryBuilder);
-//        searchRequest.source(searchSourceBuilder);
-//        SearchResponse searchResponse = client.search(searchRequest);
-//        SearchHits hits = searchResponse.getHits();
-//        SearchHit[] searchHits = hits.getHits();
-//        for (SearchHit hit : searchHits) {
-//            System.out.println(hit.getSourceAsString());
-//            System.out.println(hit.getScore());
-//        }
+        RestHighLevelClient client = new RestHighLevelClient(
+                RestClient.builder(
+                        new HttpHost("94.23.214.93", 9200, "http")));
+//                        new HttpHost("worker-node", 9200, "http")));
+        XContentBuilder builder = XContentFactory.jsonBuilder();
+        builder.startObject();
+        {
+            builder.field("user", "Amirsaeed");
+            builder.timeField("postDate", new Date());
+            builder.field("message", "i am different different");
+        }
+        builder.endObject();
+        IndexRequest indexRequest = new IndexRequest("test2", "doc", "5" )
+                .source(builder);
+        IndexRequest indexRequest1 = new IndexRequest("test2", "doc", "6")
+                .source("user", "Mohammadreza",
+                        "postDate", new Date(),
+                        "message", "different elasticsearch different different");
+        BulkRequest bulkRequest = new BulkRequest();
+        bulkRequest.add(indexRequest);
+        bulkRequest.add(indexRequest1);
+        BulkResponse bulkResponse = client.bulk(bulkRequest);
+        System.out.println(bulkResponse.status());
+        GetRequest getRequest = new GetRequest("test2", "doc", "5");
+        GetRequest getRequest2 = new GetRequest("test2", "doc", "6");
+        GetResponse getResponse = client.get(getRequest);
+        System.out.println(getResponse.getSourceAsString());
+        GetResponse getResponse2 = client.get(getRequest2);
+        System.out.println(getResponse2.getSourceAsString());
+        getRequest = new GetRequest("test2", "doc", "5");
+        getRequest.fetchSourceContext(new FetchSourceContext(false));
+        getRequest.storedFields("_none_");
+        System.out.println(client.exists(getRequest));
+        SearchRequest searchRequest = new SearchRequest("test2");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        QueryBuilder matchQueryBuilder = QueryBuilders.matchQuery("message", "different")
+                .fuzziness(Fuzziness.AUTO)
+                .prefixLength(3)
+                .maxExpansions(10);
+        searchSourceBuilder.query(matchQueryBuilder);
+        searchRequest.source(searchSourceBuilder);
+        SearchResponse searchResponse = client.search(searchRequest);
+        SearchHits hits = searchResponse.getHits();
+        SearchHit[] searchHits = hits.getHits();
+        for (SearchHit hit : searchHits) {
+            System.out.println(hit.getSourceAsString());
+            System.out.println(hit.getScore());
+        }
     }
 
 }

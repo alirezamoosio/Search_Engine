@@ -40,7 +40,8 @@ public class Crawler implements Runnable {
 
 
     public void addPage(WebDocument page) {
-        newPages.add(page);
+//        newPages.add(page);
+        elasticDao.put(page);
         urlQueue.pushNewURL(page);
     }
 
@@ -55,14 +56,14 @@ public class Crawler implements Runnable {
         });
         inputThread.setPriority(MAX_PRIORITY - 2);
         taskPool.scheduleAtFixedRate(inputThread, 0, 50, TimeUnit.MILLISECONDS);
-        Thread writer = new Thread(() -> {
-            elasticDao.put(newPages);
+//        Thread writer = new Thread(() -> {
+//            elasticDao.put(newPages);
 //            System.out.println("here");
 //            System.out.println(newPages.size());
-            newPages.clear();
-        });
-        writer.setPriority(MAX_PRIORITY-2);
-        writerPool.scheduleAtFixedRate(writer, 0, 50, TimeUnit.MILLISECONDS);
+//            newPages.clear();
+//        });
+//        writer.setPriority(MAX_PRIORITY-2);
+//        writerPool.scheduleAtFixedRate(writer, 0, 50, TimeUnit.MILLISECONDS);
     }
 }
 

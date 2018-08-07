@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface WebDoa {
     boolean createTable();
-    void put(List<WebDocument> documents);
+    void put(WebDocument document);
 }
