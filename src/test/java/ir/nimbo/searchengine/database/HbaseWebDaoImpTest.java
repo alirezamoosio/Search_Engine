@@ -9,6 +9,6 @@ public class HbaseWebDaoImpTest {
     @Test
     public void createTest(){
         HbaseWebDaoImp hbaseWebDaoImp = new HbaseWebDaoImp();
-        Assert.assertTrue(hbaseWebDaoImp.isFlag());
+        Assert.assertTrue(hbaseWebDaoImp.createTable());
     }
 }

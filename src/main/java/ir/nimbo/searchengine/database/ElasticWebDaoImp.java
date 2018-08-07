@@ -33,6 +33,12 @@ public class ElasticWebDaoImp implements WebDoa {
                 RestClient.builder(
                         new HttpHost("94.23.214.93", 9200, "http")));
     }
+
+    @Override
+    public boolean createTable() {
+        return false;
+    }
+
     @Override
     public void put(List<WebDocument> documents){
         try {

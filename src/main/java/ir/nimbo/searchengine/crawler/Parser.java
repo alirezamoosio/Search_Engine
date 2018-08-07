@@ -4,6 +4,7 @@ import ir.nimbo.searchengine.crawler.language.LangDetector;
 import ir.nimbo.searchengine.exception.IllegalLanguageException;
 import org.apache.kafka.common.protocol.types.Field;
 import org.apache.log4j.Logger;
+import org.jets3t.apps.synchronize.Synchronize;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -47,7 +48,7 @@ public class Parser implements Runnable {
 //        }).start();
 //    }
 
-    private void notify(WebDocument webDocument) {
+    private synchronized void  notify(WebDocument webDocument) {
         observer.addPage(webDocument);
     }
 
