@@ -4,6 +4,7 @@ import ir.nimbo.searchengine.crawler.language.LangDetector;
 import ir.nimbo.searchengine.database.ElasticWebDaoImp;
 import ir.nimbo.searchengine.database.HbaseWebDaoImp;
 import ir.nimbo.searchengine.database.WebDoa;
+import ir.nimbo.searchengine.kafka.KafkaManager;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -25,19 +26,21 @@ public class Crawler implements Runnable {
     private ScheduledExecutorService taskPool;
     private ExecutorService parserPool;
     private LangDetector langDetector;
-    private WebDoa elasticDao;
+    private ExecutorService kafkaout;
+//    private WebDoa elasticDao;
 //    private WebDoa hbaseDoa;
-    public Crawler(URLQueue urlQueue) {
-        elasticDao = new ElasticWebDaoImp();
+    public Crawler() {
+//        elasticDao = new ElasticWebDaoImp();
         WebDoa hbaseDoa = new HbaseWebDaoImp();
         hbaseDoa.createTable();
         langDetector = new LangDetector();
         langDetector.profileLoad();
         taskPool = Executors.newScheduledThreadPool(1);
-        parserPool = Executors.newFixedThreadPool(400);
-        hbasepool = Executors.newFixedThreadPool(200);
+        parserPool = Executors.newFixedThreadPool(300);
+        hbasepool = Executors.newFixedThreadPool(100);
+        kafkaout = Executors.newFixedThreadPool(1);
 //        elasticpool = Executors.newFixedThreadPool(100);
-        this.urlQueue = urlQueue;
+        urlQueue = new KafkaManager();
         inputUrls = new ArrayList<>();
     }
 
@@ -47,7 +50,11 @@ public class Crawler implements Runnable {
             WebDoa hbase = new HbaseWebDaoImp();
             hbase.put(page);
         }));
-        urlQueue.pushNewURL(page);
+        kafkaout.execute(new Thread(()->{
+             URLQueue urlQueue = new KafkaManager();
+             urlQueue.pushNewURL(page);
+        }));
+//        urlQueue.pushNewURL(page);
 //        hbaseDoa.put(page);
        // elasticDao.put(page);
 

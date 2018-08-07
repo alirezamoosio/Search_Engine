@@ -18,11 +18,11 @@ public class KafkaManager implements URLQueue {
     private KafkaConsumer<Integer, String> consumer;
     private Producer<Integer, String> producer;
 
-    public KafkaManager(String topic, String portsWithIp, String groupId) {
-        this.topic = topic;
+    public KafkaManager() {
+        this.topic = "links";
         Properties props = new Properties();
-        props.put("bootstrap.servers", portsWithIp);
-        props.put("group.id", groupId);
+        props.put("bootstrap.servers", "master-node:9092,worker-node:9092");
+        props.put("group.id", "firstrun");
         props.put("enable.auto.commit", "true");
         props.put("auto.commit.interval.ms", "10000");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.IntegerDeserializer");
@@ -55,7 +55,6 @@ public class KafkaManager implements URLQueue {
             producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
         }
 //        tempList.clear();
-        flush();
     }
 
     public void shuffle() {

@@ -36,14 +36,7 @@ public class App {
     public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        KafkaManager kafkaManager;
-        if (scanner.next().equals("server")) {
-            kafkaManager = new KafkaManager("links", "master-node:9092,worker-node:9092",scanner.next());
-        }else {
-            kafkaManager = new KafkaManager("links","localhost:9092,localhost:9093","test");
-        }
-        scanner.close();
-        Thread crawl = new Thread(new Crawler(kafkaManager));
+        Thread crawl = new Thread(new Crawler());
         crawl.start();
     }
 
