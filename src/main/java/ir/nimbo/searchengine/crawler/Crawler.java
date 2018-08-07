@@ -25,10 +25,10 @@ public class Crawler implements Runnable {
     private ScheduledExecutorService taskPool;
     private ExecutorService parserPool;
     private LangDetector langDetector;
-//    private WebDoa elasticDao;
+    private WebDoa elasticDao;
 //    private WebDoa hbaseDoa;
     public Crawler(URLQueue urlQueue) {
-//        WebDoa elasticDao = new ElasticWebDaoImp();
+        elasticDao = new ElasticWebDaoImp();
         WebDoa hbaseDoa = new HbaseWebDaoImp();
         hbaseDoa.createTable();
         langDetector = new LangDetector();
@@ -47,13 +47,8 @@ public class Crawler implements Runnable {
             WebDoa hbase = new HbaseWebDaoImp();
             hbase.put(page);
         }));
-        elasticpool.execute(new Thread(()->{
-            WebDoa elasticpool = new HbaseWebDaoImp();
-            elasticpool.put(page);
-        }));
-        System.out.println("done");
 //        hbaseDoa.put(page);
-//        elasticDao.put(page);
+        elasticDao.put(page);
 
     }
 
