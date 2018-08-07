@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class HbaseWebDaoImp implements WebDoa {
-    private TableName webPageTable;
+    private TableName webPageTable = TableName.valueOf("webpage");;
     private String contextFamily = "context";
     private Configuration configuration;
 
@@ -28,7 +28,6 @@ public class HbaseWebDaoImp implements WebDoa {
     }
 
     public boolean createTable() {
-        webPageTable = TableName.valueOf("webpage");
         try (Connection connection = ConnectionFactory.createConnection(configuration)) {
             Admin admin = connection.getAdmin();
             TableDescriptorBuilder tableDescriptorBuilder = TableDescriptorBuilder.newBuilder(webPageTable);
@@ -37,6 +36,7 @@ public class HbaseWebDaoImp implements WebDoa {
             tableDescriptorBuilder.setColumnFamily(anchorFamilyBuilder.build());
             if (!admin.tableExists(webPageTable))
                 admin.createTable(tableDescriptorBuilder.build());
+            System.out.println("create");
             connection.close();
             return true;
 
