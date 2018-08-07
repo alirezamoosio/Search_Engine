@@ -49,6 +49,7 @@ public class ElasticWebDaoImp implements WebDoa {
                 try {
                     builder.startObject();
                     {
+                        System.out.println("added");
                         builder.field("pageLink", document.getPagelink());
                         builder.field("pageText", document.getTextDoc());
                     }

@@ -21,15 +21,17 @@ public class Crawler implements Runnable {
     private URLQueue urlQueue;
     private List<String> inputUrls;
     private List<WebDocument> newPages;
-    private ScheduledExecutorService ioExecuter;
+    private ScheduledExecutorService taskPool;
     private ExecutorService parserPool;
+    private ScheduledExecutorService writerPool;
     private LangDetector langDetector;
     private WebDoa elasticDao;
     public Crawler(URLQueue urlQueue) {
         elasticDao = new ElasticWebDaoImp();
         langDetector = new LangDetector();
         langDetector.profileLoad();
-        ioExecuter = Executors.newScheduledThreadPool(2);
+        taskPool = Executors.newScheduledThreadPool(1);
+        writerPool = Executors.newScheduledThreadPool(1);
         parserPool = Executors.newFixedThreadPool(200);
         this.urlQueue = urlQueue;
         inputUrls = new ArrayList<>();
@@ -52,13 +54,13 @@ public class Crawler implements Runnable {
             inputUrls.clear();
         });
         inputThread.setPriority(MAX_PRIORITY - 2);
-        ioExecuter.scheduleAtFixedRate(inputThread, 0, 50, TimeUnit.MILLISECONDS);
+        taskPool.scheduleAtFixedRate(inputThread, 0, 50, TimeUnit.MILLISECONDS);
         Thread writer = new Thread(() -> {
             elasticDao.put(newPages);
             newPages.clear();
         });
         writer.setPriority(MAX_PRIORITY-2);
-        ioExecuter.scheduleAtFixedRate(writer, 0, 100, TimeUnit.MILLISECONDS);
+        writerPool.scheduleAtFixedRate(writer, 0, 100, TimeUnit.MILLISECONDS);
     }
 }
 

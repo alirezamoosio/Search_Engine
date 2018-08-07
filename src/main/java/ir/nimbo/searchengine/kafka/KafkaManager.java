@@ -55,7 +55,7 @@ public class KafkaManager implements URLQueue {
             producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
         }
 //        tempList.clear();
-        flush();
+//        flush();
     }
 
     public void shuffle() {
