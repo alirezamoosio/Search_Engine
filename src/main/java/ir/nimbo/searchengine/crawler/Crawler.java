@@ -34,8 +34,7 @@ public class Crawler implements Runnable {
         langDetector = new LangDetector();
         langDetector.profileLoad();
         taskPool = Executors.newScheduledThreadPool(1);
-        parserPool = Executors.newFixedThreadPool(400);
-        hbasepool = Executors.newFixedThreadPool(200);
+        parserPool = Executors.newFixedThreadPool(200);
 //        elasticpool = Executors.newFixedThreadPool(100);
         this.urlQueue = urlQueue;
         inputUrls = new ArrayList<>();
@@ -62,7 +61,7 @@ public class Crawler implements Runnable {
             inputUrls.clear();
         });
         inputThread.setPriority(MAX_PRIORITY - 2);
-        taskPool.scheduleAtFixedRate(inputThread, 0, 50, TimeUnit.MILLISECONDS);
+        taskPool.scheduleAtFixedRate(inputThread, 0, 5, TimeUnit.MILLISECONDS);
     }
 }
 
