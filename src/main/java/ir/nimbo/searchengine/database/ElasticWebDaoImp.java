@@ -45,7 +45,6 @@ public class ElasticWebDaoImp implements WebDoa {
             XContentBuilder builder = XContentFactory.jsonBuilder();
             IndexRequest indexRequest = new IndexRequest(index, "doc");
             BulkRequest bulkRequest = new BulkRequest();
-//            for(WebDocument document: documents) {
                 try {
                     builder.startObject();
                     {
@@ -55,11 +54,10 @@ public class ElasticWebDaoImp implements WebDoa {
                     builder.endObject();
                     indexRequest.source(builder);
                     bulkRequest.add(indexRequest);
+                    System.out.println("added");
                 } catch (IOException e) {
                     logger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
                 }
-//            }
-//            System.out.println("added");
             BulkResponse bulkResponse = client.bulk(bulkRequest);
         } catch (IOException e) {
             logger.error("ERROR! couldn't add bulk to elastic");

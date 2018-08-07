@@ -54,10 +54,7 @@ public class HbaseWebDaoImp implements WebDoa {
 
             Put put = new Put(Bytes.toBytes(document.getPagelink()));
             put.addColumn(contextFamily.getBytes(), "pageLink".getBytes(), document.getPagelink().getBytes());
-//            put.addColumn(contextFamily.getBytes(),"outlinks".getBytes(),document.getLinks().forEach(e->e.getUrl().getBytes()));
-//        }
             t.put(put);
-            System.out.println("added");
         } catch (IOException e) {
             e.printStackTrace();
         }
