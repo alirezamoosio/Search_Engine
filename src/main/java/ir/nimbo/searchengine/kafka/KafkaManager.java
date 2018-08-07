@@ -51,11 +51,11 @@ public class KafkaManager implements URLQueue {
     public void pushNewURL(WebDocument page) {
 //        tempList.addAll(Arrays.asList(page.getLinks().stream().map(Link::getUrl).toArray(String[]::new)));
 //        shuffle();
-        for (String url : page.getLinks().stream().map(Link::getUrl).toArray(String[]::new)) {
-            producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
-        }
+//        for (String url : page.getLinks().stream().map(Link::getUrl).toArray(String[]::new)) {
+//            producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
+//        }
 //        tempList.clear();
-//        flush();
+        flush();
     }
 
     public void shuffle() {
