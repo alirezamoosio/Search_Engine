@@ -57,7 +57,7 @@ public class Parser implements Runnable {
         if (url == null)
             logger.error("null url");
         try {
-            Document document = Jsoup.connect(url).get();
+            Document document = Jsoup.connect(url).validateTLSCertificates(false).get();
             WebDocument webDocument = new WebDocument();
             String text = document.text();
             langDetector.languageCheck(text);
