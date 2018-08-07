@@ -46,10 +46,10 @@ public class ElasticWebDaoImp implements WebDoa {
             IndexRequest indexRequest = new IndexRequest(index, "doc");
             BulkRequest bulkRequest = new BulkRequest();
             for(WebDocument document: documents) {
+                System.out.println("added");
                 try {
                     builder.startObject();
                     {
-                        System.out.println("added");
                         builder.field("pageLink", document.getPagelink());
                         builder.field("pageText", document.getTextDoc());
                     }
