@@ -6,5 +6,5 @@ import java.util.List;
 public interface URLQueue {
     List<String> getUrls();
 
-    void pushNewURL(List<WebDocument> pages);
+    void pushNewURL(WebDocument pages);
 }

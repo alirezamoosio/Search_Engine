@@ -9,41 +9,39 @@ import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class HbaseWebDaoImp implements WebDoa {
-    private TableName webPageTable = TableName.valueOf("webpage3");
+    private TableName webPageTable ;
     private boolean flag =false;
     private String contextFamily = "context";
+    private Configuration configuration;
     public HbaseWebDaoImp() {
-        Configuration configuration = HBaseConfiguration.create();
+        configuration = HBaseConfiguration.create();
         String path = this.getClass().getClassLoader().getResource("hbase-site.xml").getPath();
         configuration.addResource(new Path(path));
         try {
             HBaseAdmin.available(configuration);
-            createTable(configuration);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void createTable(Configuration conf) {
-        try (Connection connection = ConnectionFactory.createConnection(conf)) {
+    public boolean createTable() {
+        webPageTable = TableName.valueOf("webpage");
+        try (Connection connection = ConnectionFactory.createConnection(configuration)) {
             Admin admin = connection.getAdmin();
             TableDescriptorBuilder tableDescriptorBuilder = TableDescriptorBuilder.newBuilder(webPageTable);
             ColumnFamilyDescriptorBuilder anchorFamilyBuilder = ColumnFamilyDescriptorBuilder
                     .newBuilder(contextFamily.getBytes());
             tableDescriptorBuilder.setColumnFamily(anchorFamilyBuilder.build());
-            admin.createTable(tableDescriptorBuilder.build());
-            flag = true;
+            if(!admin.tableExists(webPageTable))
+                admin.createTable(tableDescriptorBuilder.build());
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
-    }
-    public boolean isFlag(){
-        return flag;
     }
     @Override
     public void put(List<WebDocument> documents) {

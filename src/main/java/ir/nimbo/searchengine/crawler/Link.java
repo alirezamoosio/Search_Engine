@@ -27,6 +27,9 @@ public class Link {
         this.url = url;
         this.domain = domain;
     }
+    public Link (String url){
+        this.url = url;
+    }
     public String getAnchorLink() {
         return anchorLink;
     }

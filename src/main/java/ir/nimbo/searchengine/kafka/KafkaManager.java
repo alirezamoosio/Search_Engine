@@ -48,10 +48,8 @@ public class KafkaManager implements URLQueue {
         return result;
     }
     @Override
-    public void pushNewURL(List<WebDocument> pages) {
-        for (WebDocument page : pages) {
-            tempList.addAll(Arrays.asList(page.getLinks().stream().map(Link::getUrl).toArray(String[]::new)));
-        }
+    public void pushNewURL(WebDocument page) {
+        tempList.addAll(Arrays.asList(page.getLinks().stream().map(Link::getUrl).toArray(String[]::new)));
         shuffle();
         for (String url : tempList) {
             producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
