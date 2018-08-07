@@ -1,6 +1,7 @@
 package ir.nimbo.searchengine.crawler;
 
 import ir.nimbo.searchengine.crawler.language.LangDetector;
+import ir.nimbo.searchengine.database.ElasticWebDaoImp;
 import ir.nimbo.searchengine.database.HbaseWebDaoImp;
 import ir.nimbo.searchengine.database.WebDoa;
 import org.apache.log4j.Logger;
@@ -20,15 +21,15 @@ public class Crawler implements Runnable {
     private URLQueue urlQueue;
     private List<String> inputUrls;
     private List<WebDocument> newPages;
-    private ScheduledExecutorService kafkaExecutor;
+    private ScheduledExecutorService ioExecuter;
     private ExecutorService parserPool;
     private LangDetector langDetector;
-    private WebDoa hbaseWebDao;
+    private WebDoa elasticDao;
     public Crawler(URLQueue urlQueue) {
-        hbaseWebDao = new HbaseWebDaoImp();
+        elasticDao = new ElasticWebDaoImp();
         langDetector = new LangDetector();
         langDetector.profileLoad();
-        kafkaExecutor = Executors.newScheduledThreadPool(2);
+        ioExecuter = Executors.newScheduledThreadPool(2);
         parserPool = Executors.newFixedThreadPool(200);
         this.urlQueue = urlQueue;
         inputUrls = new ArrayList<>();
@@ -51,12 +52,13 @@ public class Crawler implements Runnable {
             inputUrls.clear();
         });
         inputThread.setPriority(MAX_PRIORITY - 2);
-        kafkaExecutor.scheduleAtFixedRate(inputThread, 0, 50, TimeUnit.MILLISECONDS);
-//        Thread writer = new Thread(() -> {
-//            hbaseWebDao.put(newPages);
-//            newPages.clear();
-//        });
-//        kafkaExecutor.scheduleAtFixedRate(writer, 0, 100, TimeUnit.MILLISECONDS);
+        ioExecuter.scheduleAtFixedRate(inputThread, 0, 50, TimeUnit.MILLISECONDS);
+        Thread writer = new Thread(() -> {
+            elasticDao.put(newPages);
+            newPages.clear();
+        });
+        writer.setPriority(MAX_PRIORITY-2);
+        ioExecuter.scheduleAtFixedRate(writer, 0, 100, TimeUnit.MILLISECONDS);
     }
 }
 
