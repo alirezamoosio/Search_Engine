@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 public class KafkaManagerTest {
     @Test
     public void testKafka() {
-        KafkaManager kafkaManager = new KafkaManager("test","master-node:9092,worker-node:9092","test1");
+        KafkaManager kafkaManager = new KafkaManager();
 
         ArrayList<String> results = new ArrayList<>();
         WebDocument webDocument =new WebDocument();
