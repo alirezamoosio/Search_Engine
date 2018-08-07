@@ -15,7 +15,7 @@ public class FirstMustRun {
     public static void initializer(String topic,String portsWithId) {
         FirstMustRun.topic = topic;
         FirstMustRun.portsWithId = portsWithId;
-        KafkaManager kafkaManager = new KafkaManager(topic, portsWithId, "test4");
+        KafkaManager kafkaManager = new KafkaManager();
         LinkedList<String> linkedList =new LinkedList<>();
         linkedList.add("https://www.alexa.com/");
         linkedList.add("https://en.wikipedia.org/wiki/Main_Page");
@@ -37,7 +37,7 @@ public class FirstMustRun {
     }
 
     public static void updateKafka() {
-        KafkaManager kafkaManager = new KafkaManager(topic, portsWithId, "test4");
+        KafkaManager kafkaManager = new KafkaManager();
         ArrayList<String> temp = kafkaManager.getUrls();
     }
 }
