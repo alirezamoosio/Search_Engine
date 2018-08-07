@@ -56,8 +56,9 @@ public class Crawler implements Runnable {
         inputThread.setPriority(MAX_PRIORITY - 2);
         taskPool.scheduleAtFixedRate(inputThread, 0, 50, TimeUnit.MILLISECONDS);
         Thread writer = new Thread(() -> {
-//            elasticDao.put(newPages);
-            System.out.println("here");
+            elasticDao.put(newPages);
+//            System.out.println("here");
+//            System.out.println(newPages.size());
             newPages.clear();
         });
         writer.setPriority(MAX_PRIORITY-2);

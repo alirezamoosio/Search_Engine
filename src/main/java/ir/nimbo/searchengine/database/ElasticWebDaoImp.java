@@ -41,29 +41,29 @@ public class ElasticWebDaoImp implements WebDoa {
 
     @Override
     public void put(List<WebDocument> documents){
-        try {
-            XContentBuilder builder = XContentFactory.jsonBuilder();
-            IndexRequest indexRequest = new IndexRequest(index, "doc");
-            BulkRequest bulkRequest = new BulkRequest();
+//        try {
+//            XContentBuilder builder = XContentFactory.jsonBuilder();
+//            IndexRequest indexRequest = new IndexRequest(index, "doc");
+//            BulkRequest bulkRequest = new BulkRequest();
             for(WebDocument document: documents) {
                 System.out.println("added");
-                try {
-                    builder.startObject();
-                    {
-                        builder.field("pageLink", document.getPagelink());
-                        builder.field("pageText", document.getTextDoc());
-                    }
-                    builder.endObject();
-                    indexRequest.source(builder);
-                    bulkRequest.add(indexRequest);
-                } catch (IOException e) {
-                    logger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
-                }
+//                try {
+//                    builder.startObject();
+//                    {
+//                        builder.field("pageLink", document.getPagelink());
+//                        builder.field("pageText", document.getTextDoc());
+//                    }
+//                    builder.endObject();
+//                    indexRequest.source(builder);
+//                    bulkRequest.add(indexRequest);
+//                } catch (IOException e) {
+//                    logger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
+//                }
             }
-            BulkResponse bulkResponse = client.bulk(bulkRequest);
-        } catch (IOException e) {
-            logger.error("ERROR! couldn't add bulk to elastic");
-        }
+//            BulkResponse bulkResponse = client.bulk(bulkRequest);
+//        } catch (IOException e) {
+//            logger.error("ERROR! couldn't add bulk to elastic");
+//        }
     }
     public Map<String, Float> search(String text) throws IOException {
         Map<String, Float> results = new HashMap<>();
