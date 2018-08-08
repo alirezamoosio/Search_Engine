@@ -55,6 +55,7 @@ public class HbaseWebDaoImp implements WebDoa {
             Put put = new Put(Bytes.toBytes(document.getPagelink()));
             put.addColumn(contextFamily.getBytes(), "pageLink".getBytes(), document.getPagelink().getBytes());
             t.put(put);
+            t.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

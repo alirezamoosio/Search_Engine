@@ -31,7 +31,7 @@ public class KafkaManager implements URLQueue {
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("key.serializer", "org.apache.kafka.common.serialization.IntegerSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("max.poll.records", "4");
+        props.put("max.poll.records", "10");
         props.put("auto.offset.reset", "earliest");
         System.out.println(props.toString());
         consumer = new KafkaConsumer<>(props);
