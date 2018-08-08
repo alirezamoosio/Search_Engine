@@ -3,6 +3,8 @@ package ir.nimbo.searchengine.crawler;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 
 public class DuplicateLinkHandlerTest {
@@ -18,7 +20,11 @@ public class DuplicateLinkHandlerTest {
     public void loadHashTable() {
         DuplicateLinkHandler.getInstance().isDuplicate("salam");
         DuplicateLinkHandler.getInstance().saveHashTable();
-        DuplicateLinkHandler.getInstance().loadHashTable();
+        try {
+            DuplicateLinkHandler.getInstance().loadHashTable();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Assert.assertTrue(DuplicateLinkHandler.getInstance().isDuplicate("salam"));
         Assert.assertFalse(DuplicateLinkHandler.getInstance().isDuplicate(" che khabar"));
     }
