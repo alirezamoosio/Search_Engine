@@ -14,7 +14,6 @@ public class KafkaManagerTest {
     @Test
     public void testKafka() {
         KafkaManager kafkaManager = new KafkaManager();
-
         ArrayList<String> results = new ArrayList<>();
         WebDocument webDocument =new WebDocument();
         List<Link> links = new ArrayList<>();

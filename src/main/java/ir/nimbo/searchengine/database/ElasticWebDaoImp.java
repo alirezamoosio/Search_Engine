@@ -19,10 +19,7 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ElasticWebDaoImp implements WebDoa {
     private final static int BULK_SIZE = 10;
@@ -32,6 +29,7 @@ public class ElasticWebDaoImp implements WebDoa {
     private Logger logger = Logger.getLogger(ElasticWebDaoImp.class);
     private IndexRequest indexRequest;
     private BulkRequest bulkRequest;
+
     public ElasticWebDaoImp() {
         client = new RestHighLevelClient(
                 RestClient.builder(
@@ -62,15 +60,27 @@ public class ElasticWebDaoImp implements WebDoa {
             } catch (IOException e) {
                 logger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
             }
-            if (size>=BULK_SIZE) {
+            if (size >= BULK_SIZE) {
                 BulkResponse bulkResponse = client.bulk(bulkRequest);
-                size=0;
+                size = 0;
                 bulkRequest = new BulkRequest();
                 indexRequest = new IndexRequest(index, "doc");
             }
+
         } catch (IOException e) {
-            logger.error("ERROR! couldn't add bulk to elastic");
+            logger.error("ERROR! Couldn't add the document for " + document.getPagelink());
         }
+    }
+
+    public void updateElastic(){
+        try {
+            client.bulk(bulkRequest);
+            bulkRequest = new BulkRequest();
+        } catch (IOException e) {
+            System.out.println("ERROR! update on elastic failed");
+            e.printStackTrace();
+        }
+
     }
 
     public Map<String, Float> search(String text) throws IOException {
@@ -89,6 +99,7 @@ public class ElasticWebDaoImp implements WebDoa {
             Map<String, Object> sourceAsMap = hit.getSourceAsMap();
             results.put((String) sourceAsMap.get("pageLink"), hit.getScore());
         }
+//        Collections.sort((List<Float>) results.values());
         return results;
     }
 
