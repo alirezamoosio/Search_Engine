@@ -48,7 +48,7 @@ public class HbaseWebDaoImp implements WebDoa {
     }
 
     @Override
-    public void put(WebDocument document) {
+    public synchronized void put(WebDocument document) {
         try (Connection connection = ConnectionFactory.createConnection(configuration)) {
 //        for(WebDocument document : documents){
             Table t = connection.getTable(webPageTable);
