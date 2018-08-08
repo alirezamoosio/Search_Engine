@@ -38,6 +38,7 @@ public class KafkaManager implements URLQueue {
         consumer.subscribe(Collections.singletonList(topic));
         producer = new KafkaProducer<>(props);
         duplicateLinkHandler = DuplicateLinkHandler.getInstance();
+        duplicateLinkHandler.loadHashTable();
     }
 
     @Override
@@ -71,6 +72,7 @@ public class KafkaManager implements URLQueue {
         flush();
         producer.close();
         consumer.close();
+        duplicateLinkHandler.saveHashTable();
     }
 
     public void flush() {
