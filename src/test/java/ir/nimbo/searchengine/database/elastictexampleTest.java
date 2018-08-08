@@ -61,8 +61,16 @@ public class elastictexampleTest {
         bulkRequest.add(indexRequest1);
         BulkResponse bulkResponse = client.bulk(bulkRequest);
         System.out.println(bulkResponse.status());
+        indexRequest = new IndexRequest("test2", "doc", "8")
+                .source("user", "Mehran",
+                        "postDate", new Date(),
+                        "message", "The last Added");
+//        bulkRequest = new BulkRequest();
+        bulkRequest.add(indexRequest);
+        System.out.println(bulkRequest.getDescription());
+        bulkResponse = client.bulk(bulkRequest);
         GetRequest getRequest = new GetRequest("test2", "doc", "5");
-        GetRequest getRequest2 = new GetRequest("test2", "doc", "6");
+        GetRequest getRequest2 = new GetRequest("test2", "doc", "8");
         GetResponse getResponse = client.get(getRequest);
         System.out.println(getResponse.getSourceAsString());
         GetResponse getResponse2 = client.get(getRequest2);

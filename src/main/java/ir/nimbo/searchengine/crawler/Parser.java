@@ -22,17 +22,33 @@ import java.util.List;
 import static java.lang.Thread.sleep;
 
 public class Parser implements Runnable {
-    private static Logger logger = Logger.getLogger(Crawler.class);
+    private static Logger logger = Logger.getLogger("error");
+    private static Logger infoLogger = Logger.getLogger("info");
     public static int numberOFCrawledPage = 0;
     private String url;
     private Crawler observer;
     private LangDetector langDetector;
     private static long lastTime = System.currentTimeMillis();
 
+    static {
+        new Thread(() -> {
+            try {
+                sleep(1000);
+            } catch (InterruptedException ignored) {
+            }
+            System.out.println("crawled page"+numberOFCrawledPage);
+            System.out.println("rate of crawl="+numberOFCrawledPage/(System.currentTimeMillis()-lastTime)*1000);
+            infoLogger.info("rate of crawl="+numberOFCrawledPage/(System.currentTimeMillis()-lastTime)*1000);
+            lastTime=System.currentTimeMillis();
+            infoLogger.info(numberOFCrawledPage);
+        }).start();
+    }
+
     public Parser(String url, Crawler observer, LangDetector langDetector) {
         this.langDetector = langDetector;
         this.url = url;
         this.observer = observer;
+
     }
 
 //    static {
