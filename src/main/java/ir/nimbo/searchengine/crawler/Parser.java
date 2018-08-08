@@ -27,8 +27,9 @@ public class Parser implements Runnable {
     private String url;
     private Crawler observer;
     private LangDetector langDetector;
-    private static long lastTime=System.currentTimeMillis();
-    public Parser(String url, Crawler observer , LangDetector langDetector) {
+    private static long lastTime = System.currentTimeMillis();
+
+    public Parser(String url, Crawler observer, LangDetector langDetector) {
         this.langDetector = langDetector;
         this.url = url;
         this.observer = observer;
@@ -47,7 +48,7 @@ public class Parser implements Runnable {
 //        }).start();
 //    }
 
-    private  void  notify(WebDocument webDocument) {
+    private void notify(WebDocument webDocument) {
         observer.addPage(webDocument);
     }
 
@@ -73,6 +74,9 @@ public class Parser implements Runnable {
             logger.error("Jsoup connection to " + url + " failed");
         } catch (IllegalLanguageException e) {
             logger.error("Couldn't recognize url language!");
+        } finally {
+            observer = null;
+            langDetector = null;
         }
     }
 }
