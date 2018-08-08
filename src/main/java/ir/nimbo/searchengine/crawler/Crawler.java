@@ -47,9 +47,9 @@ public class Crawler implements Runnable {
 
 
     public void addPage(WebDocument page) {
-//        hbasepool.execute(new Thread(()->{
-//            hbaseDoa.put(page);
-//        }));
+        hbasepool.execute(new Thread(()->{
+            hbaseDoa.put(page);
+        }));
         kafkaout.execute(new Thread(()->{
              urlQueue.pushNewURL(page);
         }));
