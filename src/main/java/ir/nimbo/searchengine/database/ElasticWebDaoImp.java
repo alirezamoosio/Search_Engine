@@ -25,13 +25,19 @@ import java.util.List;
 import java.util.Map;
 
 public class ElasticWebDaoImp implements WebDoa {
+    private final static int BULK_SIZE = 10;
+    private static int size;
     private RestHighLevelClient client;
     private String index = "pages";
     private Logger logger = Logger.getLogger(ElasticWebDaoImp.class);
-    public ElasticWebDaoImp(){
+    private IndexRequest indexRequest;
+    private BulkRequest bulkRequest;
+    public ElasticWebDaoImp() {
         client = new RestHighLevelClient(
                 RestClient.builder(
                         new HttpHost("94.23.214.93", 9200, "http")));
+        indexRequest = new IndexRequest(index, "doc");
+        bulkRequest = new BulkRequest();
     }
 
     @Override
@@ -40,28 +46,33 @@ public class ElasticWebDaoImp implements WebDoa {
     }
 
     @Override
-    public void put(WebDocument document){
+    public synchronized void put(WebDocument document) {
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder();
-            IndexRequest indexRequest = new IndexRequest(index, "doc");
-            BulkRequest bulkRequest = new BulkRequest();
-                try {
-                    builder.startObject();
-                    {
-                        builder.field("pageLink", document.getPagelink());
-                        builder.field("pageText", document.getTextDoc());
-                    }
-                    builder.endObject();
-                    indexRequest.source(builder);
-                    bulkRequest.add(indexRequest);
-                } catch (IOException e) {
-                    logger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
+            try {
+                builder.startObject();
+                {
+                    builder.field("pageLink", document.getPagelink());
+                    builder.field("pageText", document.getTextDoc());
                 }
-            BulkResponse bulkResponse = client.bulk(bulkRequest);
+                builder.endObject();
+                indexRequest.source(builder);
+                bulkRequest.add(indexRequest);
+                size++;
+            } catch (IOException e) {
+                logger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
+            }
+            if (size>=BULK_SIZE) {
+                BulkResponse bulkResponse = client.bulk(bulkRequest);
+                size=0;
+                bulkRequest = new BulkRequest();
+                indexRequest = new IndexRequest(index, "doc");
+            }
         } catch (IOException e) {
             logger.error("ERROR! couldn't add bulk to elastic");
         }
     }
+
     public Map<String, Float> search(String text) throws IOException {
         Map<String, Float> results = new HashMap<>();
         SearchRequest searchRequest = new SearchRequest(index);

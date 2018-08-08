@@ -1,5 +1,6 @@
 package ir.nimbo.searchengine.kafka;
 
+import ir.nimbo.searchengine.crawler.DuplicateLinkHandler;
 import ir.nimbo.searchengine.crawler.Link;
 import ir.nimbo.searchengine.crawler.URLQueue;
 import ir.nimbo.searchengine.crawler.WebDocument;
@@ -17,6 +18,7 @@ public class KafkaManager implements URLQueue {
     private final LinkedList<String> tempList = new LinkedList<>();
     private KafkaConsumer<Integer, String> consumer;
     private Producer<Integer, String> producer;
+    private DuplicateLinkHandler duplicateLinkHandler;
 
     public KafkaManager() {
         this.topic = "links";
@@ -29,12 +31,13 @@ public class KafkaManager implements URLQueue {
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("key.serializer", "org.apache.kafka.common.serialization.IntegerSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("max.poll.records", "60");
+        props.put("max.poll.records", "4");
         props.put("auto.offset.reset", "earliest");
         System.out.println(props.toString());
         consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singletonList(topic));
         producer = new KafkaProducer<>(props);
+        duplicateLinkHandler = DuplicateLinkHandler.getInstance();
     }
 
     @Override
@@ -47,12 +50,14 @@ public class KafkaManager implements URLQueue {
         }
         return result;
     }
+
     @Override
     public void pushNewURL(WebDocument page) {
 //        tempList.addAll(Arrays.asList(page.getLinks().stream().map(Link::getUrl).toArray(String[]::new)));
 //        shuffle();
         for (String url : page.getLinks().stream().map(Link::getUrl).toArray(String[]::new)) {
-            producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
+            if (!duplicateLinkHandler.isDuplicate(url))
+                producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
         }
 //        tempList.clear();
     }
@@ -66,6 +71,7 @@ public class KafkaManager implements URLQueue {
         producer.close();
         consumer.close();
     }
+
     public void flush() {
         producer.flush();
     }

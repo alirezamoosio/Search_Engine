@@ -22,15 +22,15 @@ public class Crawler implements Runnable {
     private URLQueue urlQueue;
     private List<String> inputUrls;
     private ExecutorService hbasepool;
-//    private ExecutorService elasticpool;
+    private ExecutorService elasticpool;
     private ScheduledExecutorService taskPool;
     private ExecutorService parserPool;
     private LangDetector langDetector;
     private ExecutorService kafkaout;
-//    private WebDoa elasticDao;
+    private WebDoa elasticDao;
 //    private WebDoa hbaseDoa;
     public Crawler() {
-//        elasticDao = new ElasticWebDaoImp();
+        elasticDao = new ElasticWebDaoImp();
         WebDoa hbaseDoa = new HbaseWebDaoImp();
         hbaseDoa.createTable();
         langDetector = new LangDetector();
@@ -39,7 +39,7 @@ public class Crawler implements Runnable {
         parserPool = Executors.newFixedThreadPool(300);
         hbasepool = Executors.newFixedThreadPool(100);
         kafkaout = Executors.newFixedThreadPool(1);
-//        elasticpool = Executors.newFixedThreadPool(100);
+        elasticpool = Executors.newFixedThreadPool(1);
         urlQueue = new KafkaManager();
         inputUrls = new ArrayList<>();
     }
@@ -51,8 +51,10 @@ public class Crawler implements Runnable {
             hbase.put(page);
         }));
         kafkaout.execute(new Thread(()->{
-             URLQueue urlQueue = new KafkaManager();
              urlQueue.pushNewURL(page);
+        }));
+        elasticpool.execute(new Thread(()->{
+            elasticDao.put(page);
         }));
 //        urlQueue.pushNewURL(page);
 //        hbaseDoa.put(page);
@@ -70,7 +72,7 @@ public class Crawler implements Runnable {
             inputUrls.clear();
         });
         inputThread.setPriority(MAX_PRIORITY - 2);
-        taskPool.scheduleAtFixedRate(inputThread, 0, 50, TimeUnit.MILLISECONDS);
+        taskPool.scheduleAtFixedRate(inputThread, 0, 10, TimeUnit.MILLISECONDS);
     }
 }
 
