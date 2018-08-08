@@ -7,10 +7,11 @@ public class DuplicateLinkHandler {
         return ourInstance;
     }
 
-    private static int hashPrime = 201326611;
+    private static int hashPrime ;
     private byte[] linkHashTableTime;
 
     private DuplicateLinkHandler() {
+        hashPrime = 201326611;
         linkHashTableTime = new byte[hashPrime];
     }
 

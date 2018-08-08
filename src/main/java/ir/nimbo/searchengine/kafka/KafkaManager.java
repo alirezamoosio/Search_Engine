@@ -68,6 +68,7 @@ public class KafkaManager implements URLQueue {
 
     @Override
     protected void finalize() {
+        flush();
         producer.close();
         consumer.close();
     }
