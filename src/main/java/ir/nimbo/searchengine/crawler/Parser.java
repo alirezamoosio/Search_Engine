@@ -62,7 +62,7 @@ public class Parser {
 //        observer.addPage(webDocument);
 //    }
 
-    public WebDocument parse(String url) throws DomainFrequencyException {
+    public WebDocument parse(String url) throws DomainFrequencyException, IllegalLanguageException, IOException {
         if (url == null || domainTimeHandler.isAllow(url)) {
             logger.error("null url");
             throw new DomainFrequencyException();
@@ -81,11 +81,13 @@ public class Parser {
             return webDocument;
         } catch (MalformedURLException e) {
             logger.error(url + " is malformatted!");
+            throw e;
         } catch (IOException e) {
             logger.error("Jsoup connection to " + url + " failed");
+            throw e;
         } catch (IllegalLanguageException e) {
             logger.error("Couldn't recognize url language!");
+            throw e;
         }
-        return null;
     }
 }

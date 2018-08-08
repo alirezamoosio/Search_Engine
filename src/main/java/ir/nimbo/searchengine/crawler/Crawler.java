@@ -5,9 +5,11 @@ import ir.nimbo.searchengine.database.ElasticWebDaoImp;
 import ir.nimbo.searchengine.database.HbaseWebDaoImp;
 import ir.nimbo.searchengine.database.WebDoa;
 import ir.nimbo.searchengine.exception.DomainFrequencyException;
+import ir.nimbo.searchengine.exception.IllegalLanguageException;
 import ir.nimbo.searchengine.kafka.KafkaManager;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,11 +64,11 @@ public class Crawler implements Runnable {
                     String url=urlsOfThisThread.pop();
                     try {
                         webDocument = parser.parse(url);
+                        urlQueue.pushNewURL(webDocument.getLinks().stream().map(Link::getUrl).toArray(String[]::new));
                     } catch (DomainFrequencyException e) {
                         urlQueue.pushNewURL(url);
-                        continue;
+                    } catch (IllegalLanguageException | IOException ignored) {
                     }
-                    urlQueue.pushNewURL(webDocument.getLinks().stream().map(Link::getUrl).toArray(String[]::new));
 
                 }
             });
