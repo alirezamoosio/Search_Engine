@@ -13,4 +13,17 @@ public class DuplicateLinkHandlerTest {
         Assert.assertTrue(DuplicateLinkHandler.getInstance().isDuplicate("salam!"));
         Assert.assertFalse(DuplicateLinkHandler.getInstance().isDuplicate("che khabar"));
     }
+
+    @Test
+    public void loadHashTable() {
+        DuplicateLinkHandler.getInstance().loadHashTable();
+        Assert.assertTrue(DuplicateLinkHandler.getInstance().isDuplicate("salam"));
+        Assert.assertFalse(DuplicateLinkHandler.getInstance().isDuplicate(" che khabar"));
+    }
+    @Test
+    public void saveHashTable() {
+        Assert.assertFalse(DuplicateLinkHandler.getInstance().isDuplicate("salam"));
+        DuplicateLinkHandler.getInstance().saveHashTable();
+    }
+
 }
