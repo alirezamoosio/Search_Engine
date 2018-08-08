@@ -37,7 +37,7 @@ public class Crawler implements Runnable {
         langDetector = new LangDetector();
         langDetector.profileLoad();
         taskPool = Executors.newScheduledThreadPool(1);
-        parserPool = Executors.newFixedThreadPool(80);
+        parserPool = Executors.newFixedThreadPool(200);
         hbasepool = Executors.newFixedThreadPool(1);
         kafkaout = Executors.newFixedThreadPool(1);
         elasticpool = Executors.newFixedThreadPool(1);
@@ -47,15 +47,15 @@ public class Crawler implements Runnable {
 
 
     public void addPage(WebDocument page) {
-        hbasepool.execute(new Thread(()->{
-            hbaseDoa.put(page);
-        }));
+//        hbasepool.execute(new Thread(()->{
+//            hbaseDoa.put(page);
+//        }));
         kafkaout.execute(new Thread(()->{
              urlQueue.pushNewURL(page);
         }));
-        elasticpool.execute(new Thread(()->{
-            elasticDao.put(page);
-        }));
+//        elasticpool.execute(new Thread(()->{
+//            elasticDao.put(page);
+//        }));
 //        urlQueue.pushNewURL(page);
 //        hbaseDoa.put(page);
        // elasticDao.put(page);
