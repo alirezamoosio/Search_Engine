@@ -1,6 +1,8 @@
 package ir.nimbo.searchengine.crawler;
 
-@FunctionalInterface
-public interface ParseFinishObserver {
+
+public interface ParseFinishObserver{
     void put(WebDocument webDocument);
+    boolean createTable();
+
 }
