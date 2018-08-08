@@ -5,6 +5,7 @@ import ir.nimbo.searchengine.database.HbaseWebDaoImp;
 import ir.nimbo.searchengine.database.WebDao;
 
 import ir.nimbo.searchengine.exception.DomainFrequencyException;
+import ir.nimbo.searchengine.exception.DuplicateLinkException;
 import ir.nimbo.searchengine.exception.IllegalLanguageException;
 import ir.nimbo.searchengine.exception.URLException;
 import ir.nimbo.searchengine.kafka.KafkaManager;
@@ -70,9 +71,9 @@ public class Crawler implements Runnable {
                         webDocument = parser.parse(url);
                         urlQueue.pushNewURL(webDocument.getLinks().stream().map(Link::getUrl).toArray(String[]::new));
                         hbaseDoa.put(webDocument);
-                    } catch (URLException e) {
+                    } catch (URLException | DuplicateLinkException | IllegalLanguageException | IOException ignored) {
+                    } catch (DomainFrequencyException e) {
                         urlQueue.pushNewURL(url);
-                    } catch (IllegalLanguageException | IOException ignored) {
                     }
 
                 }

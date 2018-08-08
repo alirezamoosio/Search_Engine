@@ -60,13 +60,17 @@ public class KafkaManager implements URLQueue {
 
     @Override
     public void pushNewURL(String... links) {
-//        tempList.addAll(Arrays.asList(page.getLinks().stream().map(Link::getUrl).toArray(String[]::new)));
-//        shuffle();
-        for (String url : links) {
-            if (!duplicateLinkHandler.isDuplicate(url))
-                producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
+        tempList.addAll(Arrays.asList(links));
+        if (tempList.size() > 5000) {
+            synchronized (tempList) {
+                shuffle();
+                for (String url : tempList) {
+                    if (!duplicateLinkHandler.isDuplicate(url))
+                        producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
+                }
+            }
         }
-//        tempList.clear();
+
     }
 
     public void shuffle() {

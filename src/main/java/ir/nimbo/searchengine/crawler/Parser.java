@@ -2,6 +2,7 @@ package ir.nimbo.searchengine.crawler;
 
 import ir.nimbo.searchengine.crawler.language.LangDetector;
 import ir.nimbo.searchengine.exception.DomainFrequencyException;
+import ir.nimbo.searchengine.exception.DuplicateLinkException;
 import ir.nimbo.searchengine.exception.IllegalLanguageException;
 import ir.nimbo.searchengine.exception.URLException;
 import org.apache.log4j.Logger;
@@ -13,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 
-import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 
 public class Parser {
@@ -55,20 +55,17 @@ public class Parser {
     public static void setLangDetector(LangDetector langDetector) {
         Parser.langDetector = langDetector;
     }
-//    public  Parser(String url, Crawler observer, LangDetector langDetector) {
-//        this.langDetector = langDetector;
-//        this.url = url;
-//        this.observer = observer;
-//    }
 
-//    private void notify(WebDocument webDocument) {
-//        observer.addPage(webDocument);
-//    }
-
-    public WebDocument parse(String url) throws  IllegalLanguageException, IOException, URLException {
-        if (url == null || !domainTimeHandler.isAllow(url) || duplicateLinkHandler.isDuplicate(url)) {
+    public WebDocument parse(String url) throws IllegalLanguageException, IOException, URLException, DuplicateLinkException, DomainFrequencyException {
+        if (url == null) {
             logger.error("url Error");
             throw new URLException();
+        } else if (!domainTimeHandler.isAllow(url)) {
+            logger.error("url Error");
+            throw new DomainFrequencyException();
+        } else if (duplicateLinkHandler.isDuplicate(url)) {
+            logger.error("url Error");
+            throw new DuplicateLinkException();
         }
         duplicateLinkHandler.confirm(url);
 
