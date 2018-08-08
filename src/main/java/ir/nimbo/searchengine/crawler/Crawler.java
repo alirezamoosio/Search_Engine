@@ -38,7 +38,7 @@ public class Crawler implements Runnable {
         langDetector.profileLoad();
         taskPool = Executors.newScheduledThreadPool(1);
         parserPool = Executors.newFixedThreadPool(300);
-        hbasepool = Executors.newFixedThreadPool(100);
+        hbasepool = Executors.newFixedThreadPool(1);
         kafkaout = Executors.newFixedThreadPool(1);
         elasticpool = Executors.newFixedThreadPool(1);
         urlQueue = new KafkaManager();
