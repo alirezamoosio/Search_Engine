@@ -3,6 +3,7 @@ package ir.nimbo.searchengine.crawler;
 import ir.nimbo.searchengine.crawler.language.LangDetector;
 import ir.nimbo.searchengine.exception.DomainFrequencyException;
 import ir.nimbo.searchengine.exception.IllegalLanguageException;
+import ir.nimbo.searchengine.exception.URLException;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,6 +24,7 @@ public class Parser {
     private static long lastTime = System.currentTimeMillis();
     private static LangDetector langDetector;
     private static Parser parser;
+    private static DuplicateLinkHandler duplicateLinkHandler = DuplicateLinkHandler.getInstance();
     private static DomainFrequencyHandler domainTimeHandler = DomainFrequencyHandler.getInstance();
 
     static {
@@ -43,6 +45,7 @@ public class Parser {
 
     }
 
+
     public static Parser getInstance() {
         if (parser == null)
             parser = new Parser();
@@ -62,11 +65,13 @@ public class Parser {
 //        observer.addPage(webDocument);
 //    }
 
-    public WebDocument parse(String url) throws DomainFrequencyException, IllegalLanguageException, IOException {
-        if (url == null || domainTimeHandler.isAllow(url)) {
-            logger.error("null url");
-            throw new DomainFrequencyException();
+    public WebDocument parse(String url) throws  IllegalLanguageException, IOException, URLException {
+        if (url == null || !domainTimeHandler.isAllow(url) || duplicateLinkHandler.isDuplicate(url)) {
+            logger.error("url Error");
+            throw new URLException();
         }
+        duplicateLinkHandler.confirm(url);
+
         try {
             Document document = Jsoup.connect(url).validateTLSCertificates(false).ignoreHttpErrors(true).get();
             WebDocument webDocument = new WebDocument();

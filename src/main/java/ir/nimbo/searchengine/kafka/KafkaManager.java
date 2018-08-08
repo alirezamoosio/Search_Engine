@@ -52,10 +52,8 @@ public class KafkaManager implements URLQueue {
         ConsumerRecords<Integer, String> records = consumer.poll(10000);
         consumer.commitSync();
         for (ConsumerRecord<Integer, String> record : records) {
-            if (!duplicateLinkHandler.isDuplicate(record.value())) {
-                duplicateLinkHandler.confirm(record.value());
-                result.add(record.value());
-            }
+            result.add(record.value());
+
         }
         return result;
     }

@@ -5,7 +5,7 @@ import ir.nimbo.searchengine.crawler.WebDocument;
 
 import java.util.List;
 
-public interface WebDoa extends ParseFinishObserver {
+public interface WebDao extends ParseFinishObserver {
     boolean createTable();
     void put(WebDocument document);
 }

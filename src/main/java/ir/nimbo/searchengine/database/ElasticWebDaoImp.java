@@ -21,8 +21,8 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import java.io.IOException;
 import java.util.*;
 
-public class ElasticWebDaoImp implements WebDoa {
-    private final static int BULK_SIZE = 10;
+public class ElasticWebDaoImp implements WebDao {
+    private final static int BULK_SIZE = 100;
     private static int size;
     private RestHighLevelClient client;
     private String index = "pages";

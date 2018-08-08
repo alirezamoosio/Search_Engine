@@ -17,11 +17,10 @@ public class UrlHandler {
     }
 
     static Link[] getLinks(Elements links, String mainUrl) {
-        Link[] finalLinks = links.stream().filter(element -> !element.attr("href").contains("#"))
+        return links.stream().filter(element -> !element.attr("href").contains("#"))
                 .map(element -> new Link(element, mainUrl))
                 .filter(e -> !e.getDomain().equals("ERROR"))
                 .toArray(Link[]::new);
-        return finalLinks;
     }
 
     public static void splitter(ArrayList<Link> links, ArrayList<Link> internalLinks, ArrayList<Link> externalLinks, String mainDomain) {
