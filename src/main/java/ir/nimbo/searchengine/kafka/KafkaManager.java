@@ -24,8 +24,8 @@ public class KafkaManager implements URLQueue {
     public KafkaManager() {
         this.topic = "links";
         Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092,localhost:9092");
-        props.put("group.id", "test1");
+        props.put("bootstrap.servers", "master-node:9092,worker-node:9092");
+        props.put("group.id", "test901");
         props.put("enable.auto.commit", "true");
         props.put("auto.commit.interval.ms", "10000");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.IntegerDeserializer");
@@ -61,10 +61,10 @@ public class KafkaManager implements URLQueue {
     }
 
     @Override
-    public void pushNewURL(WebDocument page) {
+    public void pushNewURL(String... links) {
 //        tempList.addAll(Arrays.asList(page.getLinks().stream().map(Link::getUrl).toArray(String[]::new)));
 //        shuffle();
-        for (String url : page.getLinks().stream().map(Link::getUrl).toArray(String[]::new)) {
+        for (String url : links) {
             if (!duplicateLinkHandler.isDuplicate(url))
                 producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
         }

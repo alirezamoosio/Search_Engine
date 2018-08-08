@@ -1,6 +1,7 @@
 package ir.nimbo.searchengine.crawler;
 
 import ir.nimbo.searchengine.crawler.language.LangDetector;
+import ir.nimbo.searchengine.exception.DomainFrequencyException;
 import ir.nimbo.searchengine.exception.IllegalLanguageException;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -11,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 
+import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 
 public class Parser {
@@ -21,6 +23,7 @@ public class Parser {
     private static long lastTime = System.currentTimeMillis();
     private static LangDetector langDetector;
     private static Parser parser;
+    private static DomainFrequencyHandler domainTimeHandler = DomainFrequencyHandler.getInstance();
 
     static {
         new Thread(() -> {
@@ -59,9 +62,11 @@ public class Parser {
 //        observer.addPage(webDocument);
 //    }
 
-    public WebDocument parse(String url) {
-        if (url == null)
+    public WebDocument parse(String url) throws DomainFrequencyException {
+        if (url == null || domainTimeHandler.isAllow(url)) {
             logger.error("null url");
+            throw new DomainFrequencyException();
+        }
         try {
             Document document = Jsoup.connect(url).validateTLSCertificates(false).ignoreHttpErrors(true).get();
             WebDocument webDocument = new WebDocument();

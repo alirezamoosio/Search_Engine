@@ -16,14 +16,13 @@ public class KafkaManagerTest {
         KafkaManager kafkaManager = new KafkaManager();
         ArrayList<String> results = new ArrayList<>();
         WebDocument webDocument =new WebDocument();
-        List<Link> links = new ArrayList<>();
+        List<String> links = new ArrayList<>();
         for(int i = 6; i < 11; i++){
             ArrayList<WebDocument> docs = new ArrayList<>();
             for(int j = 0; j < 100; j++){
-                links.add(new Link("testMessage" + i + "_" + j));
+                links.add("testMessage" + i + "_" + j);
             }
-            webDocument.setLinks(links);
-            kafkaManager.pushNewURL(webDocument);
+            kafkaManager.pushNewURL(links.toArray(new String[0]));
             for(String link: kafkaManager.getUrls()){
                 System.out.println(link);
                 results.add(link);
