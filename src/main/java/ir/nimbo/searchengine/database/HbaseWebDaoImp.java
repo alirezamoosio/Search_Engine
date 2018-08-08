@@ -59,10 +59,10 @@ public class HbaseWebDaoImp implements WebDoa {
             Table t = connection.getTable(webPageTable);
             Put put = new Put(Bytes.toBytes(document.getPagelink()));
             put.addColumn(contextFamily.getBytes(), "pageLink".getBytes(), document.getPagelink().getBytes());
-            Gson gson = new Gson();
-            String serializedList = gson.toJson(document.getLinks());
-            put.addColumn(contextFamily.getBytes(), outLinksColumn.getBytes(), serializedList.getBytes());
-            put.addColumn(contextFamily.getBytes(), Bytes.toBytes(1.0), pageRankColumn.getBytes());
+//            Gson gson = new Gson();
+//            String serializedList = gson.toJson(document.getLinks());
+//            put.addColumn(contextFamily.getBytes(), outLinksColumn.getBytes(), serializedList.getBytes());
+//            put.addColumn(contextFamily.getBytes(), Bytes.toBytes(1.0), pageRankColumn.getBytes());
             t.put(put);
             t.close();
         } catch (IOException e) {
