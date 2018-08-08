@@ -37,6 +37,7 @@ public class HbaseWebDaoImp implements WebDoa {
             if (!admin.tableExists(webPageTable))
                 admin.createTable(tableDescriptorBuilder.build());
             System.out.println("create");
+            admin.close();
             connection.close();
             return true;
 
