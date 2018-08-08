@@ -28,16 +28,17 @@ public class Crawler implements Runnable {
     private LangDetector langDetector;
     private ExecutorService kafkaout;
     private WebDoa elasticDao;
+    private WebDoa hbaseDoa;
 //    private WebDoa hbaseDoa;
     public Crawler() {
         elasticDao = new ElasticWebDaoImp();
-        WebDoa hbaseDoa = new HbaseWebDaoImp();
+        hbaseDoa = new HbaseWebDaoImp();
         hbaseDoa.createTable();
         langDetector = new LangDetector();
         langDetector.profileLoad();
         taskPool = Executors.newScheduledThreadPool(1);
-        parserPool = Executors.newFixedThreadPool(300);
-        hbasepool = Executors.newFixedThreadPool(100);
+        parserPool = Executors.newFixedThreadPool(80);
+        hbasepool = Executors.newFixedThreadPool(1);
         kafkaout = Executors.newFixedThreadPool(1);
         elasticpool = Executors.newFixedThreadPool(1);
         urlQueue = new KafkaManager();
@@ -47,8 +48,7 @@ public class Crawler implements Runnable {
 
     public void addPage(WebDocument page) {
         hbasepool.execute(new Thread(()->{
-            WebDoa hbase = new HbaseWebDaoImp();
-            hbase.put(page);
+            hbaseDoa.put(page);
         }));
         kafkaout.execute(new Thread(()->{
              urlQueue.pushNewURL(page);

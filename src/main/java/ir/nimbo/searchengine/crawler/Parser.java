@@ -32,7 +32,6 @@ public class Parser implements Runnable {
         this.langDetector = langDetector;
         this.url = url;
         this.observer = observer;
-
     }
 
 //    static {

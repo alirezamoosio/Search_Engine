@@ -5,22 +5,22 @@ import ir.nimbo.searchengine.util.ConfigManager;
 import ir.nimbo.searchengine.util.PropertyType;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableInputFormat;
+import org.apache.hadoop.hbase.mapreduce.TableOutputFormat;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.mapreduce.Job;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class RankCalculator {
     private static final double DAMPING_FACTOR = 0.85;
@@ -28,19 +28,16 @@ public class RankCalculator {
     private static String familyName = ConfigManager.getInstance().getProperty(PropertyType.HBASE_FAMILY);
     private static String outLinksName = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_OUTLINKS);
     private static String pageRankName = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_PAGERANK);
-    private SparkConf conf;
+    private SparkConf sparkConf;
+    private Configuration hbaseConf;
     private JavaSparkContext sparkContext;
-    private static Integer totalPages;
 
     public RankCalculator(String appName, String master, int totalPages) {
-//        conf = new SparkConf().setAppName(appName).setMaster(master);
-//        sparkContext = new JavaSparkContext(conf);
-        RankCalculator.totalPages = totalPages;
-    }
-
-    private void setConfig(Configuration config) {
-        String configPath = getClass().getClassLoader().getResource("hbase-site.xml").getPath();
-        config.addResource(new Path(configPath));
+//        sparkConf = new SparkConf().setAppName(appName).setMaster(master);
+//        sparkContext = new JavaSparkContext(sparkConf);
+        hbaseConf = HBaseConfiguration.create();
+        hbaseConf.addResource(new Path(getClass().getClassLoader().getResource("hbase-site.xml").getPath()));
+        hbaseConf.set(TableInputFormat.INPUT_TABLE, ConfigManager.getInstance().getProperty(PropertyType.HBASE_TABLE));
     }
 
     public void calculate() {
@@ -51,10 +48,8 @@ public class RankCalculator {
     }
 
     private JavaPairRDD<String, Value> getFromHBase() {
-        Configuration config = HBaseConfiguration.create();
-        config.addResource(new Path(getClass().getClassLoader().getResource("hbase-site.xml").getPath()));
         JavaPairRDD<ImmutableBytesWritable, Result> read =
-                sparkContext.newAPIHadoopRDD(config, TableInputFormat.class, ImmutableBytesWritable.class, Result.class);
+                sparkContext.newAPIHadoopRDD(hbaseConf, TableInputFormat.class, ImmutableBytesWritable.class, Result.class);
         return read.mapToPair(pair -> {
             String key = Bytes.toString(pair._1.get());
             String serializedList = Bytes.toString(pair._2.getColumnLatestCell(familyName.getBytes(), outLinksName.getBytes()).getValueArray());
@@ -74,7 +69,7 @@ public class RankCalculator {
                 for (String url : key._2.outLinks) {
                     result.add(new Tuple2<>(url, new Value(null, DAMPING_FACTOR * key._2.pageRank / key._2.outLinks.size())));
                 }
-                result.add(new Tuple2<>(key._1, new Value(key._2.outLinks, (1 - DAMPING_FACTOR) / totalPages)));
+                result.add(new Tuple2<>(key._1, new Value(key._2.outLinks, 1 - DAMPING_FACTOR)));
                 return result.iterator();
             });
             input = mapped.reduceByKey((value1, value2) -> {
@@ -87,7 +82,22 @@ public class RankCalculator {
     }
 
     private void writeToHBase(JavaPairRDD<String, Value> toWrite) {
-
+        try {
+            final Gson gson = new Gson();
+            Job jobConfig = new Job(hbaseConf);
+            jobConfig.getConfiguration().set(TableOutputFormat.OUTPUT_TABLE,
+                    ConfigManager.getInstance().getProperty(PropertyType.HBASE_TABLE));
+            jobConfig.setOutputFormatClass(TableOutputFormat.class);
+            JavaPairRDD<ImmutableBytesWritable, Put> hbasePuts = toWrite.mapToPair(pair -> {
+                Put put = new Put(Bytes.toBytes(pair._1));
+                put.addColumn(familyName.getBytes(), outLinksName.getBytes(), gson.toJson(pair._2.outLinks).getBytes());
+                put.addColumn(familyName.getBytes(), pageRankName.getBytes(), Bytes.toBytes(pair._2.pageRank));
+                return new Tuple2<>(new ImmutableBytesWritable(), put);
+            });
+            hbasePuts.saveAsNewAPIHadoopDataset(hbaseConf);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void close() {

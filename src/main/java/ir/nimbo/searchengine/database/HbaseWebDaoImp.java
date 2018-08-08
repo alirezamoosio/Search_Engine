@@ -1,6 +1,9 @@
 package ir.nimbo.searchengine.database;
 
+import com.google.gson.Gson;
 import ir.nimbo.searchengine.crawler.WebDocument;
+import ir.nimbo.searchengine.util.ConfigManager;
+import ir.nimbo.searchengine.util.PropertyType;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -12,8 +15,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class HbaseWebDaoImp implements WebDoa {
-    private TableName webPageTable = TableName.valueOf("webpage");;
-    private String contextFamily = "context";
+    private TableName webPageTable = TableName.valueOf(ConfigManager.getInstance().getProperty(PropertyType.HBASE_TABLE));
+    private String contextFamily = ConfigManager.getInstance().getProperty(PropertyType.HBASE_FAMILY);
     private Configuration configuration;
 
     public HbaseWebDaoImp() {
@@ -37,6 +40,7 @@ public class HbaseWebDaoImp implements WebDoa {
             if (!admin.tableExists(webPageTable))
                 admin.createTable(tableDescriptorBuilder.build());
             System.out.println("create");
+            admin.close();
             connection.close();
             return true;
 
@@ -47,14 +51,20 @@ public class HbaseWebDaoImp implements WebDoa {
     }
 
     @Override
-    public void put(WebDocument document) {
+    public synchronized void put(WebDocument document) {
         try (Connection connection = ConnectionFactory.createConnection(configuration)) {
 //        for(WebDocument document : documents){
+            String outLinksColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_OUTLINKS);
+            String pageRankColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_PAGERANK);
             Table t = connection.getTable(webPageTable);
-
             Put put = new Put(Bytes.toBytes(document.getPagelink()));
             put.addColumn(contextFamily.getBytes(), "pageLink".getBytes(), document.getPagelink().getBytes());
+//            Gson gson = new Gson();
+//            String serializedList = gson.toJson(document.getLinks());
+//            put.addColumn(contextFamily.getBytes(), outLinksColumn.getBytes(), serializedList.getBytes());
+//            put.addColumn(contextFamily.getBytes(), Bytes.toBytes(1.0), pageRankColumn.getBytes());
             t.put(put);
+            t.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
