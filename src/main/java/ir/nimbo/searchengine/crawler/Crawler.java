@@ -37,7 +37,7 @@ public class Crawler implements Runnable {
         langDetector = new LangDetector();
         langDetector.profileLoad();
         taskPool = Executors.newScheduledThreadPool(1);
-        parserPool = Executors.newFixedThreadPool(200);
+        parserPool = Executors.newFixedThreadPool(100);
         hbasepool = Executors.newFixedThreadPool(1);
         kafkaout = Executors.newFixedThreadPool(1);
         elasticpool = Executors.newFixedThreadPool(1);
@@ -71,8 +71,8 @@ public class Crawler implements Runnable {
             }
             inputUrls.clear();
         });
-        inputThread.setPriority(MAX_PRIORITY - 2);
-        taskPool.scheduleAtFixedRate(inputThread, 0, 10, TimeUnit.MILLISECONDS);
+        inputThread.setPriority(MAX_PRIORITY - 1);
+        taskPool.scheduleAtFixedRate(inputThread, 0, 500, TimeUnit.MILLISECONDS);
     }
 }
 
