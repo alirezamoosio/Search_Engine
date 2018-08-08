@@ -35,25 +35,33 @@ public class DuplicateLinkHandler {
             DuplicateLinkHandler.getInstance().saveHashTable();
             throw e;
         }
+    }
+
+    public void confirm(String url) {
+        int hash = url.hashCode() % hashPrime;
+        if (hash < 0)
+            hash += hashPrime;
+        int hasht = hash / 8;
+        int index = hash % 8;
+        if (index<0)
+            index+=8;
+        linkHashTableTime[hasht]|=twoPowers[index];
 
     }
 
     public boolean isDuplicate(String url) {
-        int hash = ((url.hashCode() % hashPrime) + hashPrime) % hashPrime;
-        int hasht=hash/8;
-        int index=hash%8;
-        if ((linkHashTableTime[hasht] & twoPowers[index])!=0) {
-            return true;
-        } else {
-            linkHashTableTime[hasht]|=twoPowers[index];
-            return false;
-        }
+        int hash = url.hashCode() % hashPrime;
+        if (hash < 0)
+            hash += hashPrime;
+        int hasht = hash / 8;
+        int index = hash % 8;
+        if (index<0)
+            index+=8;
+        return (linkHashTableTime[hasht] & twoPowers[index]) != 0;
     }
     public void saveHashTable(){
         try(FileOutputStream fileOutputStream=new FileOutputStream("duplicateHashTable.information")){
             fileOutputStream.write(linkHashTableTime);
-        } catch (FileNotFoundException e) {
-            logger.error(e.getMessage());
         } catch (IOException e) {
             logger.error(e.getMessage());
         }

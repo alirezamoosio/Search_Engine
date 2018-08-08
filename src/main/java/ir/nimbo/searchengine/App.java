@@ -1,5 +1,6 @@
 package ir.nimbo.searchengine;
 
+import ir.nimbo.searchengine.crawler.DuplicateLinkHandler;
 import ir.nimbo.searchengine.kafka.KafkaManager;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -32,12 +33,9 @@ import java.util.Scanner;
 
 public class App {
     public static long timeOFStart = System.currentTimeMillis();
-
     public static Scanner scanner = new Scanner(System.in);
-
     public static void main(String[] args) {
         Thread crawl = new Thread(new Crawler());
         crawl.start();
     }
-
 }
