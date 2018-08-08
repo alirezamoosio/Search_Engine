@@ -14,7 +14,7 @@ public class ConfigManager {
 
     private ConfigManager() {
         try {
-            properties.load(new FileInputStream(getClass().getClassLoader().getResource("config.properties").getPath()));
+            properties.load(getClass().getResourceAsStream("/config.properties"));
         } catch (IOException e) {
             e.printStackTrace();
         }
