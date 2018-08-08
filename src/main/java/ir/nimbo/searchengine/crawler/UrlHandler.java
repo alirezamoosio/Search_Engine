@@ -9,11 +9,13 @@ public class UrlHandler {
 
     static String normalizeLink(String link, String mainUrl) {
         if (link.startsWith("/")) {
-            return mainUrl + link;
+            link=mainUrl + link;
+        }
+        if (link.startsWith("www")){
+            link="http://"+link;
         }
         return link;
     }
-
     static Link[] getLinks(Elements links, String mainUrl) {
         Link[] finalLinks = links.stream().filter(element -> !element.attr("href").contains("#"))
                 .map(element -> new Link(element, mainUrl))
