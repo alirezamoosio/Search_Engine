@@ -11,6 +11,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
+import java.io.IOException;
 import java.util.*;
 
 public class KafkaManager implements URLQueue {
@@ -38,7 +39,11 @@ public class KafkaManager implements URLQueue {
         consumer.subscribe(Collections.singletonList(topic));
         producer = new KafkaProducer<>(props);
         duplicateLinkHandler = DuplicateLinkHandler.getInstance();
-        duplicateLinkHandler.loadHashTable();
+        try {
+            duplicateLinkHandler.loadHashTable();
+        } catch (IOException e) {
+            System.exit(0);
+        }
     }
 
     @Override

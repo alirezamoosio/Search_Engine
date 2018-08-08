@@ -28,12 +28,14 @@ public class DuplicateLinkHandler {
         linkHashTableTime = new byte[hashTableSize];
         twoPowers= new byte[]{0b1, 0b10, 0b100, 0b1000, 0b10000, 0b100000, 0b1000000, -128};//-128 = 10000000
     }
-    public void loadHashTable() {
+    public void loadHashTable() throws IOException {
         try {
             linkHashTableTime= Files.readAllBytes(new File("duplicateHashTable.information").toPath());
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            DuplicateLinkHandler.getInstance().saveHashTable();
+            throw e;
         }
+
     }
 
     public boolean isDuplicate(String url) {
