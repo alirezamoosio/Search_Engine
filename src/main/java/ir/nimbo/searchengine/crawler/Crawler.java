@@ -47,15 +47,15 @@ public class Crawler implements Runnable {
 
 
     public void addPage(WebDocument page) {
-        hbasepool.execute(new Thread(()->{
-            hbaseDoa.put(page);
-        }));
+//        hbasepool.execute(new Thread(()->{
+//            hbaseDoa.put(page);
+//        }));
         kafkaout.execute(new Thread(()->{
              urlQueue.pushNewURL(page);
         }));
-//        elasticpool.execute(new Thread(()->{
-//            elasticDao.put(page);
-//        }));
+        elasticpool.execute(new Thread(()->{
+            elasticDao.put(page);
+        }));
 //        urlQueue.pushNewURL(page);
 //        hbaseDoa.put(page);
        // elasticDao.put(page);
