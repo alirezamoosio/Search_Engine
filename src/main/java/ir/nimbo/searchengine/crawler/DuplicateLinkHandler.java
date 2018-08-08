@@ -23,14 +23,14 @@ public class DuplicateLinkHandler {
     private byte[] linkHashTableTime;
     private byte[] twoPowers;
     private DuplicateLinkHandler() {
-        hashPrime = 201326611;
-        linkHashTableTime = new byte[hashPrime];
+        hashPrime = 1610612741;
+        hashTableSize=hashPrime/8 +1;
+        linkHashTableTime = new byte[hashTableSize];
         twoPowers= new byte[]{0b1, 0b10, 0b100, 0b1000, 0b10000, 0b100000, 0b1000000, -128};//-128 = 10000000
     }
-
     public void loadHashTable() {
         try {
-            linkHashTableTime= Files.readAllBytes(new File("hashTable.information").toPath());
+            linkHashTableTime= Files.readAllBytes(new File("duplicateHashTable.information").toPath());
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
@@ -38,15 +38,17 @@ public class DuplicateLinkHandler {
 
     public boolean isDuplicate(String url) {
         int hash = ((url.hashCode() % hashPrime) + hashPrime) % hashPrime;
-        if (linkHashTableTime[hash] == 1) {
+        int hasht=hash/8;
+        int index=hash%8;
+        if ((linkHashTableTime[hasht] & twoPowers[index])!=0) {
             return true;
         } else {
-            linkHashTableTime[hash]=1;
+            linkHashTableTime[hasht]|=twoPowers[index];
             return false;
         }
     }
     public void saveHashTable(){
-        try(FileOutputStream fileOutputStream=new FileOutputStream("hashTable.information")){
+        try(FileOutputStream fileOutputStream=new FileOutputStream("duplicateHashTable.information")){
             fileOutputStream.write(linkHashTableTime);
         } catch (FileNotFoundException e) {
             logger.error(e.getMessage());
