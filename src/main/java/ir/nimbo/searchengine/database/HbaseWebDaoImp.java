@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class HbaseWebDaoImp implements WebDoa {
-    private TableName webPageTable = TableName.valueOf("webpage");;
-    private String contextFamily = "context";
+    private TableName webPageTable = TableName.valueOf(ConfigManager.getInstance().getProperty(PropertyType.HBASE_TABLE));
+    private String contextFamily = ConfigManager.getInstance().getProperty(PropertyType.HBASE_FAMILY);
     private Configuration configuration;
 
     public HbaseWebDaoImp() {
