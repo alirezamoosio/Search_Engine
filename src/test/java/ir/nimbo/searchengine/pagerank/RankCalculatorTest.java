@@ -30,11 +30,11 @@ public class RankCalculatorTest {
     @Test
     public void getResult() {
         String site1 = "site1";
-        Value value1 = new Value(Arrays.asList("site2", "site3"), 1.0 / 3);
+        Value value1 = new Value(Arrays.asList("site2", "site3"), 1.0);
         String site2 = "site2";
-        Value value2 = new Value(Collections.singletonList("site3"), 1.0 / 3);
+        Value value2 = new Value(Collections.singletonList("site3"), 1.0);
         String site3 = "site3";
-        Value value3 = new Value(Collections.singletonList("site2"), 1.0 / 3);
+        Value value3 = new Value(Collections.singletonList("site2"), 1.0);
         SparkConf conf = new SparkConf().setAppName("Test").setMaster("local");
         JavaSparkContext sparkContext = new JavaSparkContext(conf);
         List<Tuple2<String, Value>> list = Arrays.asList(new Tuple2<>(site1, value1),
@@ -43,8 +43,8 @@ public class RankCalculatorTest {
         JavaRDD<Tuple2<String, Value>> helpSet = sparkContext.parallelize(list);
         JavaPairRDD<String, Value> input = JavaPairRDD.fromJavaRDD(helpSet);
         JavaPairRDD<String, Value> result = calculator.getResult(input);
-        result.saveAsTextFile("/home/mousavi/Desktop/file.txt");
-        System.out.println(result);
+        System.out.println(result.collectAsMap());
+
     }
 
     @After
