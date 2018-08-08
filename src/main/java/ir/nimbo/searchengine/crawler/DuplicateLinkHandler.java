@@ -36,7 +36,6 @@ public class DuplicateLinkHandler {
             throw e;
         }
     }
-
     public void confirm(String url) {
         int hash = url.hashCode() % hashPrime;
         if (hash < 0)
@@ -49,9 +48,11 @@ public class DuplicateLinkHandler {
 
     }
 
+
     public boolean isDuplicate(String url) {
         int hash = url.hashCode() % hashPrime;
         if (hash < 0)
+
             hash += hashPrime;
         int hasht = hash / 8;
         int index = hash % 8;

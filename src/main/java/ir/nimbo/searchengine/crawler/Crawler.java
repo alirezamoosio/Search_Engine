@@ -29,7 +29,6 @@ public class Crawler implements Runnable {
     private ExecutorService kafkaout;
     private WebDoa elasticDao;
     private WebDoa hbaseDoa;
-//    private WebDoa hbaseDoa;
     public Crawler() {
         elasticDao = new ElasticWebDaoImp();
         hbaseDoa = new HbaseWebDaoImp();
@@ -43,6 +42,7 @@ public class Crawler implements Runnable {
         elasticpool = Executors.newFixedThreadPool(1);
         urlQueue = new KafkaManager();
         inputUrls = new ArrayList<>();
+        System.out.println("end of crawler constructor");
     }
 
 
