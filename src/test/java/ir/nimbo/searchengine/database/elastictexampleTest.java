@@ -38,6 +38,7 @@ import java.util.Date;
 public class elastictexampleTest {
     @Test
     public void ElasticTest() throws IOException {
+        Logger logger = Logger.getLogger("error");
         RestHighLevelClient client = new RestHighLevelClient(
                 RestClient.builder(
                         new HttpHost("94.23.214.93", 9200, "http")));

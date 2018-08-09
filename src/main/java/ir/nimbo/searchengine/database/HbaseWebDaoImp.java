@@ -10,10 +10,12 @@ import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 
 public class HbaseWebDaoImp implements WebDao {
+    private static Logger errorLogger = Logger.getLogger("error");
     private TableName webPageTable = TableName.valueOf(ConfigManager.getInstance().getProperty(PropertyType.HBASE_TABLE));
     private String contextFamily = ConfigManager.getInstance().getProperty(PropertyType.HBASE_FAMILY);
     private Configuration configuration;
@@ -65,7 +67,7 @@ public class HbaseWebDaoImp implements WebDao {
             t.put(put);
             t.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            errorLogger.error("couldn't put document for " + document.getPagelink() + " into HBase!");
         }
     }
 

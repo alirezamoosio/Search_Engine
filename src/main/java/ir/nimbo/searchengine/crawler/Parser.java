@@ -17,7 +17,7 @@ import java.util.Arrays;
 import static java.lang.Thread.sleep;
 
 public class Parser {
-    private static Logger logger = Logger.getLogger("error");
+    private static Logger errorLogger = Logger.getLogger("error");
     private static Logger infoLogger = Logger.getLogger("info");
     private static int numberOFCrawledPage = 0;
     private static int lastNumberOfCrawledPage = 0;
@@ -62,15 +62,15 @@ public class Parser {
 
     public WebDocument parse(String url) throws IllegalLanguageException, IOException, URLException, DuplicateLinkException, DomainFrequencyException {
         if (url == null) {
-            logger.error("url Error");
+            errorLogger.error("url Error");
             System.out.println("number of null"+numberOfNull++);
             throw new URLException();
         } else if (!domainTimeHandler.isAllow(url)) {
-            logger.error("url Error");
+            errorLogger.error("url Error");
             System.out.println("number of domain time"+numberOfDomain++);
             throw new DomainFrequencyException();
         } else if (duplicateLinkHandler.isDuplicate(url)) {
-            logger.error("url Error");
+            errorLogger.error("url Error");
             System.out.println("number of duplicate"+numberOfDuplicate++);
             throw new DuplicateLinkException();
         }
@@ -89,13 +89,13 @@ public class Parser {
             numberOFCrawledPage++;
             return webDocument;
         } catch (MalformedURLException e) {
-            logger.error(url + " is malformatted!");
+            errorLogger.error(url + " is malformatted!");
             throw e;
         } catch (IOException e) {
-            logger.error("Jsoup connection to " + url + " failed");
+            errorLogger.error("Jsoup connection to " + url + " failed");
             throw e;
         } catch (IllegalLanguageException e) {
-            logger.error("Couldn't recognize url language!");
+            errorLogger.error("Couldn't recognize url language!");
             throw e;
         }
     }

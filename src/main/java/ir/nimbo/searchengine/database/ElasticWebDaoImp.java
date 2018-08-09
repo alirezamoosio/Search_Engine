@@ -10,23 +10,24 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.unit.Fuzziness;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class ElasticWebDaoImp implements WebDao {
     private final static int BULK_SIZE = 100;
     private static int size;
     private RestHighLevelClient client;
     private String index = "pages";
-    private Logger logger = Logger.getLogger(ElasticWebDaoImp.class);
+    private Logger errorLogger = Logger.getLogger("error");
     private IndexRequest indexRequest;
     private BulkRequest bulkRequest;
 
@@ -58,7 +59,7 @@ public class ElasticWebDaoImp implements WebDao {
                 bulkRequest.add(indexRequest);
                 size++;
             } catch (IOException e) {
-                logger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
+                errorLogger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
             }
             if (size >= BULK_SIZE) {
                 BulkResponse bulkResponse = client.bulk(bulkRequest);
@@ -66,37 +67,43 @@ public class ElasticWebDaoImp implements WebDao {
                 bulkRequest = new BulkRequest();
                 indexRequest = new IndexRequest(index, "doc");
             }
-
         } catch (IOException e) {
-            logger.error("ERROR! Couldn't add the document for " + document.getPagelink());
+            errorLogger.error("ERROR! Couldn't add the document for " + document.getPagelink());
         }
     }
 
-    public void updateElastic(){
-        try {
-            client.bulk(bulkRequest);
-            bulkRequest = new BulkRequest();
-        } catch (IOException e) {
-            System.out.println("ERROR! update on elastic failed");
-            e.printStackTrace();
-        }
 
-    }
-
-    public Map<String, Float> search(String text) throws IOException {
+    public Map<String, Float> search(String text) {
         Map<String, Float> results = new HashMap<>();
         SearchRequest searchRequest = new SearchRequest(index);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        QueryBuilder matchQueryBuilder = QueryBuilders.matchQuery("pageText", text)
-                .fuzziness(Fuzziness.AUTO)
-                .prefixLength(3)
-                .maxExpansions(100);
-        searchSourceBuilder.query(matchQueryBuilder);
+        searchRequest.types("doc");
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         searchRequest.source(searchSourceBuilder);
-        SearchResponse searchResponse = client.search(searchRequest);
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        boolQueryBuilder.must(QueryBuilders.matchQuery("pageText", text));
+        sourceBuilder.query(boolQueryBuilder);
+        sourceBuilder.from(0);
+        sourceBuilder.size(10);
+        sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+        searchRequest.source(sourceBuilder);
+        SearchResponse searchResponse = null;
+        boolean searchStatus = false;
+        while(!searchStatus){
+            try {
+                searchResponse = client.search(searchRequest);
+                searchStatus = true;
+            } catch (IOException e) {
+                System.out.println("Elastic connection timed out! Trying again...");
+                searchStatus = false;
+            }
+        }
         SearchHit[] hits = searchResponse.getHits().getHits();
+//        int i = 1;
         for (SearchHit hit : hits) {
             Map<String, Object> sourceAsMap = hit.getSourceAsMap();
+//            System.out.println(i + " " + sourceAsMap.get("pageLink") + " " + hit.getScore());
+//            i++;
             results.put((String) sourceAsMap.get("pageLink"), hit.getScore());
         }
 //        Collections.sort((List<Float>) results.values());
