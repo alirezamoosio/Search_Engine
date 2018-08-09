@@ -13,6 +13,10 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HbaseWebDaoImp implements WebDao {
     private static Logger errorLogger = Logger.getLogger("error");
@@ -58,11 +62,13 @@ public class HbaseWebDaoImp implements WebDao {
             String outLinksColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_OUTLINKS);
             String pageRankColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_PAGERANK);
             Table t = connection.getTable(webPageTable);
-            Put put = new Put(Bytes.toBytes(document.getPagelink()));
-            put.addColumn(contextFamily.getBytes(), "pageLink".getBytes(), document.getPagelink().getBytes());
+            Put put = new Put(Bytes.toBytes(generateRowKeyFromUrl(document.getPagelink())));
+//            put.addColumn(contextFamily.getBytes(), "pageLink".getBytes(), document.getPagelink().getBytes());
             Gson gson = new Gson();
-            String serializedList = gson.toJson(document.getLinks());
-            put.addColumn(contextFamily.getBytes(), outLinksColumn.getBytes(), serializedList.getBytes());
+            Map<String, String> outLinksMap = new HashMap<>();
+            document.getLinks().forEach(link -> outLinksMap.put(link.getUrl(), link.getAnchorLink()));
+            String serializedMap = gson.toJson(outLinksMap);
+            put.addColumn(contextFamily.getBytes(), outLinksColumn.getBytes(), serializedMap.getBytes());
             put.addColumn(contextFamily.getBytes(), pageRankColumn.getBytes(), Bytes.toBytes(1.0));
             t.put(put);
             t.close();
@@ -71,7 +77,27 @@ public class HbaseWebDaoImp implements WebDao {
         }
     }
 
-    public String invertUrl(String url) {
-        return null;
+    public String generateRowKeyFromUrl(String url) {
+        String domain;
+        try {
+            domain = new URL(url).getHost();
+        } catch (MalformedURLException e) {
+            domain = "ERROR";
+        }
+        String[] urlSections = url.split(domain);
+        String[] domainSections = domain.split("\\.");
+        StringBuilder domainToHbase = new StringBuilder();
+        for (int i = domainSections.length - 1; i >= 0; i--) {
+            domainToHbase.append(domainSections[i]);
+            if(i == 0) {
+                if (!url.startsWith(domain)) {
+                    domainToHbase.append("." + urlSections[0]);
+                }
+            }
+            else {
+                domainToHbase.append(".");
+            }
+        }
+        return domainToHbase + "-" + urlSections[urlSections.length - 1];
     }
 }

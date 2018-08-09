@@ -10,7 +10,6 @@ public class Link {
     private String anchorLink;
     private String url;
     private String domain;
-    private static Logger errorLogger = Logger.getLogger("error");
 
     Link(Element element, String mainUrl) {
         this.anchorLink = element.text();
