@@ -34,6 +34,7 @@ public class Crawler implements Runnable {
     private ExecutorService kafkaout;
     private WebDao elasticDao;
     private WebDao hbaseDoa;
+
     public Crawler() {
 //        elasticDao = new ElasticWebDaoImp();
         hbaseDoa = new HbaseWebDaoImp();
@@ -47,7 +48,7 @@ public class Crawler implements Runnable {
 //        elasticpool = Executors.newFixedThreadPool(1);
         urlQueue = new KafkaManager();
         inputUrls = new ArrayList<>();
-        parser=Parser.getInstance();
+        parser = Parser.getInstance();
         Parser.setLangDetector(langDetector);
         System.out.println("end of crawler constructor");
     }
@@ -60,25 +61,27 @@ public class Crawler implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            Thread thread= new Thread(() -> {
-                LinkedList<String> urlsOfThisThread=new LinkedList<>();
-                while (true){
-                    if(urlsOfThisThread.size()<10)
+            Thread thread = new Thread(() -> {
+                LinkedList<String> urlsOfThisThread = new LinkedList<>();
+                LinkedList<String> pushTempList = new LinkedList<>();
+                while (true) {
+                    if (urlsOfThisThread.size() < 10)
                         urlsOfThisThread.addAll(urlQueue.getUrls());
                     WebDocument webDocument;
-                    String url=urlsOfThisThread.pop();
+                    String url = urlsOfThisThread.pop();
                     try {
                         webDocument = parser.parse(url);
                         urlQueue.pushNewURL(webDocument.getLinks().stream().map(Link::getUrl).toArray(String[]::new));
                         hbaseDoa.put(webDocument);
                     } catch (URLException | DuplicateLinkException | IllegalLanguageException | IOException ignored) {
                     } catch (DomainFrequencyException e) {
-                        urlQueue.pushNewURL(url);
+                        pushTempList.add(url);
+                        if (pushTempList.size() > 200)
+                            urlQueue.pushNewURL(pushTempList.toArray(new String[0]));
                     }
-
                 }
             });
-            thread.setPriority(MAX_PRIORITY-1);
+            thread.setPriority(MAX_PRIORITY - 1);
             thread.start();
         }
     }

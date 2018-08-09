@@ -1,9 +1,7 @@
 package ir.nimbo.searchengine.kafka;
 
 import ir.nimbo.searchengine.crawler.DuplicateLinkHandler;
-import ir.nimbo.searchengine.crawler.Link;
 import ir.nimbo.searchengine.crawler.URLQueue;
-import ir.nimbo.searchengine.crawler.WebDocument;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -16,7 +14,7 @@ import java.util.*;
 
 public class KafkaManager implements URLQueue {
     private final String topic;
-    private final LinkedList<String> tempList = new LinkedList<>();
+    private final LinkedList<List<String>> tempArrayLists = new LinkedList<>();
     private KafkaConsumer<Integer, String> consumer;
     private Producer<Integer, String> producer;
     private DuplicateLinkHandler duplicateLinkHandler;
@@ -53,18 +51,23 @@ public class KafkaManager implements URLQueue {
         consumer.commitSync();
         for (ConsumerRecord<Integer, String> record : records) {
             result.add(record.value());
-
         }
         return result;
     }
 
     @Override
     public void pushNewURL(String... links) {
-        tempList.addAll(Arrays.asList(links));
-        if (tempList.size() > 5000) {
-            synchronized (tempList) {
-                shuffle();
-                for (String url : tempList) {
+        tempArrayLists.add(Arrays.asList(links));
+
+        if (tempArrayLists.size() > 200) {
+            synchronized (tempArrayLists) {
+                LinkedList<String> temList = new LinkedList<>();
+                for (List list : tempArrayLists) {
+                    temList.addAll(list);
+                }
+                Collections.shuffle(temList);
+
+                for (String url : temList) {
                     if (!duplicateLinkHandler.isDuplicate(url))
                         producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
                 }
@@ -73,9 +76,6 @@ public class KafkaManager implements URLQueue {
 
     }
 
-    public void shuffle() {
-        Collections.shuffle(tempList);
-    }
 
     @Override
     protected void finalize() {

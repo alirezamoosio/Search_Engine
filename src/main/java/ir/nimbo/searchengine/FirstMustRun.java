@@ -41,4 +41,3 @@ public class FirstMustRun {
         ArrayList<String> temp = kafkaManager.getUrls();
     }
 }
-
