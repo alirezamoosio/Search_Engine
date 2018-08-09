@@ -22,6 +22,9 @@ public class DuplicateLinkHandler {
     private static int hashTableSize;
     private byte[] linkHashTableTime;
     private byte[] twoPowers;
+    public static void refresh(){
+        ourInstance=new DuplicateLinkHandler();
+    }
     private DuplicateLinkHandler() {
         hashPrime = 1610612741;
         hashTableSize=hashPrime/8 +1;

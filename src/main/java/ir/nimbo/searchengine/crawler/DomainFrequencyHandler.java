@@ -17,7 +17,7 @@ public class DomainFrequencyHandler {
 
     public boolean isAllow(String url) {
         int hash = (url.hashCode() % domainHashPrime + domainHashPrime) % domainHashPrime;
-        if (System.currentTimeMillis() - domainHashTableTime[hash] > 30000) {
+        if (System.currentTimeMillis() - domainHashTableTime[hash] > 28000) {
             domainHashTableTime[hash] = System.currentTimeMillis();
             return true;
         }

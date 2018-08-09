@@ -25,9 +25,10 @@ public class Crawler implements Runnable {
     private List<String> inputUrls;
     private WebDao elasticDao;
     private WebDao hbaseDoa;
+    private int counter;
 
     public Crawler(URLQueue urlQueue) {
-        hbaseDoa = new HbaseWebDaoImp();
+//        hbaseDoa = new HbaseWebDaoImp();
         this.urlQueue = urlQueue;
         parser = Parser.getInstance();
         inputUrls = new ArrayList<>();
@@ -36,7 +37,7 @@ public class Crawler implements Runnable {
 
     @Override
     public void run() {
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 50; i++) {
             try {
                 sleep(35);
             } catch (InterruptedException e) {
@@ -45,17 +46,25 @@ public class Crawler implements Runnable {
             Thread thread = new Thread(() -> {
                 LinkedList<String> urlsOfThisThread = new LinkedList<>();
                 while (true) {
-                    if (urlsOfThisThread.size() < 10)
+                    if (urlsOfThisThread.size() < 10) {
+                        System.out.println("cc"+counter);
+                        System.out.println(urlsOfThisThread.size());
+                        System.out.println("finished");
+
                         urlsOfThisThread.addAll(urlQueue.getUrls());
-                    WebDocument webDocument;
-                    String url = urlsOfThisThread.pop();
-                    try {
-                        webDocument = parser.parse(url);
-                        urlQueue.pushNewURL(webDocument.getLinks().stream().map(Link::getUrl).toArray(String[]::new));
-                        hbaseDoa.put(webDocument);
-                    } catch (URLException | DuplicateLinkException | IllegalLanguageException | IOException ignored) {
-                    } catch (DomainFrequencyException e) {
-                        System.out.println("duplicate Domain");
+                        System.out.println("finished");
+                    }else {
+                        WebDocument webDocument;
+                        String url = urlsOfThisThread.pop();
+                        try {
+                            webDocument = parser.parse(url);
+                            counter += webDocument.getTextDoc().getBytes().length;
+//                        urlQueue.pushNewURL(webDocument.getLinks().stream().map(Link::getUrl).toArray(String[]::new));
+//                        hbaseDoa.put(webDocument);
+                        } catch (URLException | DuplicateLinkException | IllegalLanguageException | IOException ignored) {
+                        } catch (DomainFrequencyException e) {
+//                            System.out.println("duplicate Domain");
+                        }
                     }
                 }
             });

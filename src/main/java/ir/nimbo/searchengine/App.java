@@ -1,34 +1,12 @@
 package ir.nimbo.searchengine;
 
-import ir.nimbo.searchengine.crawler.DuplicateLinkHandler;
 import ir.nimbo.searchengine.kafka.KafkaManager;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.Admin;
-import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.ConnectionFactory;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
-
-import java.io.IOException;
 
 /**
  * Hello world!
  */
 import ir.nimbo.searchengine.crawler.Crawler;
-import ir.nimbo.searchengine.crawler.Parser;
-import org.jsoup.Jsoup;
 
-import javax.swing.table.TableRowSorter;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Scanner;
 
 public class App {
@@ -36,7 +14,8 @@ public class App {
     public static Scanner scanner = new Scanner(System.in);
     public static void main(String[] args) {
         System.out.println("main");
-        Thread crawl = new Thread(new Crawler(new KafkaManager("firstTest")));
+        Intiaizer.intialize();
+        Thread crawl = new Thread(new Crawler(new KafkaManager( "links","master-node:9092,worker-node:9092","tes456787654t",90)));
         crawl.start();
     }
 }

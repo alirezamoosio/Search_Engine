@@ -17,6 +17,10 @@ import java.util.Arrays;
 import static java.lang.Thread.sleep;
 
 public class Parser {
+
+    private int numberOfNull=0;
+    private static int numberOfDuplicate=0;
+    private static int numberOfDomain=0;
     private static Logger errorLogger = Logger.getLogger("error");
     private static Logger infoLogger = Logger.getLogger("info");
     private static int numberOFCrawledPage = 0;
@@ -31,9 +35,11 @@ public class Parser {
         new Thread(() -> {
             while (true) {
                 try {
-                    sleep(1000);
+                    sleep(5000);
                 } catch (InterruptedException ignored) {
                 }
+                System.out.println("number of duplicate"+numberOfDuplicate);
+                System.out.println("number of domain time"+numberOfDomain);
                 System.out.println("crawled page" + numberOFCrawledPage);
                 System.out.println("rate of crawl=" + (double) (numberOFCrawledPage - lastNumberOfCrawledPage) / (System.currentTimeMillis() - lastTime) * 1000);
                 infoLogger.info("rate of crawl=" + (double) (numberOFCrawledPage - lastNumberOfCrawledPage) / (System.currentTimeMillis() - lastTime) * 1000);
@@ -44,10 +50,6 @@ public class Parser {
         }).start();
 
     }
-
-    private int numberOfNull=0;
-    private int numberOfDuplicate=0;
-    private int numberOfDomain=0;
 
 
     public static Parser getInstance() {
@@ -67,11 +69,13 @@ public class Parser {
             throw new URLException();
         } else if (!domainTimeHandler.isAllow(url)) {
             errorLogger.error("url Error");
-            System.out.println("number of domain time"+numberOfDomain++);
+
+            numberOfDomain++;
             throw new DomainFrequencyException();
         } else if (duplicateLinkHandler.isDuplicate(url)) {
             errorLogger.error("url Error");
-            System.out.println("number of duplicate"+numberOfDuplicate++);
+
+            numberOfDuplicate++;
             throw new DuplicateLinkException();
         }
         duplicateLinkHandler.confirm(url);

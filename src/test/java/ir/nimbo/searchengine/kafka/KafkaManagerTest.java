@@ -1,19 +1,15 @@
 package ir.nimbo.searchengine.kafka;
 
-import ir.nimbo.searchengine.crawler.Link;
 import ir.nimbo.searchengine.crawler.WebDocument;
-import org.apache.kafka.clients.consumer.CommitFailedException;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 public class KafkaManagerTest {
     @Test
     public void testKafka() {
-        KafkaManager kafkaManager = new KafkaManager("test");
+        KafkaManager kafkaManager = new KafkaManager( "test","master-node:9092,worker-node:9092","test",80);
         ArrayList<String> results = new ArrayList<>();
         WebDocument webDocument =new WebDocument();
         List<String> links = new ArrayList<>();

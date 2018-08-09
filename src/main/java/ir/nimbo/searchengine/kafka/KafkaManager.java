@@ -23,18 +23,18 @@ public class KafkaManager implements URLQueue {
     private Producer<String, String> producer;
     private DuplicateLinkHandler duplicateLinkHandler;
 
-    public KafkaManager(String topic) {
+    public KafkaManager( String topic,String portsWithIp,String groupID,int maxPoll) {
         this.topic = topic;
         Properties props = new Properties();
-        props.put("bootstrap.servers", "master-node:9092,worker-node:9092");
-        props.put("group.id", "test");
+        props.put("bootstrap.servers", portsWithIp);
+        props.put("group.id", groupID);
         props.put("enable.auto.commit", "true");
         props.put("auto.commit.interval.ms", "10000");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("max.poll.records", "2");
+        props.put("max.poll.records", maxPoll);
         props.put("auto.offset.reset", "earliest");
         System.out.println(props.toString());
         consumer = new KafkaConsumer<>(props);
