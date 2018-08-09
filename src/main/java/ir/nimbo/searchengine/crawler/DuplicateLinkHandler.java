@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 
 public class DuplicateLinkHandler {
     private static DuplicateLinkHandler ourInstance = new DuplicateLinkHandler();
-    private static Logger logger = Logger.getLogger(DuplicateLinkHandler.class);
+    private static Logger logger = Logger.getLogger("error");
 
 
     public static DuplicateLinkHandler getInstance() {

@@ -22,7 +22,7 @@ import static java.lang.Thread.MAX_PRIORITY;
 import static java.lang.Thread.sleep;
 
 public class Crawler implements Runnable {
-    private static Logger logger = Logger.getLogger(Crawler.class);
+    private static Logger errorLogger = Logger.getLogger("error");
     private Parser parser;
     private URLQueue urlQueue;
     private List<String> inputUrls;
