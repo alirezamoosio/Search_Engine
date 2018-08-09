@@ -17,9 +17,16 @@ import java.util.List;
 
 
 public class LangDetector {
+    private static LangDetector langDetector=new LangDetector();
     private List<LanguageProfile> languageProfiles;
     private LanguageDetector languageDetector;
 
+    private LangDetector() {
+    }
+
+    public static LangDetector getInstance() {
+        return langDetector;
+    }
     public void profileLoad() {
         try {
             languageProfiles = new LanguageProfileReader().readAllBuiltIn();

@@ -8,15 +8,12 @@ import ir.nimbo.searchengine.exception.DomainFrequencyException;
 import ir.nimbo.searchengine.exception.DuplicateLinkException;
 import ir.nimbo.searchengine.exception.IllegalLanguageException;
 import ir.nimbo.searchengine.exception.URLException;
-import ir.nimbo.searchengine.kafka.KafkaManager;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
 
 import static java.lang.Thread.MAX_PRIORITY;
 import static java.lang.Thread.sleep;
@@ -26,30 +23,14 @@ public class Crawler implements Runnable {
     private Parser parser;
     private URLQueue urlQueue;
     private List<String> inputUrls;
-    private ExecutorService hbasepool;
-    private ExecutorService elasticpool;
-    private ScheduledExecutorService taskPool;
-    private ExecutorService parserPool;
-    private LangDetector langDetector;
-    private ExecutorService kafkaout;
     private WebDao elasticDao;
     private WebDao hbaseDoa;
 
-    public Crawler() {
-//        elasticDao = new ElasticWebDaoImp();
+    public Crawler(URLQueue urlQueue) {
         hbaseDoa = new HbaseWebDaoImp();
-//        hbaseDoa.createTable();
-        langDetector = new LangDetector();
-        langDetector.profileLoad();
-//        taskPool = Executors.newScheduledThreadPool(1);
-//        parserPool = Executors.newFixedThreadPool(100);
-//        hbasepool = Executors.newFixedThreadPool(1);
-//        kafkaout = Executors.newFixedThreadPool(1);
-//        elasticpool = Executors.newFixedThreadPool(1);
-        urlQueue = new KafkaManager();
-        inputUrls = new ArrayList<>();
+        this.urlQueue = urlQueue;
         parser = Parser.getInstance();
-        Parser.setLangDetector(langDetector);
+        inputUrls = new ArrayList<>();
         System.out.println("end of crawler constructor");
     }
 
@@ -63,7 +44,6 @@ public class Crawler implements Runnable {
             }
             Thread thread = new Thread(() -> {
                 LinkedList<String> urlsOfThisThread = new LinkedList<>();
-                LinkedList<String> pushTempList = new LinkedList<>();
                 while (true) {
                     if (urlsOfThisThread.size() < 10)
                         urlsOfThisThread.addAll(urlQueue.getUrls());
@@ -75,9 +55,7 @@ public class Crawler implements Runnable {
                         hbaseDoa.put(webDocument);
                     } catch (URLException | DuplicateLinkException | IllegalLanguageException | IOException ignored) {
                     } catch (DomainFrequencyException e) {
-                        pushTempList.add(url);
-                        if (pushTempList.size() > 200)
-                            urlQueue.pushNewURL(pushTempList.toArray(new String[0]));
+                        System.out.println("duplicate Domain");
                     }
                 }
             });

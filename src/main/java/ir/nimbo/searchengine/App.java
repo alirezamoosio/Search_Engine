@@ -36,7 +36,7 @@ public class App {
     public static Scanner scanner = new Scanner(System.in);
     public static void main(String[] args) {
         System.out.println("main");
-        Thread crawl = new Thread(new Crawler());
+        Thread crawl = new Thread(new Crawler(new KafkaManager("firstTest")));
         crawl.start();
     }
 }

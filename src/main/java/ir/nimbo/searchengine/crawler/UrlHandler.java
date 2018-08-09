@@ -3,6 +3,7 @@ package ir.nimbo.searchengine.crawler;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UrlHandler {
 
@@ -23,12 +24,12 @@ public class UrlHandler {
                 .toArray(Link[]::new);
     }
 
-    public static void splitter(ArrayList<Link> links, ArrayList<Link> internalLinks, ArrayList<Link> externalLinks, String mainDomain) {
+    public static void splitter(List<Link> links, ArrayList<String> internalLinks, ArrayList<String> externalLinks, String mainDomain) {
         for (Link link : links) {
             if (link.getDomain().equals(mainDomain)) {
-                internalLinks.add(link);
+                internalLinks.add(link.getUrl());
             } else {
-                externalLinks.add(link);
+                externalLinks.add(link.getUrl());
             }
         }
     }

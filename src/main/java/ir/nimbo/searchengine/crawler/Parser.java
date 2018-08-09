@@ -45,6 +45,10 @@ public class Parser {
 
     }
 
+    private int numberOfNull=0;
+    private int numberOfDuplicate=0;
+    private int numberOfDomain=0;
+
 
     public static Parser getInstance() {
         if (parser == null)
@@ -59,12 +63,15 @@ public class Parser {
     public WebDocument parse(String url) throws IllegalLanguageException, IOException, URLException, DuplicateLinkException, DomainFrequencyException {
         if (url == null) {
             logger.error("url Error");
+            System.out.println("number of null"+numberOfNull++);
             throw new URLException();
         } else if (!domainTimeHandler.isAllow(url)) {
             logger.error("url Error");
+            System.out.println("number of domain time"+numberOfDomain++);
             throw new DomainFrequencyException();
         } else if (duplicateLinkHandler.isDuplicate(url)) {
             logger.error("url Error");
+            System.out.println("number of duplicate"+numberOfDuplicate++);
             throw new DuplicateLinkException();
         }
         duplicateLinkHandler.confirm(url);

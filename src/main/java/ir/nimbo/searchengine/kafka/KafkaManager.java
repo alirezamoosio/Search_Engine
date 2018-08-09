@@ -1,6 +1,7 @@
 package ir.nimbo.searchengine.kafka;
 
 import ir.nimbo.searchengine.crawler.DuplicateLinkHandler;
+import ir.nimbo.searchengine.crawler.Link;
 import ir.nimbo.searchengine.crawler.URLQueue;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -10,27 +11,30 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 public class KafkaManager implements URLQueue {
     private final String topic;
+
     private final LinkedList<List<String>> tempArrayLists = new LinkedList<>();
-    private KafkaConsumer<Integer, String> consumer;
-    private Producer<Integer, String> producer;
+    private KafkaConsumer<String, String> consumer;
+    private Producer<String, String> producer;
     private DuplicateLinkHandler duplicateLinkHandler;
 
-    public KafkaManager() {
-        this.topic = "links";
+    public KafkaManager(String topic) {
+        this.topic = topic;
         Properties props = new Properties();
         props.put("bootstrap.servers", "master-node:9092,worker-node:9092");
-        props.put("group.id", "test901");
+        props.put("group.id", "test");
         props.put("enable.auto.commit", "true");
         props.put("auto.commit.interval.ms", "10000");
-        props.put("key.deserializer", "org.apache.kafka.common.serialization.IntegerDeserializer");
+        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put("key.serializer", "org.apache.kafka.common.serialization.IntegerSerializer");
+        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("max.poll.records", "80");
+        props.put("max.poll.records", "2");
         props.put("auto.offset.reset", "earliest");
         System.out.println(props.toString());
         consumer = new KafkaConsumer<>(props);
@@ -47,29 +51,28 @@ public class KafkaManager implements URLQueue {
     @Override
     public synchronized ArrayList<String> getUrls() {
         ArrayList<String> result = new ArrayList<>();
-        ConsumerRecords<Integer, String> records = consumer.poll(10000);
+        ConsumerRecords<String, String> records = consumer.poll(10000);
         consumer.commitSync();
-        for (ConsumerRecord<Integer, String> record : records) {
+        for (ConsumerRecord<String, String> record : records) {
             result.add(record.value());
         }
         return result;
     }
 
+    public void pushNewURL(Link... links) {
+
+
+    }
+
     @Override
     public void pushNewURL(String... links) {
-        tempArrayLists.add(Arrays.asList(links));
-
-        if (tempArrayLists.size() > 200) {
-            synchronized (tempArrayLists) {
-                LinkedList<String> temList = new LinkedList<>();
-                for (List list : tempArrayLists) {
-                    temList.addAll(list);
-                }
-                Collections.shuffle(temList);
-
-                for (String url : temList) {
-                    if (!duplicateLinkHandler.isDuplicate(url))
-                        producer.send(new ProducerRecord<>(topic, url.hashCode(), url));
+        for(String url:links) {
+            if (!duplicateLinkHandler.isDuplicate(url)) {
+                try {
+                    String key = new URL(url).getHost();
+                    producer.send(new ProducerRecord<>(topic, key, url));
+                } catch (MalformedURLException e) {
+                    System.out.println("Wrong Exception");
                 }
             }
         }
