@@ -37,23 +37,28 @@ public class Crawler implements Runnable {
 
     @Override
     public void run() {
-        for (int i = 0; i < 50; i++) {
+        System.out.println("runned");
+        for (int i = 0; i < 200; i++) {
+            System.out.println("thread "+i);
             try {
                 sleep(35);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            int finalI = i;
             Thread thread = new Thread(() -> {
                 LinkedList<String> urlsOfThisThread = new LinkedList<>();
-                while (true) {
-                    if (urlsOfThisThread.size() < 10) {
-                        System.out.println("cc"+counter);
-                        System.out.println(urlsOfThisThread.size());
-                        System.out.println("finished");
 
-                        urlsOfThisThread.addAll(urlQueue.getUrls());
+                System.out.println("while true start"+ finalI);
+                while (true) {
+                    System.out.println("in start"+ finalI);
+                    if (urlsOfThisThread.size() < 10) {
+                        System.out.println("cc" + counter);
+                        List<String> list = urlQueue.getUrls();
+                        System.out.println(list.size());
+                        urlsOfThisThread.addAll(list);
                         System.out.println("finished");
-                    }else {
+                    } else {
                         WebDocument webDocument;
                         String url = urlsOfThisThread.pop();
                         try {
