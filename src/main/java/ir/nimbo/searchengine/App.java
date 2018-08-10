@@ -17,7 +17,7 @@ public class App {
     public static void main(String[] args) {
         System.out.println("main");
         Intiaizer.intialize();
-        Thread crawl = new Thread(new Crawler(new KafkaManager( "links",LOCAL_IP,"tes456787654t",90)));
+        Thread crawl = new Thread(new Crawler(new KafkaManager( "links",  SERVER_IP,"tes456787654t",90)));
         crawl.start();
     }
 }

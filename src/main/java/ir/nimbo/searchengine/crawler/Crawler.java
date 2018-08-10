@@ -47,11 +47,10 @@ public class Crawler implements Runnable {
             }
             int finalI = i;
             Thread thread = new Thread(() -> {
-                LinkedList<String> urlsOfThisThread = new LinkedList<>();
+                LinkedList<String> urlsOfThisThread = new LinkedList<>(urlQueue.getUrls());
 
                 System.out.println("while true start"+ finalI);
                 while (true) {
-                    System.out.println("in start"+ finalI);
                     if (urlsOfThisThread.size() < 10) {
                         System.out.println("cc" + counter);
                         List<String> list = urlQueue.getUrls();

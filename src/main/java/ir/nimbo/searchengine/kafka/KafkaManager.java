@@ -60,8 +60,6 @@ public class KafkaManager implements URLQueue {
     }
 
     public void pushNewURL(Link... links) {
-
-
     }
 
     @Override
