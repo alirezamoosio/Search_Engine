@@ -30,8 +30,9 @@ public class ElasticWebDaoImp implements WebDao {
     private Logger errorLogger = Logger.getLogger("error");
     private IndexRequest indexRequest;
     private BulkRequest bulkRequest;
-    private static int added=0;
-    private final Integer sync =2;
+    private static int added = 0;
+    private static final Integer sync = 0;
+
     public ElasticWebDaoImp() {
         client = new RestHighLevelClient(
                 RestClient.builder(
@@ -46,7 +47,7 @@ public class ElasticWebDaoImp implements WebDao {
     }
 
     @Override
-    public void put(WebDocument document) {
+    public synchronized void put(WebDocument document) {
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder();
             try {
@@ -88,7 +89,7 @@ public class ElasticWebDaoImp implements WebDao {
         searchRequest.source(searchSourceBuilder);
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 //        for(String necessaryWord:necessaryWords {
-            boolQueryBuilder.must(QueryBuilders.matchQuery("pageText", necessaryWord));
+        boolQueryBuilder.must(QueryBuilders.matchQuery("pageText", necessaryWord));
 //        }
 //        for(String preferredWord:preferredWords) {
 //            boolQueryBuilder.should(QueryBuilders.matchQuery("pageText", preferredWord));
@@ -103,7 +104,7 @@ public class ElasticWebDaoImp implements WebDao {
         searchRequest.source(sourceBuilder);
         SearchResponse searchResponse = null;
         boolean searchStatus = false;
-        while(!searchStatus){
+        while (!searchStatus) {
             try {
                 searchResponse = client.search(searchRequest);
                 searchStatus = true;
