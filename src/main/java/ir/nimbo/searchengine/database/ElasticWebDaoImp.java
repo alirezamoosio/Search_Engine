@@ -60,33 +60,42 @@ public class ElasticWebDaoImp implements WebDao {
                 bulkRequest.add(indexRequest);
                 indexRequest = new IndexRequest(index, "_doc");
             } catch (IOException e) {
+                System.out.println("here");
                 errorLogger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
             }
             if (bulkRequest.estimatedSizeInBytes() / 1000_000 >= elasticFlushSizeLimit ||
                     bulkRequest.numberOfActions() >= elasticFlushNumberLimit) {
                 BulkResponse bulkResponse = client.bulk(bulkRequest);
                 bulkRequest = new BulkRequest();
-
             }
         } catch (IOException e) {
+            System.out.println("error");
             errorLogger.error("ERROR! Couldn't add the document for " + document.getPagelink());
         }
     }
 
 
-    public Map<String, Float> search(String text) {
+    public Map<String, Float> search(String necessaryWord, ArrayList<String> preferredWords, ArrayList<String> forbiddenWords) {
         Map<String, Float> results = new HashMap<>();
         SearchRequest searchRequest = new SearchRequest(index);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchRequest.types("doc");
+//        searchRequest.types("_doc");
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         searchRequest.source(searchSourceBuilder);
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        boolQueryBuilder.must(QueryBuilders.matchQuery("pageText", text));
+//        for(String necessaryWord:necessaryWords {
+            boolQueryBuilder.must(QueryBuilders.matchQuery("pageText", necessaryWord));
+//        }
+//        for(String preferredWord:preferredWords) {
+//            boolQueryBuilder.should(QueryBuilders.matchQuery("pageText", preferredWord));
+//        }
+//        for(String forbiddenWord:forbiddenWords) {
+//            boolQueryBuilder.mustNot(QueryBuilders.matchQuery("pageText", forbiddenWord));
+//        }
         sourceBuilder.query(boolQueryBuilder);
         sourceBuilder.from(0);
-        sourceBuilder.size(10);
-        sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+        sourceBuilder.size(2000);
+        sourceBuilder.timeout(new TimeValue(5, TimeUnit.SECONDS));
         searchRequest.source(sourceBuilder);
         SearchResponse searchResponse = null;
         boolean searchStatus = false;
@@ -100,11 +109,11 @@ public class ElasticWebDaoImp implements WebDao {
             }
         }
         SearchHit[] hits = searchResponse.getHits().getHits();
-//        int i = 1;
+        int i = 1;
         for (SearchHit hit : hits) {
             Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-//            System.out.println(i + " " + sourceAsMap.get("pageLink") + " " + hit.getScore());
-//            i++;
+            System.out.println(i + " " + sourceAsMap.get("pageLink") + " " + hit.getScore());
+            i++;
             results.put((String) sourceAsMap.get("pageLink"), hit.getScore());
         }
 //        Collections.sort((List<Float>) results.values());

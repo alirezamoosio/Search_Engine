@@ -34,20 +34,26 @@ public class ElasticWebDaoImpTest {
         webDocument.setPagelink("www.my2.com");
         webDocument.setTextDoc("hello from the other side");
         webDocuments.add(webDocument);
-//        for(WebDocument webDocument1 : webDocuments){
-//            elasticWebDaoImp.put(webDocument1);
-//        }
+        for(WebDocument webDocument1 : webDocuments){
+            elasticWebDaoImp.put(webDocument1);
+        }
 //        elasticWebDaoImp.updateElastic();
         webDocument.setPagelink("www.my6.com");
         webDocument.setTextDoc("hello for fun!");
-//        elasticWebDaoImp.put(webDocument);
+        elasticWebDaoImp.put(webDocument);
 //        elasticWebDaoImp.updateElastic();
     }
 
     @Test
     public void search(){
         elasticWebDaoImp = new ElasticWebDaoImp();
-        Map<String, Float> searchResult = elasticWebDaoImp.search("world");
+        ArrayList<String> necessaryWords = new ArrayList<>();
+        ArrayList<String> forbiddenWords = new ArrayList<>();
+        ArrayList<String> preferredWords = new ArrayList<>();
+        necessaryWords.add("prime");
+//        forbiddenWords.add("U.S.A");
+//        preferredWords.add("world");
+        Map<String, Float> searchResult = elasticWebDaoImp.search("iran",preferredWords,forbiddenWords);
         System.out.println(searchResult.size());
         Set<String> hits = searchResult.keySet();
         for(String hit: hits){
