@@ -55,7 +55,7 @@ public class ElasticWebDaoImp implements WebDao {
                     builder.field("pageText", document.getTextDoc());
                 }
                 builder.endObject();
-//                indexRequest.source(builder);
+                indexRequest.source(builder);
                 bulkRequest.add(indexRequest);
                 size++;
             } catch (IOException e) {
