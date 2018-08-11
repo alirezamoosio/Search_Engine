@@ -81,7 +81,7 @@ public class Crawler implements Runnable {
                     }
                 }
             });
-            thread.setPriority(MAX_PRIORITY - 2);
+            thread.setPriority(MAX_PRIORITY - 1);
             thread.start();
         }
     }
