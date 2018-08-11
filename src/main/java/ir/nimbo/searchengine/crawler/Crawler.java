@@ -1,6 +1,7 @@
 package ir.nimbo.searchengine.crawler;
 
 import ir.nimbo.searchengine.crawler.language.LangDetector;
+import ir.nimbo.searchengine.database.ElasticWebDaoImp;
 import ir.nimbo.searchengine.database.HbaseWebDaoImp;
 import ir.nimbo.searchengine.database.WebDao;
 
@@ -38,6 +39,8 @@ public class Crawler implements Runnable {
         parser = Parser.getInstance();
         inputUrls = new ArrayList<>();
         System.out.println("end of crawler constructor");
+        hbaseDoa = new HbaseWebDaoImp();
+        elasticDao = new ElasticWebDaoImp();
     }
 
     @Override
