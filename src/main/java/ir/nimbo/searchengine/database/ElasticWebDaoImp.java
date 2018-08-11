@@ -23,13 +23,14 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class ElasticWebDaoImp implements WebDao {
-    private static int elasticFlushSizeLimit = 20;
-    private static int elasticFlushNumberLimit = 300;
+    private static int elasticFlushSizeLimit = 2;
+    private static int elasticFlushNumberLimit = 200;
     private RestHighLevelClient client;
     private String index = "pages";
     private Logger errorLogger = Logger.getLogger("error");
     private IndexRequest indexRequest;
     private BulkRequest bulkRequest;
+    private static int added=0;
 
     public ElasticWebDaoImp() {
         client = new RestHighLevelClient(
@@ -58,6 +59,7 @@ public class ElasticWebDaoImp implements WebDao {
                 indexRequest.source(builder);
                 bulkRequest.add(indexRequest);
                 indexRequest = new IndexRequest(index, "_doc");
+                added++;
             } catch (IOException e) {
                 System.out.println("here");
                 errorLogger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
@@ -66,6 +68,7 @@ public class ElasticWebDaoImp implements WebDao {
                     bulkRequest.numberOfActions() >= elasticFlushNumberLimit) {
                 BulkResponse bulkResponse = client.bulk(bulkRequest);
                 bulkRequest = new BulkRequest();
+                System.out.println(added+" added in elastic since start running");
             }
         } catch (IOException e) {
             System.out.println("error");
