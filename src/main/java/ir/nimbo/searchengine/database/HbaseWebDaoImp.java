@@ -27,7 +27,7 @@ public class HbaseWebDaoImp implements WebDao {
     private Configuration configuration;
     private List<Put> puts;
     private static int size = 0;
-    private final static int SIZE_LIMMIT = 200;
+    private final static int SIZE_LIMMIT = 100;
     private static int added = 0;
 
     public HbaseWebDaoImp() {
@@ -84,7 +84,7 @@ public class HbaseWebDaoImp implements WebDao {
                 t.close();
                 puts.clear();
                 added += size;
-                System.out.println(added + " added in elastic since start running");
+                System.out.println(added + " added in hbase since start running");
                 size = 0;
             } catch (IOException e) {
                 errorLogger.error("couldn't put document for " + document.getPagelink() + " into HBase!");
