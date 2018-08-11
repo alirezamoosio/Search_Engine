@@ -63,6 +63,7 @@ public class ElasticWebDaoImp implements WebDao {
             }
             if (size >= BULK_SIZE) {
                 BulkResponse bulkResponse = client.bulk(bulkRequest);
+                System.out.println("aad to elastic");
                 size = 0;
                 bulkRequest = new BulkRequest();
                 indexRequest = new IndexRequest(index, "doc");
