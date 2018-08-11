@@ -13,47 +13,50 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
+import static java.lang.Thread.sleep;
 
 public class FirstMustRun {
     private static Logger logger = Logger.getLogger(FirstMustRun.class);
     private static String topic;
     private static String portsWithId;
+
     private static int counter=0;
-    public static void fgh(String[] args) {
-        Intiaizer.intialize();
-        KafkaManager myKafkaManager = new KafkaManager("links", "localhost:9092,localhost:9093","teg23543edwuht123",100);
-        KafkaManager serverKafkaManager = new KafkaManager("links", "master-node:9092,worker-node:9092","teyuiiyt567gvbh",80);
-        if(true){
-            serverKafkaManager.getUrls().forEach(System.out::println);
-            return;
-        }
-        ArrayList<String> finalGoodList=new ArrayList<>();
-        DuplicateLinkHandler.refresh();
-        while (true){
-            for (String e : serverKafkaManager.getUrls()) {
-                try {
-                    String domain=new URL(e).getHost();
-                    if (!DuplicateLinkHandler.getInstance().isDuplicate(domain)) {
-                        System.out.print(counter++);
-                        System.out.println(domain);
-                        finalGoodList.add(e);
-                        DuplicateLinkHandler.getInstance().confirm(domain);
-                    }
-                } catch (MalformedURLException e1) {
-                    e1.printStackTrace();
-                }
-            }
-            if (counter>31200){
-                break;
-            }
-        }
-        Collections.shuffle(finalGoodList);
-        finalGoodList.forEach(System.out::println);}
+    public static void swsa(String[] args) {
+//        Intiaizer.intialize();
+//        KafkaManager myKafkaManager = new KafkaManager("links", "localhost:9092,localhost:9093","teg23543edwuht123",100);
+//        KafkaManager serverKafkaManager = new KafkaManager("links", "master-node:9092,worker-node:9092","teyuiiyt567gvbh",80);
+//        if(true){
+//            serverKafkaManager.getUrls().forEach(System.out::println);
+//            return;
+//        }
+//        ArrayList<String> finalGoodList=new ArrayList<>();
+//        DuplicateLinkHandler.refresh();
+//        while (true){
+//            for (String e : serverKafkaManager.getUrls()) {
+//                try {
+//                    String domain=new URL(e).getHost();
+//                    if (!DuplicateLinkHandler.getInstance().isDuplicate(domain)) {
+//                        System.out.print(counter++);
+//                        System.out.println(domain);
+//                        finalGoodList.add(e);
+//                        DuplicateLinkHandler.getInstance().confirm(domain);
+//                    }
+//                } catch (MalformedURLException e1) {
+//                    e1.printStackTrace();
+//                }
+//            }
+//            if (counter>31200){
+//                break;
+//            }
+//        }
+//        Collections.shuffle(finalGoodList);
+//        finalGoodList.forEach(System.out::println);
+    }
 
     private static void initializer2(String topic) {
         FirstMustRun.topic = topic;

@@ -7,6 +7,9 @@ import ir.nimbo.searchengine.kafka.KafkaManager;
  */
 import ir.nimbo.searchengine.crawler.Crawler;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -25,8 +28,8 @@ public class App {
         KafkaManager helper=new KafkaManager("helper",SERVER_IP,"test",2000);
         Thread crawl = new Thread(new Crawler(main,helper));
         crawl.start();
+        new Thread(Listener::listen).start();
         manageKafkaHelper(main,helper);
-
 
     }
 
