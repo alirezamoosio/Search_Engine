@@ -73,7 +73,7 @@ public class Crawler implements Runnable {
                         try {
                             webDocument = parser.parse(url);
                             ///////
-                            if (!duplicateLinkHandler.isDuplicate(url)) {
+                            if (!duplicateLinkHandler.isDuplicate(webDocument.getPagelink())) {
                                 counter += webDocument.getTextDoc().getBytes().length;
                                 tempUrlQueue.pushNewURL(giveGoodLink(webDocument));
                                 hbaseDoa.put(webDocument);
