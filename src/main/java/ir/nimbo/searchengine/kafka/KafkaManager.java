@@ -9,6 +9,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -22,6 +23,7 @@ public class KafkaManager implements URLQueue {
     private KafkaConsumer<String, String> consumer;
     private Producer<String, String> producer;
     private DuplicateLinkHandler duplicateLinkHandler;
+    private Logger errorLogger = Logger.getLogger("error");
 
     public KafkaManager(String topic, String portsWithIp, String groupID, int maxPoll) {
         this.topic = topic;
@@ -36,7 +38,7 @@ public class KafkaManager implements URLQueue {
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("max.poll.records", maxPoll);
         props.put("auto.offset.reset", "earliest");
-        System.out.println(props.toString());
+//        System.out.println(props.toString());
         consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singletonList(topic));
         producer = new KafkaProducer<>(props);

@@ -2,6 +2,7 @@ package ir.nimbo.searchengine.database;
 
 import ir.nimbo.searchengine.crawler.WebDocument;
 import org.apache.http.HttpHost;
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -115,12 +116,9 @@ public class ElasticWebDaoImp implements WebDao {
             }
         }
         SearchHit[] hits = searchResponse.getHits().getHits();
-        int i = 1;
         for (SearchHit hit : hits) {
             Map<String, Object> sourceAsMap = hit.getSourceAsMap();
             results.put((String) sourceAsMap.get("pageLink"), hit.getScore());
-            System.out.println(i + " " + sourceAsMap.get("pageLink") + " " + hit.getScore());
-            i++;
         }
         return sortByValues(results);
     }
