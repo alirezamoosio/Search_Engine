@@ -48,6 +48,7 @@ public class ElasticWebDaoImp implements WebDao {
     @Override
     public synchronized void put(WebDocument document) {
         try {
+            System.out.println(document.getPagelink());
             XContentBuilder builder = XContentFactory.jsonBuilder();
             try {
                 builder.startObject();
