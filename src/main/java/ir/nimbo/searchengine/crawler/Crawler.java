@@ -40,13 +40,14 @@ public class Crawler implements Runnable {
         inputUrls = new ArrayList<>();
         System.out.println("end of crawler constructor");
         hbaseDoa = new HbaseWebDaoImp();
+        hbaseDoa.createTable();
         elasticDao = new ElasticWebDaoImp();
     }
 
     @Override
     public void run() {
         System.out.println("running");
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 400; i++) {
             System.out.println("thread " + i);
             try {
                 sleep(35);
