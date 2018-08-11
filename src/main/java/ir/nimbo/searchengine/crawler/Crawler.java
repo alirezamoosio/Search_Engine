@@ -46,6 +46,7 @@ public class Crawler implements Runnable {
 
     @Override
     public void run() {
+        DuplicateLinkHandler duplicateLinkHandler = DuplicateLinkHandler.getInstance();
         System.out.println("running");
         for (int i = 0; i < 400; i++) {
             System.out.println("thread " + i);
@@ -72,10 +73,12 @@ public class Crawler implements Runnable {
                         try {
                             webDocument = parser.parse(url);
                             ///////
-                            counter += webDocument.getTextDoc().getBytes().length;
-                            tempUrlQueue.pushNewURL(giveGoodLink(webDocument));
-                            hbaseDoa.put(webDocument);
-                            elasticDao.put(webDocument);
+                            if (!duplicateLinkHandler.isDuplicate(url)) {
+                                counter += webDocument.getTextDoc().getBytes().length;
+                                tempUrlQueue.pushNewURL(giveGoodLink(webDocument));
+                                hbaseDoa.put(webDocument);
+                                elasticDao.put(webDocument);
+                            }
                         } catch (URLException | DuplicateLinkException | IllegalLanguageException | IOException | DomainFrequencyException ignored) {
                         }
                     }

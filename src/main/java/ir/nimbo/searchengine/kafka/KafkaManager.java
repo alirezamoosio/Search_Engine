@@ -23,7 +23,7 @@ public class KafkaManager implements URLQueue {
     private Producer<String, String> producer;
     private DuplicateLinkHandler duplicateLinkHandler;
 
-    public KafkaManager( String topic,String portsWithIp,String groupID,int maxPoll) {
+    public KafkaManager(String topic, String portsWithIp, String groupID, int maxPoll) {
         this.topic = topic;
         Properties props = new Properties();
         props.put("bootstrap.servers", portsWithIp);
@@ -64,15 +64,15 @@ public class KafkaManager implements URLQueue {
 
     @Override
     public void pushNewURL(String... links) {
-        for(String url:links) {
-            if (!duplicateLinkHandler.isDuplicate(url)) {
-                try {
-                    String key = new URL(url).getHost();
-                    producer.send(new ProducerRecord<>(topic, key, url));
-                } catch (MalformedURLException e) {
-                    System.out.println("Wrong Exception");
-                }
+        for (String url : links) {
+//            if (!duplicateLinkHandler.isDuplicate(url)) {
+            try {
+                String key = new URL(url).getHost();
+                producer.send(new ProducerRecord<>(topic, key, url));
+            } catch (MalformedURLException e) {
+                System.out.println("Wrong Exception");
             }
+//            }
         }
 
     }
