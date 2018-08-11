@@ -70,7 +70,8 @@ public class Crawler implements Runnable {
                             ///////
                             counter += webDocument.getTextDoc().getBytes().length;
                             tempUrlQueue.pushNewURL(giveGoodLink(webDocument));
-//                            hbaseDoa.put(webDocument);
+                            hbaseDoa.put(webDocument);
+                            elasticDao.put(webDocument);
                         } catch (URLException | DuplicateLinkException | IllegalLanguageException | IOException | DomainFrequencyException ignored) {
                         }
                     }
