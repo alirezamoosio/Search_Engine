@@ -1,5 +1,7 @@
 package ir.nimbo.searchengine;
 
+import ir.nimbo.searchengine.crawler.DuplicateLinkHandler;
+import ir.nimbo.searchengine.crawler.Parser;
 import ir.nimbo.searchengine.kafka.KafkaManager;
 
 /**
@@ -21,7 +23,8 @@ public class App {
     private static final String SERVER_IP = "master-node:9092,worker-node:9092";
     public static long timeOFStart = System.currentTimeMillis();
     public static Scanner scanner = new Scanner(System.in);
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
+        DuplicateLinkHandler.getInstance().loadHashTable();
         System.out.println("main");
         Intiaizer.intialize();
         KafkaManager main=new KafkaManager( "links",  SERVER_IP,"tes4654t",90);
