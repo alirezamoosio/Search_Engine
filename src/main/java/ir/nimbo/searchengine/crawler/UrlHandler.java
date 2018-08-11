@@ -17,7 +17,9 @@ public class UrlHandler {
         return link;
     }
 
-    static Link[] getLinks(Elements links, String mainUrl) {
+    static Link[]
+
+    getLinks(Elements links, String mainUrl) {
         return links.stream().filter(element -> !element.attr("href").contains("#"))
                 .map(element -> new Link(element, mainUrl))
                 .filter(e -> !e.getDomain().equals("ERROR"))

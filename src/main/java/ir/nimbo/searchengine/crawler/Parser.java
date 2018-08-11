@@ -17,19 +17,25 @@ import java.util.Arrays;
 import static java.lang.Thread.sleep;
 
 public class Parser {
-
-    private int numberOfNull=0;
-    private static int numberOfDuplicate=0;
-    private static int numberOfDomain=0;
-    private static Logger errorLogger = Logger.getLogger("error");
-    private static Logger infoLogger = Logger.getLogger("info");
+    private static int numberOfUrlGetted = 0;
+    private static int numberOfNull = 0;
+    private static int numberOfDuplicate = 0;
+    private static int numberOfDomainError = 0;
+    private static long lastTime = System.currentTimeMillis();
     private static int numberOFCrawledPage = 0;
     private static int lastNumberOfCrawledPage = 0;
-    private static long lastTime = System.currentTimeMillis();
+    private static int lastNumberOfDuplicate = 0;
+    private static int lastNumberOfDomainError = 0;
+    private static int lastNumberOfUrlGetted = 0;
+    private static Logger errorLogger = Logger.getLogger("error");
+    private static Logger infoLogger = Logger.getLogger("info");
     private static LangDetector langDetector;
     private static Parser parser;
     private static DuplicateLinkHandler duplicateLinkHandler = DuplicateLinkHandler.getInstance();
     private static DomainFrequencyHandler domainTimeHandler = DomainFrequencyHandler.getInstance();
+    private static int numberOfLanguagePassed = 0;
+
+    private static int lastNumberOfLanguagePassed = 0;
 
     static {
         new Thread(() -> {
@@ -38,11 +44,18 @@ public class Parser {
                     sleep(5000);
                 } catch (InterruptedException ignored) {
                 }
-                System.out.println("number of duplicate"+numberOfDuplicate);
-                System.out.println("number of domain time"+numberOfDomain);
-                System.out.println("crawled page" + numberOFCrawledPage);
-                System.out.println("rate of crawl=" + (double) (numberOFCrawledPage - lastNumberOfCrawledPage) / (System.currentTimeMillis() - lastTime) * 1000);
-                infoLogger.info("rate of crawl=" + (double) (numberOFCrawledPage - lastNumberOfCrawledPage) / (System.currentTimeMillis() - lastTime) * 1000);
+                int delta = (int) ((System.currentTimeMillis() - lastTime) / 1000);
+
+                System.out.println("num/rate of getted url     " + numberOfUrlGetted + "\t" + (double) (numberOfUrlGetted - lastNumberOfUrlGetted) / delta);
+                System.out.println("num/rate of passed lang    " + numberOfLanguagePassed + "\t" + (double) (numberOfLanguagePassed - lastNumberOfLanguagePassed) / delta);
+                System.out.println("num/rate of duplicate      " + numberOfDuplicate + "\t" + (double) (numberOfDuplicate - lastNumberOfDuplicate) / delta);
+                System.out.println("num/rate of domain Error   " + numberOfDomainError + "\t" + (double) (numberOfDomainError - lastNumberOfDomainError) / delta);
+                System.out.println("num/rate of crawl=         " + numberOFCrawledPage + "\t" + (double) (numberOFCrawledPage - lastNumberOfCrawledPage) / delta);
+                infoLogger.info("rate of crawl=" + (double) (numberOFCrawledPage - lastNumberOfCrawledPage) / delta);
+                lastNumberOfUrlGetted = numberOfUrlGetted;
+                lastNumberOfDuplicate = numberOfDuplicate;
+                lastNumberOfDomainError = numberOfDomainError;
+                lastNumberOfLanguagePassed = numberOfLanguagePassed;
                 lastNumberOfCrawledPage = numberOFCrawledPage;
                 lastTime = System.currentTimeMillis();
                 infoLogger.info(numberOFCrawledPage);
@@ -65,12 +78,12 @@ public class Parser {
     public WebDocument parse(String url) throws IllegalLanguageException, IOException, URLException, DuplicateLinkException, DomainFrequencyException {
         if (url == null) {
             errorLogger.error("url Error");
-            System.out.println("number of null"+numberOfNull++);
+            System.out.println("number of null" + numberOfNull++);
             throw new URLException();
         } else if (!domainTimeHandler.isAllow(url)) {
             errorLogger.error("url Error");
 
-            numberOfDomain++;
+            numberOfDomainError++;
             throw new DomainFrequencyException();
         } else if (duplicateLinkHandler.isDuplicate(url)) {
             errorLogger.error("url Error");
@@ -79,12 +92,14 @@ public class Parser {
             throw new DuplicateLinkException();
         }
         duplicateLinkHandler.confirm(url);
-
+        String text = null;
         try {
-            Document document = Jsoup.connect(url).validateTLSCertificates(false).ignoreHttpErrors(true).get();
+            Document document = Jsoup.connect(url).validateTLSCertificates(false).get();
+            numberOfUrlGetted++;
             WebDocument webDocument = new WebDocument();
-            String text = document.text();
-            langDetector.languageCheck(text);
+            text = document.text();
+            checkLanguage(document, text);
+            numberOfLanguagePassed++;
             Link[] links = UrlHandler.getLinks(document.getElementsByTag("a"), new URL(url).getHost());
             webDocument.setTextDoc(text);
             webDocument.setTitle(document.title());
@@ -99,8 +114,22 @@ public class Parser {
             errorLogger.error("Jsoup connection to " + url + " failed");
             throw e;
         } catch (IllegalLanguageException e) {
-            errorLogger.error("Couldn't recognize url language!");
+            System.out.println(url + "  " + text);
+            errorLogger.error("Couldn't recognize url language!" + url);
             throw e;
         }
     }
+
+    private void checkLanguage(Document document, String text) throws IllegalLanguageException {
+        try {
+            String lang = document.getElementsByAttribute("lang").get(0).attr("lang").toLowerCase();
+            if (lang.equals("en") || lang.startsWith("en-")) {
+                return;
+            }
+            throw new IllegalLanguageException();
+        } catch (RuntimeException e) {
+            langDetector.languageCheck(text);
+        }
+    }
 }
+

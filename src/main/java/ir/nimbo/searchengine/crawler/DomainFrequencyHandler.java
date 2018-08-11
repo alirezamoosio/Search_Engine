@@ -11,7 +11,7 @@ public class DomainFrequencyHandler {
     private long[] domainHashTableTime;
 
     private DomainFrequencyHandler() {
-        domainHashPrime = 196613;
+        domainHashPrime = 786433;
         domainHashTableTime = new long[domainHashPrime];
     }
 
