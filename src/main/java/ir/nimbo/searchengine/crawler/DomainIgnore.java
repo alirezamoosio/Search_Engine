@@ -64,7 +64,7 @@ public class DomainIgnore {
     }
 
 
-    public boolean isDuplicate(String url) {
+    public boolean isIgnore(String url) {
         int hash = url.hashCode() % hashPrime;
         if (hash < 0)
 

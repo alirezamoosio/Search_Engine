@@ -21,8 +21,8 @@ public class App {
     public static void main(String[] args) throws InterruptedException {
         System.out.println("main");
         Intiaizer.intialize();
-        KafkaManager main=new KafkaManager( "links",  LOCAL_IP,"tes4569787654t",90);
-        KafkaManager helper=new KafkaManager("helper",LOCAL_IP,"test",800);
+        KafkaManager main=new KafkaManager( "links",  SERVER_IP,"tes4654t",90);
+        KafkaManager helper=new KafkaManager("helper",SERVER_IP,"test",2000);
         Thread crawl = new Thread(new Crawler(main,helper));
         crawl.start();
         manageKafkaHelper(main,helper);
@@ -33,9 +33,9 @@ public class App {
     private static void manageKafkaHelper(KafkaManager main, KafkaManager helper) throws InterruptedException {
         LinkedList<String> linkedList=new LinkedList<>();
         while (true){
-            sleep(531);
+            sleep(2000);
             linkedList.addAll(helper.getUrls());
-            System.out.println(linkedList.size());
+            System.out.println("in temp kafka  :"+linkedList.size());
             if (linkedList.size()>60000){
                 System.out.println("shuffle and add");
                 Collections.shuffle(linkedList);

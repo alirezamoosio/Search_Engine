@@ -43,7 +43,7 @@ public class Crawler implements Runnable {
     @Override
     public void run() {
         System.out.println("running");
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 200; i++) {
             System.out.println("thread " + i);
             try {
                 sleep(35);
@@ -56,7 +56,7 @@ public class Crawler implements Runnable {
 
                 System.out.println("while true start" + finalI);
                 while (true) {
-                    if (urlsOfThisThread.size() < 100) {
+                    if (urlsOfThisThread.size() < 10) {
                         System.out.println("cc" + counter);
                         List<String> list = urlQueue.getUrls();
                         System.out.println(list.size());
@@ -76,7 +76,7 @@ public class Crawler implements Runnable {
                     }
                 }
             });
-            thread.setPriority(MAX_PRIORITY - 1);
+            thread.setPriority(MAX_PRIORITY - 2);
             thread.start();
         }
     }

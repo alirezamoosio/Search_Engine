@@ -32,6 +32,7 @@ public class Parser {
     private static LangDetector langDetector;
     private static Parser parser;
     private static DuplicateLinkHandler duplicateLinkHandler = DuplicateLinkHandler.getInstance();
+//    private static DomainIgnore domainIgnore=DomainIgnore.getInstance();
     private static DomainFrequencyHandler domainTimeHandler = DomainFrequencyHandler.getInstance();
     private static int numberOfLanguagePassed = 0;
 
@@ -106,6 +107,7 @@ public class Parser {
             webDocument.setPagelink(url);
             webDocument.setLinks(Arrays.asList(links));
             numberOFCrawledPage++;
+            System.out.println(url);
             return webDocument;
         } catch (MalformedURLException e) {
             errorLogger.error(url + " is malformatted!");
@@ -114,7 +116,9 @@ public class Parser {
             errorLogger.error("Jsoup connection to " + url + " failed");
             throw e;
         } catch (IllegalLanguageException e) {
-            System.out.println(url + "  " + text);
+//            String domain=new URL(url).getHost();
+//            domainIgnore.confirm(domain);
+//            System.out.println(domain);
             errorLogger.error("Couldn't recognize url language!" + url);
             throw e;
         }
