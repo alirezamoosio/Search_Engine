@@ -31,7 +31,7 @@ public class ElasticWebDaoImp implements WebDao {
     private IndexRequest indexRequest;
     private BulkRequest bulkRequest;
     private static int added=0;
-
+    private final Integer sync =2;
     public ElasticWebDaoImp() {
         client = new RestHighLevelClient(
                 RestClient.builder(
@@ -46,7 +46,7 @@ public class ElasticWebDaoImp implements WebDao {
     }
 
     @Override
-    public synchronized void put(WebDocument document) {
+    public void put(WebDocument document) {
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder();
             try {
@@ -66,9 +66,11 @@ public class ElasticWebDaoImp implements WebDao {
             }
             if (bulkRequest.estimatedSizeInBytes() / 1000_000 >= elasticFlushSizeLimit ||
                     bulkRequest.numberOfActions() >= elasticFlushNumberLimit) {
-                BulkResponse bulkResponse = client.bulk(bulkRequest);
-                bulkRequest = new BulkRequest();
-                System.out.println(added+" added in elastic since start running");
+                synchronized (sync) {
+                    BulkResponse bulkResponse = client.bulk(bulkRequest);
+                    bulkRequest = new BulkRequest();
+                    System.out.println(added + " added in elastic since start running");
+                }
             }
         } catch (IOException e) {
             System.out.println("error");
