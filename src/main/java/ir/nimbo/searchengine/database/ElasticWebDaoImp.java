@@ -48,7 +48,6 @@ public class ElasticWebDaoImp implements WebDao {
     @Override
     public synchronized void put(WebDocument document) {
         try {
-            System.out.println(document.getPagelink());
             XContentBuilder builder = XContentFactory.jsonBuilder();
             try {
                 builder.startObject();
@@ -59,6 +58,7 @@ public class ElasticWebDaoImp implements WebDao {
                 builder.endObject();
                 indexRequest.source(builder);
                 bulkRequest.add(indexRequest);
+                indexRequest = new IndexRequest(index, "_doc");
             } catch (IOException e) {
                 errorLogger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
             }
@@ -66,7 +66,6 @@ public class ElasticWebDaoImp implements WebDao {
                     bulkRequest.numberOfActions() >= elasticFlushNumberLimit) {
                 BulkResponse bulkResponse = client.bulk(bulkRequest);
                 bulkRequest = new BulkRequest();
-                indexRequest = new IndexRequest(index, "_doc");
 
             }
         } catch (IOException e) {
