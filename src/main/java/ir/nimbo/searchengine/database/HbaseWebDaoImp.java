@@ -15,7 +15,9 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HbaseWebDaoImp implements WebDao {
@@ -23,11 +25,16 @@ public class HbaseWebDaoImp implements WebDao {
     private TableName webPageTable = TableName.valueOf(ConfigManager.getInstance().getProperty(PropertyType.HBASE_TABLE));
     private String contextFamily = ConfigManager.getInstance().getProperty(PropertyType.HBASE_FAMILY);
     private Configuration configuration;
+    private List<Put> puts;
+    private static int size = 0;
+    private final static int SIZE_LIMMIT = 100;
+    private static int added = 0;
 
     public HbaseWebDaoImp() {
         configuration = HBaseConfiguration.create();
         String path = this.getClass().getClassLoader().getResource("hbase-site.xml").getPath();
         configuration.addResource(new Path(path));
+        puts = new ArrayList<>();
         try {
             HBaseAdmin.available(configuration);
         } catch (IOException e) {
@@ -57,23 +64,31 @@ public class HbaseWebDaoImp implements WebDao {
 
     @Override
     public synchronized void put(WebDocument document) {
-        try (Connection connection = ConnectionFactory.createConnection(configuration)) {
 //        for(WebDocument document : documents){
-            String outLinksColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_OUTLINKS);
-            String pageRankColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_PAGERANK);
-            Table t = connection.getTable(webPageTable);
-            Put put = new Put(Bytes.toBytes(generateRowKeyFromUrl(document.getPagelink())));
+        String outLinksColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_OUTLINKS);
+        String pageRankColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_PAGERANK);
+        Put put = new Put(Bytes.toBytes(generateRowKeyFromUrl(document.getPagelink())));
 //            put.addColumn(contextFamily.getBytes(), "pageLink".getBytes(), document.getPagelink().getBytes());
-            Gson gson = new Gson();
-            Map<String, String> outLinksMap = new HashMap<>();
-            document.getLinks().forEach(link -> outLinksMap.put(link.getUrl(), link.getAnchorLink()));
-            String serializedMap = gson.toJson(outLinksMap);
-            put.addColumn(contextFamily.getBytes(), outLinksColumn.getBytes(), serializedMap.getBytes());
-            put.addColumn(contextFamily.getBytes(), pageRankColumn.getBytes(), Bytes.toBytes(1.0));
-            t.put(put);
-            t.close();
-        } catch (IOException e) {
-            errorLogger.error("couldn't put document for " + document.getPagelink() + " into HBase!");
+        Gson gson = new Gson();
+        Map<String, String> outLinksMap = new HashMap<>();
+        document.getLinks().forEach(link -> outLinksMap.put(link.getUrl(), link.getAnchorLink()));
+        String serializedMap = gson.toJson(outLinksMap);
+        put.addColumn(contextFamily.getBytes(), outLinksColumn.getBytes(), serializedMap.getBytes());
+        put.addColumn(contextFamily.getBytes(), pageRankColumn.getBytes(), Bytes.toBytes(1.0));
+        puts.add(put);
+        size++;
+        if (size >= SIZE_LIMMIT) {
+            try (Connection connection = ConnectionFactory.createConnection(configuration)) {
+                Table t = connection.getTable(webPageTable);
+                t.put(puts);
+                t.close();
+                puts.clear();
+                added += size;
+                System.out.println(added + " added in hbase since start running");
+                size = 0;
+            } catch (IOException e) {
+                errorLogger.error("couldn't put document for " + document.getPagelink() + " into HBase!");
+            }
         }
     }
 
@@ -89,12 +104,11 @@ public class HbaseWebDaoImp implements WebDao {
         StringBuilder domainToHbase = new StringBuilder();
         for (int i = domainSections.length - 1; i >= 0; i--) {
             domainToHbase.append(domainSections[i]);
-            if(i == 0) {
+            if (i == 0) {
                 if (!url.startsWith(domain)) {
-                    domainToHbase.append("." + urlSections[0]);
+                    domainToHbase.append(".").append(urlSections[0]);
                 }
-            }
-            else {
+            } else {
                 domainToHbase.append(".");
             }
         }
