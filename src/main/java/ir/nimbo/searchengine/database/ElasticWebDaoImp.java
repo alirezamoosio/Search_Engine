@@ -35,7 +35,7 @@ public class ElasticWebDaoImp implements WebDao {
         client = new RestHighLevelClient(
                 RestClient.builder(
                         new HttpHost("94.23.214.93", 9200, "http")));
-        indexRequest = new IndexRequest(index, "doc");
+        indexRequest = new IndexRequest(index, "_doc");
         bulkRequest = new BulkRequest();
     }
 
@@ -63,10 +63,9 @@ public class ElasticWebDaoImp implements WebDao {
             }
             if (size >= BULK_SIZE) {
                 BulkResponse bulkResponse = client.bulk(bulkRequest);
-                System.out.println("aad to elastic");
                 size = 0;
                 bulkRequest = new BulkRequest();
-                indexRequest = new IndexRequest(index, "doc");
+                indexRequest = new IndexRequest(index, "_doc");
             }
         } catch (IOException e) {
             errorLogger.error("ERROR! Couldn't add the document for " + document.getPagelink());

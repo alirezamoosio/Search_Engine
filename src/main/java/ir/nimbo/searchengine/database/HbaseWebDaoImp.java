@@ -71,7 +71,6 @@ public class HbaseWebDaoImp implements WebDao {
             put.addColumn(contextFamily.getBytes(), outLinksColumn.getBytes(), serializedMap.getBytes());
             put.addColumn(contextFamily.getBytes(), pageRankColumn.getBytes(), Bytes.toBytes(1.0));
             t.put(put);
-            System.out.println("add to hbase");
             t.close();
         } catch (IOException e) {
             errorLogger.error("couldn't put document for " + document.getPagelink() + " into HBase!");
