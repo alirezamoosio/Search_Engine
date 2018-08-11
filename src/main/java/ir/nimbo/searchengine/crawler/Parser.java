@@ -107,7 +107,7 @@ public class Parser {
             webDocument.setPagelink(url);
             webDocument.setLinks(Arrays.asList(links));
             numberOFCrawledPage++;
-            System.out.println(url);
+//            System.out.println(url);
             return webDocument;
         } catch (MalformedURLException e) {
             errorLogger.error(url + " is malformatted!");
