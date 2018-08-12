@@ -87,7 +87,7 @@ public class HbaseWebDaoImp implements WebDao {
                     t.close();
                     puts.clear();
                     added += size;
-                    Metrics.numberOfPagesAddedToHbase = size;
+                    Metrics.numberOfPagesAddedToHbase = added;
                     size = 0;
                 } catch (IOException e) {
                     errorLogger.error("couldn't put document for " + document.getPagelink() + " into HBase!");
