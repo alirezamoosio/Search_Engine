@@ -91,6 +91,8 @@ public class HbaseWebDaoImp implements WebDao {
                     size = 0;
                 } catch (IOException e) {
                     errorLogger.error("couldn't put document for " + document.getPagelink() + " into HBase!");
+                }catch (RuntimeException e){
+                    errorLogger.error("habase error" + e.getMessage());
                 }
             }
         }
