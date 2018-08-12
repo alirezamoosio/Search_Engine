@@ -28,8 +28,6 @@ public class Crawler implements Runnable {
     private List<String> inputUrls;
     private WebDao elasticDao;
     private WebDao hbaseDoa;
-    private int counter;
-
     public Crawler(URLQueue urlQueue, URLQueue tempUrlQueue) {
         this.urlQueue = urlQueue;
         this.tempUrlQueue = tempUrlQueue;
@@ -58,22 +56,21 @@ public class Crawler implements Runnable {
                 System.out.println("while true start" + finalI);
                 while (true) {
                     if (urlsOfThisThread.size() < 10) {
-                        System.out.println("cc" + counter);
                         List<String> list = urlQueue.getUrls();
-                        System.out.println(list.size());
                         urlsOfThisThread.addAll(list);
-                        System.out.println("finished");
                     } else {
                         WebDocument webDocument;
                         String url = urlsOfThisThread.pop();
                         try {
                             webDocument = parser.parse(url);
                             ///////
-                            counter += webDocument.getTextDoc().getBytes().length;
+                            Metrics.byteCounter += webDocument.getTextDoc().getBytes().length;
                             tempUrlQueue.pushNewURL(giveGoodLink(webDocument));
                             hbaseDoa.put(webDocument);
                             elasticDao.put(webDocument);
                         } catch (RuntimeException e) {
+                            e.printStackTrace();
+                            System.out.println("ignored");
                             errorLogger.error("important"+e.getMessage());
                         } catch (URLException | DuplicateLinkException | IOException | IllegalLanguageException | DomainFrequencyException ignored) {
                         }

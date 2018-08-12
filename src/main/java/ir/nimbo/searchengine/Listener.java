@@ -1,6 +1,7 @@
 package ir.nimbo.searchengine;
 
 import ir.nimbo.searchengine.crawler.DuplicateLinkHandler;
+import ir.nimbo.searchengine.crawler.Metrics;
 import ir.nimbo.searchengine.crawler.Parser;
 
 import java.io.IOException;
@@ -74,7 +75,7 @@ public class Listener {
 
     public static void stat(PrintStream out,Scanner scanner) {
         out.println("salaamasaaav");;
-        Parser.stat(out);
+        Metrics.stat(out);
         out.flush();
         out.close();
     }
