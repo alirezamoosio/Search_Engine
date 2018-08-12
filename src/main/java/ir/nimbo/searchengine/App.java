@@ -42,9 +42,7 @@ public class App {
         while (true) {
             sleep(2000);
             linkedList.addAll(helper.getUrls());
-            System.out.println("in temp kafka  :" + linkedList.size());
             if (linkedList.size() > 60000) {
-                System.out.println("shuffle and add");
                 Collections.shuffle(linkedList);
                 main.pushNewURL(linkedList.toArray(new String[0]));
                 linkedList.clear();
