@@ -1,6 +1,7 @@
 package ir.nimbo.searchengine.database;
 
 import com.google.gson.Gson;
+import ir.nimbo.searchengine.metrics.Metrics;
 import ir.nimbo.searchengine.crawler.WebDocument;
 import ir.nimbo.searchengine.util.ConfigManager;
 import ir.nimbo.searchengine.util.PropertyType;
@@ -86,7 +87,7 @@ public class HbaseWebDaoImp implements WebDao {
                     t.close();
                     puts.clear();
                     added += size;
-                    infoLogger.info(added + " added in hbase since start running");
+                    Metrics.numberOfPagesAddedToHbase++;
                     size = 0;
                 } catch (IOException e) {
                     errorLogger.error("couldn't put document for " + document.getPagelink() + " into HBase!");

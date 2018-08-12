@@ -50,14 +50,16 @@ public class ElasticWebDaoImpTest {
         ArrayList<String> necessaryWords = new ArrayList<>();
         ArrayList<String> forbiddenWords = new ArrayList<>();
         ArrayList<String> preferredWords = new ArrayList<>();
-        necessaryWords.add("prime");
-//        forbiddenWords.add("U.S.A");
-//        preferredWords.add("world");
-        Map<String, Float> searchResult = elasticWebDaoImp.search("iran",preferredWords,forbiddenWords);
+        necessaryWords.add("health");
+        forbiddenWords.add("problem");
+        preferredWords.add("heart");
+        Map<String, Float> searchResult = elasticWebDaoImp.search(necessaryWords,preferredWords,forbiddenWords);
         System.out.println(searchResult.size());
         Set<String> hits = searchResult.keySet();
+        int i = 1;
         for(String hit: hits){
-            System.out.println(hit + "\t" + searchResult.get(hit));
+            System.out.println(i + "\t" + hit + "\t" + searchResult.get(hit));
+            i++;
         }
     }
 

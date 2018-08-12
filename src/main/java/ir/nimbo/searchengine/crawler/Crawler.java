@@ -1,6 +1,5 @@
 package ir.nimbo.searchengine.crawler;
 
-import ir.nimbo.searchengine.crawler.language.LangDetector;
 import ir.nimbo.searchengine.database.ElasticWebDaoImp;
 import ir.nimbo.searchengine.database.HbaseWebDaoImp;
 import ir.nimbo.searchengine.database.WebDao;
@@ -9,6 +8,7 @@ import ir.nimbo.searchengine.exception.DomainFrequencyException;
 import ir.nimbo.searchengine.exception.DuplicateLinkException;
 import ir.nimbo.searchengine.exception.IllegalLanguageException;
 import ir.nimbo.searchengine.exception.URLException;
+import ir.nimbo.searchengine.metrics.Metrics;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -30,10 +30,8 @@ public class Crawler implements Runnable {
     private List<String> inputUrls;
     private WebDao elasticDao;
     private WebDao hbaseDoa;
-    private int counter;
 
     public Crawler(URLQueue urlQueue, URLQueue tempUrlQueue) {
-//        hbaseDoa = new HbaseWebDaoImp();
         this.urlQueue = urlQueue;
         this.tempUrlQueue = tempUrlQueue;
         parser = Parser.getInstance();
@@ -58,18 +56,19 @@ public class Crawler implements Runnable {
                 while (true) {
                     if (urlsOfThisThread.size() < 10) {
                         List<String> list = urlQueue.getUrls();
-                        System.out.println(list.size());
                         urlsOfThisThread.addAll(list);
                     } else {
                         WebDocument webDocument;
                         String url = urlsOfThisThread.pop();
                         try {
                             webDocument = parser.parse(url);
-                            counter += webDocument.getTextDoc().getBytes().length;
+                            Metrics.byteCounter += webDocument.getTextDoc().getBytes().length;
                             tempUrlQueue.pushNewURL(giveGoodLink(webDocument));
                             hbaseDoa.put(webDocument);
                             elasticDao.put(webDocument);
-                        } catch (URLException | DuplicateLinkException | IllegalLanguageException | IOException | DomainFrequencyException ignored) {
+                        } catch (RuntimeException e) {
+                            errorLogger.error("important" + e.getMessage());
+                        } catch (URLException | DuplicateLinkException | IOException | IllegalLanguageException | DomainFrequencyException ignored) {
                         }
                     }
                 }
