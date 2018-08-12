@@ -51,9 +51,8 @@ public class Parser {
                 Metrics.numberOfDuplicate++;
                 throw new DuplicateLinkException();
             }
-            duplicateLinkHandler.confirm(url);
-
             Document document = Jsoup.connect(url).validateTLSCertificates(false).get();
+            duplicateLinkHandler.confirm(url);
             Metrics.numberOfUrlGetted++;
             WebDocument webDocument = new WebDocument();
             text = document.text();
