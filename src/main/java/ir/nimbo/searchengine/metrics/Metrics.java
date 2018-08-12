@@ -25,9 +25,7 @@ public class Metrics {
     private static int lastNumberOfUrlGetted = 0;
     private static int lastNumberOfPagesAddedToElastic = 0;
     private static int lastNumberOfPagesAddedToHbase = 0;
-
-
-    public static void stat(PrintStream out) {
+    public static void logStat(){
         int delta = (int) ((System.currentTimeMillis() - lastTime) / 1000);
         infoLogger.info("received MB     " + (byteCounter >> 20));
         infoLogger.info("num/rate of getted url     " + numberOfUrlGetted + "\t" + (double) (numberOfUrlGetted - lastNumberOfUrlGetted) / delta);
@@ -38,6 +36,17 @@ public class Metrics {
         infoLogger.info("num/rate of hbase=         " + numberOfPagesAddedToHbase + "\t" + (double) (numberOfPagesAddedToHbase - lastNumberOfPagesAddedToHbase) / delta);
         infoLogger.info("num/rate of elastic=         " + numberOfPagesAddedToElastic + "\t" + (double) (numberOfPagesAddedToElastic - lastNumberOfPagesAddedToElastic) / delta);
         infoLogger.info(numberOFCrawledPage + "number of crawled pages");
+        lastNumberOfUrlGetted = numberOfUrlGetted;
+        lastNumberOfDuplicate = numberOfDuplicate;
+        lastNumberOfDomainError = numberOfDomainError;
+        lastNumberOfLanguagePassed = numberOfLanguagePassed;
+        lastNumberOfCrawledPage = numberOFCrawledPage;
+        lastNumberOfPagesAddedToHbase = numberOfPagesAddedToHbase;
+        lastNumberOfPagesAddedToElastic = numberOfPagesAddedToElastic;
+        lastTime = System.currentTimeMillis();
+    }
+    public static void stat(PrintStream out) {
+        int delta = (int) ((System.currentTimeMillis() - lastTime) / 1000);
         out.println("received MB     " + (byteCounter >> 20));
         out.println("num/rate of getted url     " + numberOfUrlGetted + "\t" + (double) (numberOfUrlGetted - lastNumberOfUrlGetted) / delta);
         out.println("num/rate of passed lang    " + numberOfLanguagePassed + "\t" + (double) (numberOfLanguagePassed - lastNumberOfLanguagePassed) / delta);
@@ -65,7 +74,7 @@ public class Metrics {
             while (true) {
                 try {
                     sleep(20000);
-                    stat(System.out);
+                    logStat();
                 } catch (InterruptedException ignored) {
                 }
             }

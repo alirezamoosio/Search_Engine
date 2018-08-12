@@ -47,8 +47,7 @@ public class Crawler implements Runnable {
         for (int i = 0; i < 400; i++) {
             try {
                 sleep(35);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException ignored) {
             }
             int finalI = i;
             Thread thread = new Thread(() -> {

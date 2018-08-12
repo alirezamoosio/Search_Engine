@@ -72,7 +72,7 @@ public class KafkaManager implements URLQueue {
                 String key = new URL(url).getHost();
                 producer.send(new ProducerRecord<>(topic, key, url));
             } catch (MalformedURLException e) {
-                System.out.println("Wrong Exception" + url);
+                errorLogger.error("Wrong Exception" + url);
             }
 //            }
         }
