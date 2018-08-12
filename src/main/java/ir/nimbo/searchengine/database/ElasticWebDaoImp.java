@@ -65,7 +65,6 @@ public class ElasticWebDaoImp implements WebDao {
                 indexRequest = new IndexRequest(index, "_doc");
                 added++;
             } catch (IOException e) {
-                System.out.println("here");
                 errorLogger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
             }
             if (bulkRequest.estimatedSizeInBytes() / 1000_000 >= elasticFlushSizeLimit ||
@@ -73,8 +72,7 @@ public class ElasticWebDaoImp implements WebDao {
                 synchronized (sync) {
                     BulkResponse bulkResponse = client.bulk(bulkRequest);
                     bulkRequest = new BulkRequest();
-                    Metrics.numberOfPagesAddedToElastic++;
-                    infoLogger.info(added + " added in elastic since start running");
+                    Metrics.numberOfPagesAddedToElastic = added;
                 }
             }
         } catch (IOException e) {
