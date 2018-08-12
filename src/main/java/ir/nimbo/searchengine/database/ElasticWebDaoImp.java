@@ -32,6 +32,7 @@ public class ElasticWebDaoImp implements WebDao {
     private BulkRequest bulkRequest;
     private static int added = 0;
     private static final Integer sync = 0;
+    private static Logger infoLogger = Logger.getLogger("info");
 
     public ElasticWebDaoImp() {
         client = new RestHighLevelClient(
@@ -70,11 +71,10 @@ public class ElasticWebDaoImp implements WebDao {
                 synchronized (sync) {
                     BulkResponse bulkResponse = client.bulk(bulkRequest);
                     bulkRequest = new BulkRequest();
-                    System.out.println(added + " added in elastic since start running");
+                    infoLogger.info(added + " added in elastic since start running");
                 }
             }
         } catch (IOException e) {
-            System.out.println("error");
             errorLogger.error("ERROR! Couldn't add the document for " + document.getPagelink());
         }
     }

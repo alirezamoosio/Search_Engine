@@ -46,9 +46,7 @@ public class Crawler implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("running");
         for (int i = 0; i < 400; i++) {
-            System.out.println("thread " + i);
             try {
                 sleep(35);
             } catch (InterruptedException e) {
@@ -57,21 +55,16 @@ public class Crawler implements Runnable {
             int finalI = i;
             Thread thread = new Thread(() -> {
                 LinkedList<String> urlsOfThisThread = new LinkedList<>(urlQueue.getUrls());
-
-                System.out.println("while true start" + finalI);
                 while (true) {
                     if (urlsOfThisThread.size() < 10) {
-                        System.out.println("cc" + counter);
                         List<String> list = urlQueue.getUrls();
                         System.out.println(list.size());
                         urlsOfThisThread.addAll(list);
-                        System.out.println("finished");
                     } else {
                         WebDocument webDocument;
                         String url = urlsOfThisThread.pop();
                         try {
                             webDocument = parser.parse(url);
-                            ///////
                             counter += webDocument.getTextDoc().getBytes().length;
                             tempUrlQueue.pushNewURL(giveGoodLink(webDocument));
                             hbaseDoa.put(webDocument);

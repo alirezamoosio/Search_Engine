@@ -29,6 +29,7 @@ public class HbaseWebDaoImp implements WebDao {
     private static int size = 0;
     private final static int SIZE_LIMMIT = 100;
     private static int added = 0;
+    private static Logger infoLogger = Logger.getLogger("info");
 
     public HbaseWebDaoImp() {
         configuration = HBaseConfiguration.create();
@@ -85,7 +86,7 @@ public class HbaseWebDaoImp implements WebDao {
                     t.close();
                     puts.clear();
                     added += size;
-                    System.out.println(added + " added in hbase since start running");
+                    infoLogger.info(added + " added in hbase since start running");
                     size = 0;
                 } catch (IOException e) {
                     errorLogger.error("couldn't put document for " + document.getPagelink() + " into HBase!");
