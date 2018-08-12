@@ -1,6 +1,4 @@
 package ir.nimbo.searchengine.crawler;
-
-import ir.nimbo.searchengine.crawler.language.LangDetector;
 import ir.nimbo.searchengine.database.ElasticWebDaoImp;
 import ir.nimbo.searchengine.database.HbaseWebDaoImp;
 import ir.nimbo.searchengine.database.WebDao;
@@ -33,7 +31,6 @@ public class Crawler implements Runnable {
     private int counter;
 
     public Crawler(URLQueue urlQueue, URLQueue tempUrlQueue) {
-//        hbaseDoa = new HbaseWebDaoImp();
         this.urlQueue = urlQueue;
         this.tempUrlQueue = tempUrlQueue;
         parser = Parser.getInstance();
@@ -76,7 +73,9 @@ public class Crawler implements Runnable {
                             tempUrlQueue.pushNewURL(giveGoodLink(webDocument));
                             hbaseDoa.put(webDocument);
                             elasticDao.put(webDocument);
-                        } catch (URLException | DuplicateLinkException | IllegalLanguageException | IOException | DomainFrequencyException ignored) {
+                        } catch (RuntimeException e) {
+                            errorLogger.error("important"+e.getMessage());
+                        } catch (URLException | DuplicateLinkException | IOException | IllegalLanguageException | DomainFrequencyException ignored) {
                         }
                     }
                 }
