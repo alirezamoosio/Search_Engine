@@ -23,29 +23,30 @@ public class App {
     private static final String SERVER_IP = "master-node:9092,worker-node:9092";
     public static long timeOFStart = System.currentTimeMillis();
     public static Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) throws InterruptedException, IOException {
         DuplicateLinkHandler.getInstance().loadHashTable();
         System.out.println("main");
         Intiaizer.intialize();
-        KafkaManager main=new KafkaManager( "links",  SERVER_IP,"tes4654t",90);
-        KafkaManager helper=new KafkaManager("helper",SERVER_IP,"test",2000);
-        Thread crawl = new Thread(new Crawler(main,helper));
+        KafkaManager main = new KafkaManager("links", SERVER_IP, "tes4654t", 90);
+        KafkaManager helper = new KafkaManager("helper", SERVER_IP, "test", 2000);
+        Thread crawl = new Thread(new Crawler(main, helper));
         crawl.start();
         new Thread(Listener::listen).start();
-        manageKafkaHelper(main,helper);
+        manageKafkaHelper(main, helper);
 
     }
 
     private static void manageKafkaHelper(KafkaManager main, KafkaManager helper) throws InterruptedException {
-        LinkedList<String> linkedList=new LinkedList<>();
-        while (true){
+        LinkedList<String> linkedList = new LinkedList<>();
+        while (true) {
             sleep(2000);
             linkedList.addAll(helper.getUrls());
-            System.out.println("in temp kafka  :"+linkedList.size());
-            if (linkedList.size()>60000){
+            System.out.println("in temp kafka  :" + linkedList.size());
+            if (linkedList.size() > 60000) {
                 System.out.println("shuffle and add");
                 Collections.shuffle(linkedList);
-                main.pushNewURL(linkedList.toArray(new String [0]));
+                main.pushNewURL(linkedList.toArray(new String[0]));
                 linkedList.clear();
             }
         }

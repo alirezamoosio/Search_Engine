@@ -25,7 +25,7 @@ public class HbaseWebDaoImp implements WebDao {
     private TableName webPageTable = TableName.valueOf(ConfigManager.getInstance().getProperty(PropertyType.HBASE_TABLE));
     private String contextFamily = ConfigManager.getInstance().getProperty(PropertyType.HBASE_FAMILY);
     private Configuration configuration;
-    private List<Put> puts;
+    private final List<Put> puts;
     private static int size = 0;
     private final static int SIZE_LIMMIT = 100;
     private static int added = 0;
@@ -63,7 +63,7 @@ public class HbaseWebDaoImp implements WebDao {
     }
 
     @Override
-    public synchronized void put(WebDocument document) {
+    public void put(WebDocument document) {
 //        for(WebDocument document : documents){
         String outLinksColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_OUTLINKS);
         String pageRankColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_PAGERANK);
@@ -78,16 +78,18 @@ public class HbaseWebDaoImp implements WebDao {
         puts.add(put);
         size++;
         if (size >= SIZE_LIMMIT) {
-            try (Connection connection = ConnectionFactory.createConnection(configuration)) {
-                Table t = connection.getTable(webPageTable);
-                t.put(puts);
-                t.close();
-                puts.clear();
-                added += size;
-                System.out.println(added + " added in hbase since start running");
-                size = 0;
-            } catch (IOException e) {
-                errorLogger.error("couldn't put document for " + document.getPagelink() + " into HBase!");
+            synchronized (puts) {
+                try (Connection connection = ConnectionFactory.createConnection(configuration)) {
+                    Table t = connection.getTable(webPageTable);
+                    t.put(puts);
+                    t.close();
+                    puts.clear();
+                    added += size;
+                    System.out.println(added + " added in hbase since start running");
+                    size = 0;
+                } catch (IOException e) {
+                    errorLogger.error("couldn't put document for " + document.getPagelink() + " into HBase!");
+                }
             }
         }
     }
