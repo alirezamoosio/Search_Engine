@@ -6,8 +6,8 @@ import ir.nimbo.searchengine.metrics.Metrics;
 import ir.nimbo.searchengine.crawler.WebDocument;
 import ir.nimbo.searchengine.util.ConfigManager;
 import ir.nimbo.searchengine.util.PropertyType;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
+    import org.apache.hadoop.conf.Configuration;
+    import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
@@ -96,6 +96,7 @@ public class HbaseWebDaoImp implements WebDao {
             }
         }
     }
+
 
     public String generateRowKeyFromUrl(String url) {
         String domain;
