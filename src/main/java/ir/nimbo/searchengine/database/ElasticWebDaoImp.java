@@ -27,7 +27,7 @@ public class ElasticWebDaoImp implements WebDao {
     private static int elasticFlushSizeLimit = 2;
     private static int elasticFlushNumberLimit = 200;
     private RestHighLevelClient client;
-    private String index = "pages";
+    private String index = "webpage";
     private Logger errorLogger = Logger.getLogger("error");
     private IndexRequest indexRequest;
     private BulkRequest bulkRequest;

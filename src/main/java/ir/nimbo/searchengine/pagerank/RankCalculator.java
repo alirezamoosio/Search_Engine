@@ -25,7 +25,7 @@ import java.util.List;
 public class RankCalculator {
     private static final double DAMPING_FACTOR = 0.85;
     private static final double ITERATION_NUMBER = 50;
-    private static String familyName = ConfigManager.getInstance().getProperty(PropertyType.HBASE_FAMILY);
+    private static String familyName = ConfigManager.getInstance().getProperty(PropertyType.HBASE_FAMILY_1);
     private static String outLinksName = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_OUTLINKS);
     private static String pageRankName = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_PAGERANK);
     private SparkConf sparkConf;

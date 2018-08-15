@@ -1,6 +1,7 @@
 package ir.nimbo.searchengine.database;
 
 import com.google.gson.Gson;
+import ir.nimbo.searchengine.crawler.Link;
 import ir.nimbo.searchengine.metrics.Metrics;
 import ir.nimbo.searchengine.crawler.WebDocument;
 import ir.nimbo.searchengine.util.ConfigManager;
@@ -16,19 +17,17 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HbaseWebDaoImp implements WebDao {
     private static Logger errorLogger = Logger.getLogger("error");
     private TableName webPageTable = TableName.valueOf(ConfigManager.getInstance().getProperty(PropertyType.HBASE_TABLE));
-    private String contextFamily = ConfigManager.getInstance().getProperty(PropertyType.HBASE_FAMILY);
+    private String contextFamily = ConfigManager.getInstance().getProperty(PropertyType.HBASE_FAMILY_1);
+    private String rankFamily = ConfigManager.getInstance().getProperty(PropertyType.HBASE_FAMILY_2);
     private Configuration configuration;
     private final List<Put> puts;
     private static int size = 0;
-    private final static int SIZE_LIMMIT = 100;
+    private final static int SIZE_LIMMIT = 80;
     private static int added = 0;
     private static Logger infoLogger = Logger.getLogger("info");
 
@@ -48,9 +47,12 @@ public class HbaseWebDaoImp implements WebDao {
         try (Connection connection = ConnectionFactory.createConnection(configuration)) {
             Admin admin = connection.getAdmin();
             TableDescriptorBuilder tableDescriptorBuilder = TableDescriptorBuilder.newBuilder(webPageTable);
-            ColumnFamilyDescriptorBuilder anchorFamilyBuilder = ColumnFamilyDescriptorBuilder
+            ColumnFamilyDescriptorBuilder anchorFamilyBuilderContext = ColumnFamilyDescriptorBuilder
                     .newBuilder(contextFamily.getBytes());
-            tableDescriptorBuilder.setColumnFamily(anchorFamilyBuilder.build());
+            ColumnFamilyDescriptorBuilder anchorFamilyBuilderRank = ColumnFamilyDescriptorBuilder
+                    .newBuilder(contextFamily.getBytes());
+            tableDescriptorBuilder.setColumnFamily(anchorFamilyBuilderContext.build());
+            tableDescriptorBuilder.setColumnFamily(anchorFamilyBuilderRank.build());
             if (!admin.tableExists(webPageTable))
                 admin.createTable(tableDescriptorBuilder.build());
             System.out.println("create");
@@ -71,12 +73,9 @@ public class HbaseWebDaoImp implements WebDao {
         String pageRankColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_PAGERANK);
         Put put = new Put(Bytes.toBytes(generateRowKeyFromUrl(document.getPagelink())));
 //            put.addColumn(contextFamily.getBytes(), "pageLink".getBytes(), document.getPagelink().getBytes());
-        Gson gson = new Gson();
-        Map<String, String> outLinksMap = new HashMap<>();
-        document.getLinks().forEach(link -> outLinksMap.put(link.getUrl(), link.getAnchorLink()));
-        String serializedMap = gson.toJson(outLinksMap);
-        put.addColumn(contextFamily.getBytes(), outLinksColumn.getBytes(), serializedMap.getBytes());
-        put.addColumn(contextFamily.getBytes(), pageRankColumn.getBytes(), Bytes.toBytes(1.0));
+        List<Link> outLinks = new LinkedList<>(document.getLinks());
+        put.addColumn(contextFamily.getBytes(), outLinksColumn.getBytes(), outLinks.toString().getBytes());
+        put.addColumn(rankFamily.getBytes(), pageRankColumn.getBytes(), Bytes.toBytes(1.0));
         puts.add(put);
         size++;
         if (size >= SIZE_LIMMIT) {

@@ -3,13 +3,14 @@ package ir.nimbo.searchengine.crawler;
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Element;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class Link {
+public class Link implements Serializable {
     private String anchorLink;
     private String url;
-    private String domain;
+    transient private String domain;
 
     Link(Element element, String mainUrl) {
         this.anchorLink = element.text();
