@@ -6,8 +6,8 @@ import ir.nimbo.searchengine.metrics.Metrics;
 import ir.nimbo.searchengine.crawler.WebDocument;
 import ir.nimbo.searchengine.util.ConfigManager;
 import ir.nimbo.searchengine.util.PropertyType;
-    import org.apache.hadoop.conf.Configuration;
-    import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
@@ -91,7 +91,7 @@ public class HbaseWebDaoImp implements WebDao {
                     size = 0;
                 } catch (IOException e) {
                     errorLogger.error("couldn't put document for " + document.getPagelink() + " into HBase!");
-                }catch (RuntimeException e){
+                } catch (RuntimeException e) {
                     errorLogger.error("habase error" + e.getMessage());
                 }
             }
