@@ -5,21 +5,22 @@ import org.jsoup.nodes.Document;
 import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class WebDocument {
     private static final int NUMBER_OF_OWN_LINK_READ = 5;
     private String textDoc;
-    private List<Link> links;
+    private ArrayList<Link> links;
     private String title;
     private String pagelink;
 
-    public List<Link> getLinks() {
+    public ArrayList<Link> getLinks() {
         return links;
     }
 
     public void setLinks(List<Link> links) {
-        this.links = links;
+        this.links = (ArrayList<Link>) links;
     }
 
     public String getTitle() {

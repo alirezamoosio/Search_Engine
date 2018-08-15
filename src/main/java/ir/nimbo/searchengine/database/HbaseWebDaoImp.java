@@ -11,10 +11,12 @@ import ir.nimbo.searchengine.util.PropertyType;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.shaded.org.apache.commons.lang.SerializationUtils;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -72,9 +74,8 @@ public class HbaseWebDaoImp implements WebDao {
         String outLinksColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_OUTLINKS);
         String pageRankColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_PAGERANK);
         Put put = new Put(Bytes.toBytes(generateRowKeyFromUrl(document.getPagelink())));
-//            put.addColumn(contextFamily.getBytes(), "pageLink".getBytes(), document.getPagelink().getBytes());
-        List<Link> outLinks = new LinkedList<>(document.getLinks());
-        put.addColumn(contextFamily.getBytes(), outLinksColumn.getBytes(), outLinks.toString().getBytes());
+        byte[] outLinks = SerializationUtils.serialize(document.getLinks());
+        put.addColumn(contextFamily.getBytes(), outLinksColumn.getBytes(), outLinks);
         put.addColumn(rankFamily.getBytes(), pageRankColumn.getBytes(), Bytes.toBytes(1.0));
         puts.add(put);
         size++;

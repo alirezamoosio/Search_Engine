@@ -13,7 +13,9 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 import static java.lang.Thread.sleep;
 
@@ -62,7 +64,7 @@ public class Parser {
             webDocument.setTextDoc(text);
             webDocument.setTitle(document.title());
             webDocument.setPagelink(url);
-            webDocument.setLinks(Arrays.asList(links));
+            webDocument.setLinks(new ArrayList<>(Arrays.asList(links)));
             Metrics.numberOFCrawledPage++;
             return webDocument;
         } catch (MalformedURLException e) {
