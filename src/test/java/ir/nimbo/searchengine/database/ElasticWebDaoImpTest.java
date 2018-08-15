@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 
 public class ElasticWebDaoImpTest {
     private ElasticWebDaoImp elasticWebDaoImp;
+
     @Test
     public void put() {
         elasticWebDaoImp = new ElasticWebDaoImp();
@@ -34,7 +35,7 @@ public class ElasticWebDaoImpTest {
         webDocument.setPagelink("www.my2.com");
         webDocument.setTextDoc("hello from the other side");
         webDocuments.add(webDocument);
-        for(WebDocument webDocument1 : webDocuments){
+        for (WebDocument webDocument1 : webDocuments) {
             elasticWebDaoImp.put(webDocument1);
         }
 //        elasticWebDaoImp.updateElastic();
@@ -42,25 +43,6 @@ public class ElasticWebDaoImpTest {
         webDocument.setTextDoc("hello for fun!");
         elasticWebDaoImp.put(webDocument);
 //        elasticWebDaoImp.updateElastic();
-    }
-
-    @Test
-    public void search(){
-        elasticWebDaoImp = new ElasticWebDaoImp();
-        ArrayList<String> necessaryWords = new ArrayList<>();
-        ArrayList<String> forbiddenWords = new ArrayList<>();
-        ArrayList<String> preferredWords = new ArrayList<>();
-        necessaryWords.add("health");
-        forbiddenWords.add("problem");
-        preferredWords.add("heart");
-        Map<String, Float> searchResult = elasticWebDaoImp.search(necessaryWords,preferredWords,forbiddenWords);
-        System.out.println(searchResult.size());
-        Set<String> hits = searchResult.keySet();
-        int i = 1;
-        for(String hit: hits){
-            System.out.println(i + "\t" + hit + "\t" + searchResult.get(hit));
-            i++;
-        }
     }
 
 }

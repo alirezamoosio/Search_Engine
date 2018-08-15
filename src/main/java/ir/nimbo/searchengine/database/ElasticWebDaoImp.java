@@ -27,7 +27,7 @@ public class ElasticWebDaoImp implements WebDao {
     private static int elasticFlushSizeLimit = 2;
     private static int elasticFlushNumberLimit = 200;
     private RestHighLevelClient client;
-    private String index = "webpage";
+    private String index = "pages";
     private Logger errorLogger = Logger.getLogger("error");
     private IndexRequest indexRequest;
     private BulkRequest bulkRequest;
@@ -80,66 +80,4 @@ public class ElasticWebDaoImp implements WebDao {
         }
     }
 
-
-    public Map<String, Float> search(ArrayList<String> necessaryWords, ArrayList<String> preferredWords, ArrayList<String> forbiddenWords) {
-        Map<String, Float> results = new HashMap<>();
-        SearchRequest searchRequest = new SearchRequest(index);
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchRequest.types("_doc");
-        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        searchRequest.source(searchSourceBuilder);
-        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        for(String necessaryWord:necessaryWords) {
-            boolQueryBuilder.must(QueryBuilders.matchQuery("pageText", necessaryWord));
-        }
-        for(String preferredWord:preferredWords) {
-            boolQueryBuilder.should(QueryBuilders.matchQuery("pageText", preferredWord));
-        }
-        for(String forbiddenWord:forbiddenWords) {
-            boolQueryBuilder.mustNot(QueryBuilders.matchQuery("pageText", forbiddenWord));
-        }
-        sourceBuilder.query(boolQueryBuilder);
-        sourceBuilder.from(0);
-        sourceBuilder.size(20);
-        sourceBuilder.timeout(new TimeValue(5, TimeUnit.SECONDS));
-        searchRequest.source(sourceBuilder);
-        SearchResponse searchResponse = null;
-        boolean searchStatus = false;
-        while (!searchStatus) {
-            try {
-                searchResponse = client.search(searchRequest);
-                searchStatus = true;
-            } catch (IOException e) {
-                System.out.println("Elastic connection timed out! Trying again...");
-                searchStatus = false;
-            }
-        }
-        SearchHit[] hits = searchResponse.getHits().getHits();
-        for (SearchHit hit : hits) {
-            Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-            results.put((String) sourceAsMap.get("pageLink"), hit.getScore());
-        }
-        return sortByValues(results);
-    }
-
-    private static Map<String, Float> sortByValues(Map<String, Float> map) {
-        List<Map.Entry<String, Float>> list = new LinkedList<>(map.entrySet());
-        list.sort(new Compare());
-        Map<String, Float> sortedHashMap = new LinkedHashMap<String, Float>();
-        for (Map.Entry<String, Float> entry : list) {
-            sortedHashMap.put(entry.getKey(), entry.getValue());
-        }
-        return sortedHashMap;
-
-    }
-
-}
-
-class Compare implements Comparator{
-
-    @Override
-    public int compare(Object o1, Object o2) {
-        return ((Comparable) ((Map.Entry) (o2)).getValue())
-                .compareTo(((Map.Entry) (o1)).getValue());
-    }
 }

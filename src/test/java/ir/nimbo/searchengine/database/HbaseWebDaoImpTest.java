@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,9 +24,10 @@ public class HbaseWebDaoImpTest {
         HbaseWebDaoImp hbaseWebDaoImp = new HbaseWebDaoImp();
         WebDocument webDocument = new WebDocument();
         webDocument.setTitle("a");
-        hbaseWebDaoImp.createTable();
+        webDocument.setPagelink("www.insta.com");
+//        hbaseWebDaoImp.createTable();
         Link link = new Link("reza","www.instagram.com","instagram.com");
-        List<Link>list = new LinkedList<>();
+        List<Link>list = new ArrayList<>();
         list.add(link);
         webDocument.setLinks(list);
         hbaseWebDaoImp.put(webDocument);
