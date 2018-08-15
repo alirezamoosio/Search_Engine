@@ -17,7 +17,7 @@ public class Template implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Template)) return false;
         Template template = (Template) o;
-        return Objects.equals(getAttValue(), template.getAttValue()) &&
+        return Objects.equals(getAttributeValue(), template.getAttributeValue()) &&
                 Objects.equals(getFuncName(), template.getFuncName()) &&
                 Objects.equals(getDateFormatString(), template.getDateFormatString()) &&
                 Objects.equals(getRssLink(), template.getRssLink());
@@ -46,7 +46,7 @@ public class Template implements Serializable {
         return dateFormatString;
     }
 
-    public String getAttValue() {
+    public String getAttributeValue() {
         return attValue;
     }
 

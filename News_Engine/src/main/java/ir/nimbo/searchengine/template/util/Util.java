@@ -1,4 +1,4 @@
-package ir.nimbo.searchengine.Util;
+package ir.nimbo.searchengine.template.util;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

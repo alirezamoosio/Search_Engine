@@ -1,6 +1,6 @@
 package ir.nimbo.searchengine.template;
 
-import ir.nimbo.searchengine.Util.Util;
+import ir.nimbo.searchengine.template.util.Util;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
