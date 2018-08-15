@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ElasticWebDaoImp implements WebDao {
     private static int elasticFlushSizeLimit = 2;
-    private static int elasticFlushNumberLimit = 200;
+    private static int elasticFlushNumberLimit = 193;
     private RestHighLevelClient client;
     private String index = "pages";
     private Logger errorLogger = Logger.getLogger("error");
