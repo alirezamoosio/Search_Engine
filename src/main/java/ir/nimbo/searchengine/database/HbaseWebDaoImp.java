@@ -50,7 +50,7 @@ public class HbaseWebDaoImp implements WebDao {
             ColumnFamilyDescriptorBuilder anchorFamilyBuilderContext = ColumnFamilyDescriptorBuilder
                     .newBuilder(contextFamily.getBytes());
             ColumnFamilyDescriptorBuilder anchorFamilyBuilderRank = ColumnFamilyDescriptorBuilder
-                    .newBuilder(contextFamily.getBytes());
+                    .newBuilder(rankFamily.getBytes());
             tableDescriptorBuilder.setColumnFamily(anchorFamilyBuilderContext.build());
             tableDescriptorBuilder.setColumnFamily(anchorFamilyBuilderRank.build());
             if (!admin.tableExists(webPageTable))
