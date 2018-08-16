@@ -29,7 +29,7 @@ public class HbaseWebDaoImp implements WebDao {
     private Configuration configuration;
     private final List<Put> puts;
     private static int size = 0;
-    private final static int SIZE_LIMMIT = 51;
+    private final static int SIZE_LIMMIT = 100;
     private static int added = 0;
     private static Logger infoLogger = Logger.getLogger("info");
 
