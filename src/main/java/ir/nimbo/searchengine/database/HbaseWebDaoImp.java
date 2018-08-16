@@ -38,10 +38,14 @@ public class HbaseWebDaoImp implements WebDao {
         String path = this.getClass().getClassLoader().getResource("hbase-site.xml").getPath();
         configuration.addResource(new Path(path));
         puts = new ArrayList<>();
-        try {
-            HBaseAdmin.available(configuration);
-        } catch (IOException e) {
-            e.printStackTrace();
+        boolean status = false;
+        while (!status) {
+            try {
+                HBaseAdmin.available(configuration);
+                status = true;
+            } catch (IOException e) {
+                errorLogger.error(e.getMessage());
+            }
         }
     }
 
@@ -63,7 +67,7 @@ public class HbaseWebDaoImp implements WebDao {
             return true;
 
         } catch (IOException e) {
-            e.printStackTrace();
+            errorLogger.error(e.getMessage());
             return false;
         }
     }
