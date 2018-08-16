@@ -1,6 +1,6 @@
 package ir.nimbo.searchengine.template;
 
-import ir.nimbo.searchengine.Util.Util;
+import ir.nimbo.searchengine.template.util.Util;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -27,14 +27,16 @@ public class TemplateFinder {
 
     private static Template work(String rss) {
         Document rssDoc = Util.getPage(rss);
+        System.out.println(rssDoc.outerHtml());
         Document goodPage = findMaxTextPage(rssDoc);
         String dateFormat = findDateFormat(rssDoc);
-        String newsBodyAddress = findBodyAddress(goodPage);
-        return new Template(newsBodyAddress, "Class", dateFormat, rss);
+        String newsTextAddress = findTextAddress(goodPage);
+        return new Template(newsTextAddress, "Class", dateFormat, rss);
     }
 
-    private static String findBodyAddress(Document goodPage) {
+    private static String findTextAddress(Document goodPage) {
         ArrayList<MyElement> myElements = new ArrayList<>();
+        System.out.println(goodPage.children().size());
         Elements classElements = goodPage.getElementsByAttribute("class");
         for (int i = 0; i < classElements.size(); i++) {
             if (classElements.get(i).outerHtml().contains("mobile"))

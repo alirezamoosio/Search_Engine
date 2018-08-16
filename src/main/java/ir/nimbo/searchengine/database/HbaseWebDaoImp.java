@@ -1,7 +1,5 @@
 package ir.nimbo.searchengine.database;
 
-import com.google.gson.Gson;
-import ir.nimbo.searchengine.crawler.Link;
 import ir.nimbo.searchengine.metrics.Metrics;
 import ir.nimbo.searchengine.crawler.WebDocument;
 import ir.nimbo.searchengine.util.ConfigManager;
@@ -16,7 +14,6 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -29,7 +26,7 @@ public class HbaseWebDaoImp implements WebDao {
     private Configuration configuration;
     private final List<Put> puts;
     private static int size = 0;
-    private final static int SIZE_LIMMIT = 100;
+    private final static int SIZE_LIMIT = 100;
     private static int added = 0;
     private static Logger infoLogger = Logger.getLogger("info");
 
@@ -83,7 +80,7 @@ public class HbaseWebDaoImp implements WebDao {
         put.addColumn(rankFamily.getBytes(), pageRankColumn.getBytes(), Bytes.toBytes(1.0));
         puts.add(put);
         size++;
-        if (size >= SIZE_LIMMIT) {
+        if (size >= SIZE_LIMIT) {
             synchronized (puts) {
                 try (Connection connection = ConnectionFactory.createConnection(configuration)) {
                     Table t = connection.getTable(webPageTable);

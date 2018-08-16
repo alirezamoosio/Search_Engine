@@ -23,4 +23,6 @@ public class SiteTemplates {
         websiteName = websiteName.replace(" ", "_");
         return siteTemplates.get(websiteName);
     }
+
+
 }

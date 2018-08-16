@@ -1,7 +1,7 @@
 package ir.nimbo.searchengine;
 
 
-import ir.nimbo.searchengine.twitter.TweetHandler;
+import ir.nimbo.searchengine.trend.twitter.TweetHandler;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public class Main {
     public static void main(String[] args) throws IOException {
-        TweetHandler tweetHandler = new TweetHandler("Tweeet", "local[2]");
+        TweetHandler tweetHandler = new TweetHandler("tweet", "local[2]");
         tweetHandler.run();
     }
 }
