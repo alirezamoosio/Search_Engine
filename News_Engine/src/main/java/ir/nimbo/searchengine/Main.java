@@ -9,8 +9,13 @@ import java.io.IOException;
  * Hello world!
  */
 public class Main {
-    public static void main(String[] args) throws IOException {
-        TweetHandler tweetHandler = new TweetHandler("tweet", "local[2]");
-        tweetHandler.run();
+    public static void main(String[] args) {
+//        TweetHandler tweetHandler = new TweetHandler("tweet", "local[2]");
+//        tweetHandler.run();
+        try {
+            throw null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
