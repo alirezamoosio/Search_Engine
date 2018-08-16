@@ -11,6 +11,5 @@ public class NewsParser {
     public static String Parse(String domain, String url) throws IOException {
         Document document=Jsoup.connect(url).validateTLSCertificates(false).get();
         return document.getElementsByClass(siteTemplates.getTemplateByName(domain).getAttributeValue()).text();
-
     }
 }

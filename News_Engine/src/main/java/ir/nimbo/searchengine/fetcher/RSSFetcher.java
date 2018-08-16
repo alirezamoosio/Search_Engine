@@ -1,13 +1,8 @@
 package ir.nimbo.searchengine.fetcher;
 
-import com.sun.xml.internal.bind.v2.TODO;
-import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
-import java.util.concurrent.ArrayBlockingQueue;
 
 import static java.lang.Thread.MAX_PRIORITY;
 
@@ -18,8 +13,6 @@ public class RSSFetcher implements Runnable {
 
     public RSSFetcher(URLQueue<RSSLink> urlQueue) {
     }
-
-
     @Override
     public void run() {
         for (int i = 0; i < NUMBER_OF_THREAD; i++) {
