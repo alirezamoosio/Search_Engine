@@ -26,7 +26,7 @@ public class HbaseWebDaoImp implements WebDao {
     private Configuration configuration;
     private final List<Put> puts;
     private static int size = 0;
-    private final static int SIZE_LIMIT = 51;
+    private final static int SIZE_LIMIT = 100;
     private static int added = 0;
     private static Logger infoLogger = Logger.getLogger("info");
 
@@ -35,10 +35,14 @@ public class HbaseWebDaoImp implements WebDao {
         String path = this.getClass().getClassLoader().getResource("hbase-site.xml").getPath();
         configuration.addResource(new Path(path));
         puts = new ArrayList<>();
-        try {
-            HBaseAdmin.available(configuration);
-        } catch (IOException e) {
-            e.printStackTrace();
+        boolean status = false;
+        while (!status) {
+            try {
+                HBaseAdmin.available(configuration);
+                status = true;
+            } catch (IOException e) {
+                errorLogger.error(e.getMessage());
+            }
         }
     }
 
@@ -60,7 +64,7 @@ public class HbaseWebDaoImp implements WebDao {
             return true;
 
         } catch (IOException e) {
-            e.printStackTrace();
+            errorLogger.error(e.getMessage());
             return false;
         }
     }

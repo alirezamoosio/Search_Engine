@@ -21,9 +21,9 @@ import static java.lang.Thread.sleep;
 public class App {
     private static final String LOCAL_IP = "localhost:9092,localhost:9093";
     private static final String SERVER_IP = "master-node:9092,worker-node:9092";
-    public static long timeOFStart = System.currentTimeMillis();
-    public static Scanner scanner = new Scanner(System.in);
-
+//    public static long timeOFStart = System.currentTimeMillis();
+//    public static Scanner scanner = new Scanner(System.in);
+    private static int shuffleSize = 200000;
     public static void main(String[] args) throws InterruptedException, IOException {
         DuplicateLinkHandler.getInstance().loadHashTable();
         System.out.println("main");
@@ -42,7 +42,7 @@ public class App {
         while (true) {
             sleep(2000);
             linkedList.addAll(helper.getUrls());
-            if (linkedList.size() > 60000) {
+            if (linkedList.size() > shuffleSize) {
                 Collections.shuffle(linkedList);
                 main.pushNewURL(linkedList.toArray(new String[0]));
                 linkedList.clear();
