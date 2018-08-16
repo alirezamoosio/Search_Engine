@@ -7,9 +7,10 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 
 public class NewsParser {
-    static SiteTemplates siteTemplates=SiteTemplates.getInstance();
+    static SiteTemplates siteTemplates = SiteTemplates.getInstance();
+
     public static String Parse(String domain, String url) throws IOException {
-        Document document=Jsoup.connect(url).validateTLSCertificates(false).get();
+        Document document = Jsoup.connect(url).validateTLSCertificates(false).get();
         return document.getElementsByClass(siteTemplates.getTemplateByName(domain).getAttributeValue()).text();
     }
 }

@@ -7,7 +7,5 @@ public interface URLQueue<S> {
 
     void addUrls(List<S> url);
 
-    boolean offerUrls(List<S> url);
-
     int size();
 }
