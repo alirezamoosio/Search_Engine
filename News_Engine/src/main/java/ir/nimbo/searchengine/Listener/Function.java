@@ -36,10 +36,13 @@ public class Function {
     public static void addRss(PrintStream out, Scanner scanner) {
         out.print("please enter a rss address");
         String rss = scanner.next();
-        out.print("please enter tag of link in this rss");
-        String linkAdress = scanner.next();
         out.print("please enter domain of this site(it will be used for finding and if its template )");
         String rssDoamin = scanner.next();
+        SiteTemplates.getInstance().getSiteTemplates().
+        if (!SiteTemplates.getInstance().getSiteTemplates().containsKey(rssDoamin))
+        out.print("please enter tag of news link in this rss");
+        String newsTag = scanner.next();
+
 
     }
 

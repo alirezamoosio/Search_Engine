@@ -1,12 +1,11 @@
 package ir.nimbo.searchengine;
 
-import ir.nimbo.searchengine.fetcher.RSSLink;
-import ir.nimbo.searchengine.fetcher.URLQueue;
+import ir.nimbo.searchengine.fetcher.RSSQueue;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 
-public class Queue<T> implements URLQueue<T> {
+public class Queue<T> implements RSSQueue<T> {
     private ArrayBlockingQueue<T> queue;
 
     @Override

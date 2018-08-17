@@ -10,6 +10,7 @@ public class Template implements Serializable {
     private String funcName;
     private String dateFormatString;
     private String rssLink;
+    private String newsTag;
     private SimpleDateFormat dateFormatter;
 
     @Override
@@ -56,5 +57,13 @@ public class Template implements Serializable {
 
     public String getRssLink() {
         return rssLink;
+    }
+
+    public void setNewsTag(String newsTag) {
+        this.newsTag = newsTag;
+    }
+
+    public String getNewsTag() {
+        return newsTag;
     }
 }
