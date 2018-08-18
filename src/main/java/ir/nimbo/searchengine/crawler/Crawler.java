@@ -2,7 +2,7 @@ package ir.nimbo.searchengine.crawler;
 
 import ir.nimbo.searchengine.crawler.domainvalidation.UrlHandler;
 import ir.nimbo.searchengine.database.ElasticWebDaoImp;
-import ir.nimbo.searchengine.database.HbaseWebDaoImp;
+import ir.nimbo.searchengine.database.HBaseWebDaoImp;
 import ir.nimbo.searchengine.database.WebDao;
 
 import ir.nimbo.searchengine.database.webdocumet.WebDocument;
@@ -19,17 +19,17 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 
 import static java.lang.Thread.MAX_PRIORITY;
 import static java.lang.Thread.sleep;
 
 public class Crawler implements Runnable {
+    private static final int NUMBER_OF_THREADS = 400;
+    public static final int SLEEP_TIME = 35;
     private static Logger errorLogger = Logger.getLogger("error");
     private Parser parser;
     private URLQueue urlQueue;
     private URLQueue tempUrlQueue;
-    private List<String> inputUrls;
     private WebDao elasticDao;
     private WebDao hbaseDoa;
 
@@ -37,27 +37,25 @@ public class Crawler implements Runnable {
         this.urlQueue = urlQueue;
         this.tempUrlQueue = tempUrlQueue;
         parser = Parser.getInstance();
-        inputUrls = new ArrayList<>();
         System.out.println("end of crawler constructor");
-        hbaseDoa = new HbaseWebDaoImp();
+        hbaseDoa = new HBaseWebDaoImp();
         hbaseDoa.createTable();
         elasticDao = new ElasticWebDaoImp();
     }
 
     @Override
     public void run() {
-        for (int i = 0; i < 400; i++) {
+        for (int i = 0; i < NUMBER_OF_THREADS; i++) {
             try {
-                sleep(35);
+                //To make sure CPU can handle sudden start of many threads
+                sleep(SLEEP_TIME);
             } catch (InterruptedException ignored) {
             }
-            int finalI = i;
             Thread thread = new Thread(() -> {
                 LinkedList<String> urlsOfThisThread = new LinkedList<>(urlQueue.getUrls());
                 while (true) {
                     if (urlsOfThisThread.size() < 10) {
-                        List<String> list = urlQueue.getUrls();
-                        urlsOfThisThread.addAll(list);
+                        urlsOfThisThread.addAll(urlQueue.getUrls());
                     } else {
                         WebDocument webDocument;
                         String url = urlsOfThisThread.pop();
@@ -86,8 +84,9 @@ public class Crawler implements Runnable {
         if (internalLink.size() > 10) {
             Collections.shuffle(internalLink);
             externalLink.addAll(internalLink.subList(0, 10));
-        } else
+        } else {
             externalLink.addAll(internalLink);
+        }
         return externalLink.toArray(new String[0]);
     }
 }

@@ -25,13 +25,12 @@ import static java.lang.Thread.sleep;
 
 public class Parser {
     private static Logger errorLogger = Logger.getLogger("error");
-    private static Logger infoLogger = Logger.getLogger("info");
     private static LangDetector langDetector;
     private static Parser parser;
     private static DuplicateLinkHandler duplicateLinkHandler = DuplicateLinkHandler.getInstance();
     private static DomainFrequencyHandler domainTimeHandler = DomainFrequencyHandler.getInstance();
 
-    public static Parser getInstance() {
+    public synchronized static Parser getInstance() {
         if (parser == null)
             parser = new Parser();
         return parser;
@@ -46,20 +45,20 @@ public class Parser {
             errorLogger.error("number of null" + Metrics.numberOfNull++);
             throw new URLException();
         } else if (!domainTimeHandler.isAllow(url)) {
-            errorLogger.error("take less than 30s to request to "+url);
+            errorLogger.error("take less than 30s to request to " + url);
             Metrics.numberOfDomainError++;
             throw new DomainFrequencyException();
         }
         String text = null;
         try {
             if (duplicateLinkHandler.isDuplicate(url)) {
-                errorLogger.error(url+" is duplicate");
+                errorLogger.error(url + " is duplicate");
                 Metrics.numberOfDuplicate++;
                 throw new DuplicateLinkException();
             }
             Document document = Jsoup.connect(url).validateTLSCertificates(false).get();
             duplicateLinkHandler.confirm(url);
-            Metrics.numberOfUrlGetted++;
+            Metrics.numberOfUrlReceived++;
             WebDocument webDocument = new WebDocument();
             text = document.text();
             checkLanguage(document, text);
@@ -91,6 +90,7 @@ public class Parser {
             }
             throw new IllegalLanguageException();
         } catch (RuntimeException e) {
+            //getElementsByAttribute throws a NullPointerException if document doesn't have lang tag
             langDetector.languageCheck(text);
         }
     }

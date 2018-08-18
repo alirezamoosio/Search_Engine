@@ -12,15 +12,15 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class HbaseWebDaoImpTest {
+public class HBaseWebDaoImpTest {
     @Test
     public void createTest(){
-        HbaseWebDaoImp hbaseWebDaoImp = new HbaseWebDaoImp();
+        HBaseWebDaoImp hbaseWebDaoImp = new HBaseWebDaoImp();
         Assert.assertTrue(hbaseWebDaoImp.createTable());
     }
     @Test
     public void putTest(){
-        HbaseWebDaoImp hbaseWebDaoImp = new HbaseWebDaoImp();
+        HBaseWebDaoImp hbaseWebDaoImp = new HBaseWebDaoImp();
         WebDocument webDocument = new WebDocument();
         webDocument.setTitle("a");
         webDocument.setPagelink("www.insta.com");

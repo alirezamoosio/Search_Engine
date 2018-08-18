@@ -15,15 +15,12 @@ import java.util.LinkedList;
 import static java.lang.Thread.sleep;
 
 public class App {
-    private static final String LOCAL_IP = "localhost:9092,localhost:9093";
     private static final String SERVER_IP = "master-node:9092,worker-node:9092";
-//    public static long timeOFStart = System.currentTimeMillis();
-//    public static Scanner scanner = new Scanner(System.in);
-    private static int shuffleSize = 200000;
+    private static final int SHUFFLE_SIZE = 200000;
     public static void main(String[] args) throws InterruptedException, IOException {
         DuplicateLinkHandler.getInstance().loadHashTable();
         System.out.println("main");
-        Intiaizer.intialize();
+        Initializer.initialize();
         KafkaManager main = new KafkaManager("links", SERVER_IP, "tes4654t", 90);
         KafkaManager helper = new KafkaManager("helper", SERVER_IP, "test", 2000);
         Thread crawl = new Thread(new Crawler(main, helper));
@@ -38,7 +35,7 @@ public class App {
         while (true) {
             sleep(2000);
             linkedList.addAll(helper.getUrls());
-            if (linkedList.size() > shuffleSize) {
+            if (linkedList.size() > SHUFFLE_SIZE) {
                 Collections.shuffle(linkedList);
                 main.pushNewURL(linkedList.toArray(new String[0]));
                 linkedList.clear();
