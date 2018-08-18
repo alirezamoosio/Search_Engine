@@ -1,22 +1,17 @@
 package ir.nimbo.searchengine.fetcher;
-
-
-import ir.nimbo.searchengine.trend.WordCounter;
-
 import java.io.IOException;
 import java.util.LinkedList;
+import static ir.nimbo.searchengine.Config.NUMBER_OF_THREAD;
+import static ir.nimbo.searchengine.Config.READER_THREAD_PRIORITY;
 
-import static java.lang.Thread.MAX_PRIORITY;
+
 
 public class RSSFetcher implements Runnable {
-    private static final int NUMBER_OF_THREAD = 20;
-    private static final int READER_THREAD_PRIORITY = MAX_PRIORITY - 2;
     private RSSQueue<RSSLink> rssQueue;
 
     public RSSFetcher(RSSQueue<RSSLink> rssQueue) {
         this.rssQueue = rssQueue;
     }
-
     @Override
     public void run() {
         for (int i = 0; i < NUMBER_OF_THREAD; i++) {
@@ -33,7 +28,6 @@ public class RSSFetcher implements Runnable {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
                     // FIXME: 8/15/18
                 }
             });

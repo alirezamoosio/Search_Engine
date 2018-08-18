@@ -7,11 +7,11 @@ import java.util.Objects;
 
 public class Template implements Serializable {
     private String attValue;
+    private String domain;
     private String funcName;
     private String dateFormatString;
-    private String rssLink;
     private String newsTag;
-    private SimpleDateFormat dateFormatter;
+    private transient SimpleDateFormat dateFormatter;
 
     @Override
     public boolean equals(Object o) {
@@ -20,13 +20,12 @@ public class Template implements Serializable {
         Template template = (Template) o;
         return Objects.equals(getAttributeValue(), template.getAttributeValue()) &&
                 Objects.equals(getFuncName(), template.getFuncName()) &&
-                Objects.equals(getDateFormatString(), template.getDateFormatString()) &&
-                Objects.equals(getRssLink(), template.getRssLink());
+                Objects.equals(getDateFormatString(), template.getDateFormatString());
     }
 
-    public Template(String attrValue, String attrModel, String dateFormat, String rssLink) {
+    public Template( String attrModel,String attrValue, String dateFormat, String domain,String newsTag) {
         this.attValue = attrValue;
-        this.rssLink = rssLink;
+        this.domain = domain;
         switch (attrModel.toLowerCase()) {
             case "id":
                 funcName = "getElementById";
@@ -35,6 +34,7 @@ public class Template implements Serializable {
                 funcName = "getElementsBy" + attrModel;
                 break;
         }
+        this.newsTag=newsTag;
         this.dateFormatString = dateFormat;
         this.dateFormatter = new SimpleDateFormat(dateFormat, Locale.ENGLISH);
     }
@@ -55,8 +55,12 @@ public class Template implements Serializable {
         return funcName;
     }
 
-    public String getRssLink() {
-        return rssLink;
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     public void setNewsTag(String newsTag) {
@@ -65,5 +69,16 @@ public class Template implements Serializable {
 
     public String getNewsTag() {
         return newsTag;
+    }
+
+    @Override
+    public String toString() {
+        return "Template{" +
+                "attValue='" + attValue + '\'' +
+                ", domain='" + domain + '\'' +
+                ", funcName='" + funcName + '\'' +
+                ", dateFormatString='" + dateFormatString + '\'' +
+                ", newsTag='" + newsTag + '\'' +
+                '}';
     }
 }

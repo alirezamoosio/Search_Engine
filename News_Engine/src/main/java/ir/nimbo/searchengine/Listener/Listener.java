@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 import static java.lang.Thread.sleep;
 
@@ -15,17 +16,17 @@ public class Listener {
     private static final long NEXT_PORT_LISTEN_TIME_MILLISECONDS = 4000;
     private int listenPort = DEFAULT_LISTEN_PORT;
     private Class functionClass;
-    private String findMethodName(String input){
-        String[] strings = input.split("[ ]+");
-        String funcName = "";
-        for (String string : strings) {
-            funcName = funcName.concat(string.substring(0, 1).toUpperCase()).concat(string.substring(1).toLowerCase());
-        }
-        funcName = funcName.substring(0, 1).toLowerCase().concat(funcName.substring(1));
-        return funcName;
+    private boolean isListening = true;
+
+    private String findMethodName(String input) {
+        String[] strings = input.toLowerCase().split("[ ]+");
+        return strings[0] + Stream.of(strings).skip(1)
+                .map(element -> element.substring(0, 1).toUpperCase().concat(element.substring(1)))
+                .reduce(String::concat).get();
     }
+
     private void findAndCallMethod(PrintStream out, Scanner scanner) {
-        String funcName=findMethodName(scanner.nextLine());
+        String funcName = findMethodName(scanner.nextLine());
         if (funcName.equals("help")) {
             help(out, scanner);
             endMethod(out, scanner);
@@ -48,26 +49,20 @@ public class Listener {
 
     public void listen(Class functionClass) {
         this.functionClass = functionClass;
-        new Thread(() -> {
-            try (ServerSocket serverSocket = new ServerSocket(listenPort)) {
-                while (true) {
-                    PrintStream out = null;
-                    try (Socket socket = serverSocket.accept()) {
-                        sleep(NEXT_PORT_LISTEN_TIME_MILLISECONDS);
-                        Scanner scanner = new Scanner(socket.getInputStream());
-                        out = new PrintStream(socket.getOutputStream());
-                        findAndCallMethod(out, scanner);
-                    } catch (IOException | InterruptedException e) {
-                        e.printStackTrace(out);
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        new Thread(this::run).start();
     }
 
     public void help(PrintStream out, Scanner scanner) {
+        out.println("enter method name/all to show you it's/their's help ");
+        String methodName = scanner.nextLine();
+        switch (methodName) {
+            case "all":
+
+                break;
+            default:
+
+                break;
+        }
         for (Method method : functionClass.getMethods()) {
             out.print(method.getName());
             try {
@@ -89,4 +84,23 @@ public class Listener {
         }
     }
 
+    private void run() {
+        try (ServerSocket serverSocket = new ServerSocket(listenPort)) {
+            while (isListening) {
+                try (Socket socket = serverSocket.accept()) {
+                    sleep(NEXT_PORT_LISTEN_TIME_MILLISECONDS);
+                    Scanner scanner = new Scanner(socket.getInputStream());
+                    PrintStream out = new PrintStream(socket.getOutputStream());
+                    findAndCallMethod(out, scanner);
+                } catch (IOException | InterruptedException ignored) {
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setListening(boolean listening) {
+        isListening = listening;
+    }
 }

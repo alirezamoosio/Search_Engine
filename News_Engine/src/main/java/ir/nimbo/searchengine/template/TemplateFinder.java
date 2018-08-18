@@ -1,77 +1,53 @@
 package ir.nimbo.searchengine.template;
 
 import ir.nimbo.searchengine.template.util.Util;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static java.lang.Integer.min;
 
 public class TemplateFinder {
-    public static Template findTemplate(String rss) throws IOException {
-        try {
-            return work(rss);
-        }catch (RuntimeException err){
-            if (err.getMessage().equals("connection failed"))
-                throw new  IOException();
-            else
-                throw err;
-        }
-    }
-
-    private static Template work(String rss) {
-        Document rssDoc = Util.getPage(rss);
-        System.out.println(rssDoc.outerHtml());
-        Document goodPage = findMaxTextPage(rssDoc);
+    public static Template findTemplate(String rss, String rssDomain, String newsTag) throws IOException {
+        Document rssDoc = Jsoup.connect(rss).get();
+        Document goodPage = findMaxTextPage(rssDoc, newsTag);
         String dateFormat = findDateFormat(rssDoc);
         String newsTextAddress = findTextAddress(goodPage);
-        return new Template(newsTextAddress, "Class", dateFormat, rss);
+        return new Template( "Class",newsTextAddress, dateFormat, rssDomain,newsTag);
     }
 
     private static String findTextAddress(Document goodPage) {
-        ArrayList<MyElement> myElements = new ArrayList<>();
-        System.out.println(goodPage.children().size());
-        Elements classElements = goodPage.getElementsByAttribute("class");
-        for (int i = 0; i < classElements.size(); i++) {
-            if (classElements.get(i).outerHtml().contains("mobile"))
-                continue;
-            int numberOFDot = classElements.get(i).text().split("[.]+").length;
-            myElements.add(new MyElement(classElements.get(i), numberOFDot));
-        }
+        List<MyElement> myElements = goodPage.getElementsByAttribute("class").stream()
+                .filter(classElement -> !classElement.outerHtml().contains("mobile"))
+                .map(MyElement::new).collect(Collectors.toList());
         Collections.reverse(myElements);
-        Collections.sort(myElements);
-        Collections.reverse(myElements);
-        for (int i = 0; i < myElements.size() / 5; i++) {
+        myElements.sort(Collections.reverseOrder());
+        for (int i = 0; i < myElements.size(); i++) {
             if (!myElements.get(i).getElement().text().contains(myElements.get(i + 1).getElement().text())) {
                 return myElements.get(i).getElement().className();
             }
         }
         return null;
     }
+
     private static String findDateFormat(Document rssDoc) {
-        Elements elementsOfPubDate = rssDoc.getElementsByTag("pubDate");
-        return DateFomatFinder.parse(elementsOfPubDate.get(0).text());
+        return rssDoc.getElementsByTag("pubDate").stream().findFirst()
+                .map(Element::text).map(DateFormatFinder::parse).get();
     }
-    private static Document findMaxTextPage(Document rssDoc) {
-        Elements elementsOfLinks = rssDoc.getElementsByTag("link");
-        Document maxTextPage = null;
-        int maxTextSize = -1;
-        ArrayList<Document> documentArrayList=new ArrayList<>();
-        elementsOfLinks.subList(4,min(20,elementsOfLinks.size())).parallelStream().forEach(
-                element-> documentArrayList.add(Util.getPage(element.text())));
-        for (Document document : documentArrayList) {
-            if (document.text().length() > maxTextSize) {
-                maxTextSize = document.text().length();
-                maxTextPage=document;
-            }
-        }
-        return maxTextPage;
+
+    private static Document findMaxTextPage(Document rssDoc, String newsTag) {
+        return rssDoc.getElementsByTag("item").stream()
+                .flatMap(element -> element.getElementsByTag(newsTag).stream()).skip(4).limit(25)
+                .parallel().map(Element::text).map(Util::getPage)
+                .max(Comparator.comparing(a -> a.text().length())).get();
     }
 }
 
@@ -79,40 +55,22 @@ class MyElement implements Comparable<MyElement> {
     private int numberOfDots;
     private Element element;
 
-    MyElement(Element element, int numberOfDots) {
-        this.numberOfDots = numberOfDots;
+    MyElement(Element element) {
         this.element = element;
+        String string = element.text().replaceAll("[.]+",".");
+        numberOfDots = string.length() - string.replaceAll("[.]+", "").length();
     }
 
     @Override
     public int compareTo(MyElement o) {
-        if (numberOfDots == o.getNumberOfDots()) {
-            return 0;
-        } else if (numberOfDots > o.getNumberOfDots()) {
-            return 1;
-        }
-        return -1;
+        return numberOfDots - o.numberOfDots;
     }
-
-
-    int getNumberOfDots() {
-        return numberOfDots;
-    }
-
-    void setNumberOfDots(int numberOfDots) {
-        this.numberOfDots = numberOfDots;
-    }
-
     Element getElement() {
         return element;
     }
-
-    void setElement(Element element) {
-        this.element = element;
-    }
 }
 
-class DateFomatFinder {
+class DateFormatFinder {
 
     private static final String[] formats =
             {
@@ -135,18 +93,14 @@ class DateFomatFinder {
                     "MM/dd/yyyy",
             };
 
-    public static String parse(String d) {
-        if (d != null) {
-            for (String parse : formats) {
-                SimpleDateFormat sdf = new SimpleDateFormat(parse);
-                try {
-                    sdf.parse(d);
-                    return parse;
-                } catch (ParseException ignored) {
-                }
+    static String parse(String date) {
+        return Stream.of(formats).filter(format -> {
+            try {
+                new SimpleDateFormat(format).parse(date);
+                return true;
+            } catch (ParseException e) {
+                return false;
             }
-        }
-
-        return null;
+        }).findFirst().get();
     }
 }

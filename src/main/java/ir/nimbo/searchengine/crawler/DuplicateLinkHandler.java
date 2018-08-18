@@ -69,7 +69,5 @@ public class DuplicateLinkHandler {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-//must be called
-//its important before downing system
     }
 }

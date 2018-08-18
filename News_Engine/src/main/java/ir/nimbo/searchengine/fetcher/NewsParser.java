@@ -11,7 +11,7 @@ public class NewsParser implements Runnable {
 
     public static String Parse(String domain, String url) throws IOException {
         Document document = Jsoup.connect(url).validateTLSCertificates(false).get();
-        return document.getElementsByClass(siteTemplates.getTemplateByName(domain).getAttributeValue()).text();
+        return document.getElementsByClass(siteTemplates.getSiteTemplates().get(domain).getAttributeValue()).text();
     }
 
     @Override

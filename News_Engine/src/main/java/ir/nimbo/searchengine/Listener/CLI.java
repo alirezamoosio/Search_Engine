@@ -8,4 +8,6 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 public @interface CLI {
     String help() default "";
+
+    String name()default "unknown";
 }

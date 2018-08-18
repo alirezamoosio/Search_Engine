@@ -5,10 +5,6 @@ import java.util.LinkedHashMap;
 public class SiteTemplates {
     private static SiteTemplates ourInstance;
 
-    public static void init() {
-        ourInstance = new SiteTemplates();
-    }
-
     public static SiteTemplates getInstance() {
         return ourInstance;
     }
@@ -19,10 +15,11 @@ public class SiteTemplates {
         return siteTemplates;
     }
 
-    public Template getTemplateByName(String websiteName) {
-        websiteName = websiteName.replace(" ", "_");
-        return siteTemplates.get(websiteName);
+    public void saveTemplate() {
+        // TODO: 8/18/18  
     }
 
-
+    public void loadTemplates() {
+        // TODO: 8/18/18  
+    }
 }
