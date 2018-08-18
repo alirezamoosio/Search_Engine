@@ -1,11 +1,10 @@
 package ir.nimbo.searchengine.database;
 
+import ir.nimbo.searchengine.database.webdocumet.WebDocument;
 import ir.nimbo.searchengine.metrics.Metrics;
-import ir.nimbo.searchengine.crawler.WebDocument;
 import ir.nimbo.searchengine.util.ConfigManager;
 import ir.nimbo.searchengine.util.PropertyType;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
@@ -18,7 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-public class HbaseWebDaoImp implements WebDao {
+public class HBaseWebDaoImp implements WebDao {
     private static Logger errorLogger = Logger.getLogger("error");
     private TableName webPageTable = TableName.valueOf(ConfigManager.getInstance().getProperty(PropertyType.HBASE_TABLE));
     private String contextFamily = ConfigManager.getInstance().getProperty(PropertyType.HBASE_FAMILY_1);
@@ -28,12 +27,10 @@ public class HbaseWebDaoImp implements WebDao {
     private static int size = 0;
     private final static int SIZE_LIMIT = 100;
     private static int added = 0;
-    private static Logger infoLogger = Logger.getLogger("info");
 
-    public HbaseWebDaoImp() {
+    public HBaseWebDaoImp() {
         configuration = HBaseConfiguration.create();
-        String path = this.getClass().getClassLoader().getResource("hbase-site.xml").getPath();
-        configuration.addResource(new Path(path));
+        configuration.addResource(getClass().getResourceAsStream("/hbase-site.xml"));
         puts = new ArrayList<>();
         boolean status = false;
         while (!status) {
@@ -71,7 +68,6 @@ public class HbaseWebDaoImp implements WebDao {
 
     @Override
     public void put(WebDocument document) {
-//        for(WebDocument document : documents){
         String outLinksColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_OUTLINKS);
         String pageRankColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_PAGERANK);
         Put put = new Put(Bytes.toBytes(generateRowKeyFromUrl(document.getPagelink())));
@@ -88,19 +84,19 @@ public class HbaseWebDaoImp implements WebDao {
                     t.close();
                     puts.clear();
                     added += size;
-                    Metrics.numberOfPagesAddedToHbase = added;
+                    Metrics.numberOfPagesAddedToHBase = added;
                     size = 0;
                 } catch (IOException e) {
                     errorLogger.error("couldn't put document for " + document.getPagelink() + " into HBase!");
                 } catch (RuntimeException e) {
-                    errorLogger.error("habase error" + e.getMessage());
+                    errorLogger.error("HBase error" + e.getMessage());
                 }
             }
         }
     }
 
 
-    public String generateRowKeyFromUrl(String url) {
+    private String generateRowKeyFromUrl(String url) {
         String domain;
         try {
             domain = new URL(url).getHost();
@@ -109,17 +105,17 @@ public class HbaseWebDaoImp implements WebDao {
         }
         String[] urlSections = url.split(domain);
         String[] domainSections = domain.split("\\.");
-        StringBuilder domainToHbase = new StringBuilder();
+        StringBuilder domainToHBase = new StringBuilder();
         for (int i = domainSections.length - 1; i >= 0; i--) {
-            domainToHbase.append(domainSections[i]);
+            domainToHBase.append(domainSections[i]);
             if (i == 0) {
                 if (!url.startsWith(domain)) {
-                    domainToHbase.append(".").append(urlSections[0]);
+                    domainToHBase.append(".").append(urlSections[0]);
                 }
             } else {
-                domainToHbase.append(".");
+                domainToHBase.append(".");
             }
         }
-        return domainToHbase + "-" + urlSections[urlSections.length - 1];
+        return domainToHBase + "-" + urlSections[urlSections.length - 1];
     }
 }

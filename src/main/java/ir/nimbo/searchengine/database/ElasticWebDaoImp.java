@@ -1,7 +1,7 @@
 package ir.nimbo.searchengine.database;
 
+import ir.nimbo.searchengine.database.webdocumet.WebDocument;
 import ir.nimbo.searchengine.metrics.Metrics;
-import ir.nimbo.searchengine.crawler.WebDocument;
 import org.apache.http.HttpHost;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -16,8 +16,6 @@ import java.io.IOException;
 
 
 public class ElasticWebDaoImp implements WebDao {
-    private static int elasticFlushSizeLimit = 2;
-    private static int elasticFlushNumberLimit = 193;
     private RestHighLevelClient client;
     private String index = "pages";
     private Logger errorLogger = Logger.getLogger("error");
@@ -25,7 +23,8 @@ public class ElasticWebDaoImp implements WebDao {
     private BulkRequest bulkRequest;
     private static int added = 0;
     private static final Integer sync = 0;
-    private static Logger infoLogger = Logger.getLogger("info");
+    private static final int ELASTIC_FLUSH_SIZE_LIMIT = 2;
+    private static final int ELASTIC_FLUSH_NUMBER_LIMIT = 193;
 
     public ElasticWebDaoImp() {
         client = new RestHighLevelClient(
@@ -42,7 +41,7 @@ public class ElasticWebDaoImp implements WebDao {
     }
 
     @Override
-    public synchronized void put(WebDocument document) {
+    public void put(WebDocument document) {
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder();
             try {
@@ -59,10 +58,10 @@ public class ElasticWebDaoImp implements WebDao {
             } catch (IOException e) {
                 errorLogger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
             }
-            if (bulkRequest.estimatedSizeInBytes() / 1000_000 >= elasticFlushSizeLimit ||
-                    bulkRequest.numberOfActions() >= elasticFlushNumberLimit) {
+            if (bulkRequest.estimatedSizeInBytes() / 1000_000 >= ELASTIC_FLUSH_SIZE_LIMIT ||
+                    bulkRequest.numberOfActions() >= ELASTIC_FLUSH_NUMBER_LIMIT) {
                 synchronized (sync) {
-                    BulkResponse bulkResponse = client.bulk(bulkRequest);
+                    client.bulk(bulkRequest);
                     bulkRequest = new BulkRequest();
                     Metrics.numberOfPagesAddedToElastic = added;
                 }

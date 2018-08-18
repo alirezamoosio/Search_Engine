@@ -1,23 +1,9 @@
 package ir.nimbo.searchengine.database;
 
-import ir.nimbo.searchengine.crawler.WebDocument;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
+import ir.nimbo.searchengine.database.webdocumet.WebDocument;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import static org.junit.Assert.*;
 
 public class ElasticWebDaoImpTest {
     private ElasticWebDaoImp elasticWebDaoImp;

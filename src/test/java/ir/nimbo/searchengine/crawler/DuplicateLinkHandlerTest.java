@@ -1,5 +1,6 @@
 package ir.nimbo.searchengine.crawler;
 
+import ir.nimbo.searchengine.crawler.domainvalidation.DuplicateLinkHandler;
 import org.junit.Assert;
 import org.junit.Test;
 

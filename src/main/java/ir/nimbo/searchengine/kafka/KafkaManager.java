@@ -1,8 +1,7 @@
 package ir.nimbo.searchengine.kafka;
 
-import ir.nimbo.searchengine.crawler.DuplicateLinkHandler;
-import ir.nimbo.searchengine.crawler.Link;
 import ir.nimbo.searchengine.crawler.URLQueue;
+import ir.nimbo.searchengine.crawler.domainvalidation.DuplicateLinkHandler;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -14,12 +13,12 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Properties;
 
 public class KafkaManager implements URLQueue {
     private final String topic;
-
-    private final LinkedList<List<String>> tempArrayLists = new LinkedList<>();
     private KafkaConsumer<String, String> consumer;
     private Producer<String, String> producer;
     private DuplicateLinkHandler duplicateLinkHandler;
@@ -38,7 +37,6 @@ public class KafkaManager implements URLQueue {
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("max.poll.records", maxPoll);
         props.put("auto.offset.reset", "earliest");
-//        System.out.println(props.toString());
         consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singletonList(topic));
         producer = new KafkaProducer<>(props);
@@ -61,13 +59,9 @@ public class KafkaManager implements URLQueue {
         return result;
     }
 
-    public void pushNewURL(Link... links) {
-    }
-
     @Override
     public void pushNewURL(String... links) {
         for (String url : links) {
-//            if (!duplicateLinkHandler.isDuplicate(url)) {
             try {
                 String key = new URL(url).getHost();
                 producer.send(new ProducerRecord<>(topic, key, url));

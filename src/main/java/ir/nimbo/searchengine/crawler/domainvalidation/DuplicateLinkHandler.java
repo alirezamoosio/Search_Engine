@@ -1,13 +1,11 @@
-package ir.nimbo.searchengine.crawler;
+package ir.nimbo.searchengine.crawler.domainvalidation;
 
 import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class DuplicateLinkHandler {
     private static DuplicateLinkHandler ourInstance = new DuplicateLinkHandler();

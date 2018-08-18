@@ -1,6 +1,6 @@
 package ir.nimbo.searchengine.kafka;
 
-import ir.nimbo.searchengine.crawler.WebDocument;
+import ir.nimbo.searchengine.database.webdocumet.WebDocument;
 import org.junit.Test;
 
 import java.util.ArrayList;
