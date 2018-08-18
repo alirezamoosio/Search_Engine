@@ -90,7 +90,6 @@ public class Function {
     @CLI(help = "show all rss")
     public static void showRss(PrintStream out, Scanner scanner) {
         RSSs.getInstance().rssToDomainMap.forEach((rss,domain)->out.println(rss+"     its domain:  "+domain));
-        // TODO: 8/16/18
     }
 
     @CLI(help = "you can delete a template ")
