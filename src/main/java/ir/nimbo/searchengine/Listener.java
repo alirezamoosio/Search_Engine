@@ -1,6 +1,6 @@
 package ir.nimbo.searchengine;
 
-import ir.nimbo.searchengine.crawler.DuplicateLinkHandler;
+import ir.nimbo.searchengine.crawler.domainvalidation.DuplicateLinkHandler;
 import ir.nimbo.searchengine.metrics.Metrics;
 
 import java.io.IOException;

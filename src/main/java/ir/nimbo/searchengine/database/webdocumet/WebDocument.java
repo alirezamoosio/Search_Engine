@@ -1,11 +1,8 @@
-package ir.nimbo.searchengine.crawler;
+package ir.nimbo.searchengine.database.webdocumet;
 
-import org.jsoup.nodes.Document;
+import ir.nimbo.searchengine.database.webdocumet.Link;
 
-import javax.print.DocFlavor;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 public class WebDocument {

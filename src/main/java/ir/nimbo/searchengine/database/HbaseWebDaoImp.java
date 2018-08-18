@@ -1,7 +1,7 @@
 package ir.nimbo.searchengine.database;
 
+import ir.nimbo.searchengine.database.webdocumet.WebDocument;
 import ir.nimbo.searchengine.metrics.Metrics;
-import ir.nimbo.searchengine.crawler.WebDocument;
 import ir.nimbo.searchengine.util.ConfigManager;
 import ir.nimbo.searchengine.util.PropertyType;
 import org.apache.hadoop.conf.Configuration;

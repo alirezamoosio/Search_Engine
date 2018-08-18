@@ -1,5 +1,6 @@
-package ir.nimbo.searchengine.crawler;
+package ir.nimbo.searchengine.crawler.domainvalidation;
 
+import ir.nimbo.searchengine.database.webdocumet.Link;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.List;
 
 public class UrlHandler {
 
-    static String normalizeLink(String link, String mainUrl) {
+    public static String normalizeLink(String link, String mainUrl) {
         if (link.startsWith("/")) {
             link = mainUrl + link;
         }
@@ -17,7 +18,7 @@ public class UrlHandler {
         return link;
     }
 
-    static Link[]
+    public static Link[]
 
     getLinks(Elements links, String mainUrl) {
         return links.stream().filter(element -> !element.attr("href").contains("#"))

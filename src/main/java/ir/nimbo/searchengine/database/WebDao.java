@@ -1,11 +1,10 @@
 package ir.nimbo.searchengine.database;
 
-import ir.nimbo.searchengine.crawler.ParseFinishObserver;
-import ir.nimbo.searchengine.crawler.WebDocument;
+//import ir.nimbo.searchengine.crawler.ParseFinishObserver;
 
-import java.util.List;
+import ir.nimbo.searchengine.database.webdocumet.WebDocument;
 
-public interface WebDao extends ParseFinishObserver {
+public interface WebDao  {
     boolean createTable();
     void put(WebDocument document);
 }

@@ -1,9 +1,11 @@
 package ir.nimbo.searchengine.crawler;
 
+import ir.nimbo.searchengine.crawler.domainvalidation.UrlHandler;
 import ir.nimbo.searchengine.database.ElasticWebDaoImp;
 import ir.nimbo.searchengine.database.HbaseWebDaoImp;
 import ir.nimbo.searchengine.database.WebDao;
 
+import ir.nimbo.searchengine.database.webdocumet.WebDocument;
 import ir.nimbo.searchengine.exception.DomainFrequencyException;
 import ir.nimbo.searchengine.exception.DuplicateLinkException;
 import ir.nimbo.searchengine.exception.IllegalLanguageException;

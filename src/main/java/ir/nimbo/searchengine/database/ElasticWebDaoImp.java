@@ -1,7 +1,7 @@
 package ir.nimbo.searchengine.database;
 
+import ir.nimbo.searchengine.database.webdocumet.WebDocument;
 import ir.nimbo.searchengine.metrics.Metrics;
-import ir.nimbo.searchengine.crawler.WebDocument;
 import org.apache.http.HttpHost;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.bulk.BulkRequest;

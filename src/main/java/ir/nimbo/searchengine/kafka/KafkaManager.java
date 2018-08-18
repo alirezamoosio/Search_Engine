@@ -1,7 +1,7 @@
 package ir.nimbo.searchengine.kafka;
 
-import ir.nimbo.searchengine.crawler.DuplicateLinkHandler;
-import ir.nimbo.searchengine.crawler.Link;
+import ir.nimbo.searchengine.crawler.domainvalidation.DuplicateLinkHandler;
+import ir.nimbo.searchengine.database.webdocumet.Link;
 import ir.nimbo.searchengine.crawler.URLQueue;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;

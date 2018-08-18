@@ -1,14 +1,13 @@
 package ir.nimbo.searchengine.database;
 
-import ir.nimbo.searchengine.crawler.Link;
-import ir.nimbo.searchengine.crawler.WebDocument;
+import ir.nimbo.searchengine.database.webdocumet.Link;
+import ir.nimbo.searchengine.database.webdocumet.WebDocument;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.*;

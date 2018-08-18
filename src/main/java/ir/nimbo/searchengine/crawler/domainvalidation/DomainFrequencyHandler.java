@@ -1,4 +1,4 @@
-package ir.nimbo.searchengine.crawler;
+package ir.nimbo.searchengine.crawler.domainvalidation;
 
 public class DomainFrequencyHandler {
     private static DomainFrequencyHandler ourInstance = new DomainFrequencyHandler();

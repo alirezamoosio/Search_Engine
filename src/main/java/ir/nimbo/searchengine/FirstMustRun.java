@@ -1,9 +1,8 @@
 
 package ir.nimbo.searchengine;
 
-import ir.nimbo.searchengine.crawler.DuplicateLinkHandler;
 import ir.nimbo.searchengine.crawler.Parser;
-import ir.nimbo.searchengine.crawler.UrlHandler;
+import ir.nimbo.searchengine.crawler.domainvalidation.UrlHandler;
 import ir.nimbo.searchengine.exception.DomainFrequencyException;
 import ir.nimbo.searchengine.exception.DuplicateLinkException;
 import ir.nimbo.searchengine.exception.IllegalLanguageException;
@@ -12,9 +11,6 @@ import ir.nimbo.searchengine.kafka.KafkaManager;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.URL;
 import java.util.*;
 

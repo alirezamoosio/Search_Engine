@@ -1,7 +1,6 @@
 package ir.nimbo.searchengine;
 
-import ir.nimbo.searchengine.crawler.DuplicateLinkHandler;
-import ir.nimbo.searchengine.crawler.Parser;
+import ir.nimbo.searchengine.crawler.domainvalidation.DuplicateLinkHandler;
 import ir.nimbo.searchengine.kafka.KafkaManager;
 
 /**
@@ -10,11 +9,8 @@ import ir.nimbo.searchengine.kafka.KafkaManager;
 import ir.nimbo.searchengine.crawler.Crawler;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.Scanner;
 
 import static java.lang.Thread.sleep;
 

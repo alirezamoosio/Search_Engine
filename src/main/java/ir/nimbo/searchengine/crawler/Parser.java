@@ -1,6 +1,11 @@
 package ir.nimbo.searchengine.crawler;
 
+import ir.nimbo.searchengine.crawler.domainvalidation.DomainFrequencyHandler;
+import ir.nimbo.searchengine.crawler.domainvalidation.DuplicateLinkHandler;
+import ir.nimbo.searchengine.crawler.domainvalidation.UrlHandler;
 import ir.nimbo.searchengine.crawler.language.LangDetector;
+import ir.nimbo.searchengine.database.webdocumet.Link;
+import ir.nimbo.searchengine.database.webdocumet.WebDocument;
 import ir.nimbo.searchengine.exception.DomainFrequencyException;
 import ir.nimbo.searchengine.exception.DuplicateLinkException;
 import ir.nimbo.searchengine.exception.IllegalLanguageException;
@@ -15,7 +20,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 
 import static java.lang.Thread.sleep;
 

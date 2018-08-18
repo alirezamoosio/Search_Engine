@@ -1,6 +1,6 @@
-package ir.nimbo.searchengine.crawler;
+package ir.nimbo.searchengine.database.webdocumet;
 
-import org.apache.log4j.Logger;
+import ir.nimbo.searchengine.crawler.domainvalidation.UrlHandler;
 import org.jsoup.nodes.Element;
 
 import java.io.Serializable;
@@ -12,7 +12,7 @@ public class Link implements Serializable {
     private String url;
     transient private String domain;
 
-    Link(Element element, String mainUrl) {
+    public Link(Element element, String mainUrl) {
         this.anchorLink = element.text();
         this.url = UrlHandler.normalizeLink(element.attr("href"), mainUrl);
         try {
