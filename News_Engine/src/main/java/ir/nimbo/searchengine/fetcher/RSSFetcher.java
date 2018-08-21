@@ -8,10 +8,10 @@ import static ir.nimbo.searchengine.Config.READER_THREAD_PRIORITY;
 
 public class RSSFetcher implements Runnable {
     private RSSQueue<RSSLink> rssQueue;
-
     public RSSFetcher(RSSQueue<RSSLink> rssQueue) {
         this.rssQueue = rssQueue;
     }
+
     @Override
     public void run() {
         for (int i = 0; i < NUMBER_OF_THREAD; i++) {

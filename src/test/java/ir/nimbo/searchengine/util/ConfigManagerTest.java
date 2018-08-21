@@ -3,15 +3,13 @@ package ir.nimbo.searchengine.util;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class ConfigManagerTest {
     @Test
     public void test() {
-        String hbaseFamily = ConfigManager.getInstance().getProperty(PropertyType.HBASE_FAMILY_1);
-        String outLinksName = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_OUTLINKS);
-        String pageRankName = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_PAGERANK);
-        String tableName = ConfigManager.getInstance().getProperty(PropertyType.HBASE_TABLE);
+        String hbaseFamily = ConfigManager.getInstance().getProperty(PropertyType.H_BASE_FAMILY_1);
+        String outLinksName = ConfigManager.getInstance().getProperty(PropertyType.H_BASE_COLUMN_OUT_LINKS);
+        String pageRankName = ConfigManager.getInstance().getProperty(PropertyType.H_BASE_COLUMN_PAGE_RANK);
+        String tableName = ConfigManager.getInstance().getProperty(PropertyType.H_BASE_TABLE);
         Assert.assertEquals("context", hbaseFamily);
         Assert.assertEquals("outLinks", outLinksName);
         Assert.assertEquals("pageRank", pageRankName);

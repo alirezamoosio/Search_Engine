@@ -1,11 +1,11 @@
 package ir.nimbo.searchengine.database;
 
+import com.google.gson.Gson;
 import ir.nimbo.searchengine.database.webdocumet.WebDocument;
 import ir.nimbo.searchengine.metrics.Metrics;
 import org.apache.http.HttpHost;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -16,6 +16,9 @@ import java.io.IOException;
 
 
 public class ElasticWebDaoImp implements WebDao {
+    public static final String HOSTNAME = "94.23.214.93";
+    public static final int PORT = 9200;
+    public static final String HTTP = "http";
     private RestHighLevelClient client;
     private String index = "pages";
     private Logger errorLogger = Logger.getLogger("error");
@@ -27,10 +30,9 @@ public class ElasticWebDaoImp implements WebDao {
     private static final int ELASTIC_FLUSH_NUMBER_LIMIT = 193;
 
     public ElasticWebDaoImp() {
-        client = new RestHighLevelClient(
-                RestClient.builder(
-                        new HttpHost("94.23.214.93", 9200, "http")));
-        indexRequest = new IndexRequest(index, "_doc");
+
+        client = new RestHighLevelClient(RestClient.builder(new HttpHost(HOSTNAME, PORT, HTTP)));
+        indexRequest = new IndexRequest(index);
         bulkRequest = new BulkRequest();
     }
 
@@ -43,6 +45,8 @@ public class ElasticWebDaoImp implements WebDao {
     @Override
     public void put(WebDocument document) {
         try {
+            Gson gson=new Gson();
+
             XContentBuilder builder = XContentFactory.jsonBuilder();
             try {
                 builder.startObject();
@@ -58,7 +62,7 @@ public class ElasticWebDaoImp implements WebDao {
             } catch (IOException e) {
                 errorLogger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");
             }
-            if (bulkRequest.estimatedSizeInBytes() / 1000_000 >= ELASTIC_FLUSH_SIZE_LIMIT ||
+            if (bulkRequest.estimatedSizeInBytes() / 1000000 >= ELASTIC_FLUSH_SIZE_LIMIT ||
                     bulkRequest.numberOfActions() >= ELASTIC_FLUSH_NUMBER_LIMIT) {
                 synchronized (sync) {
                     client.bulk(bulkRequest);

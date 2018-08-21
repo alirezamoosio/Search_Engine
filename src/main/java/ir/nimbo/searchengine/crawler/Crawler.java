@@ -67,6 +67,7 @@ public class Crawler implements Runnable {
                             elasticDao.put(webDocument);
                         } catch (RuntimeException e) {
                             errorLogger.error("important" + e.getMessage());
+                            throw e;
                         } catch (URLException | DuplicateLinkException | IOException | IllegalLanguageException | DomainFrequencyException ignored) {
                         }
                     }

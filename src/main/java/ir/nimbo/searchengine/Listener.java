@@ -46,7 +46,7 @@ public class Listener {
     }
 
     public static void loadDuplicate(PrintStream out, Scanner scanner) {
-        out.println("salaamasaaav");
+        out.println("load duplicate called");
         try {
             DuplicateLinkHandler.getInstance().loadHashTable();
             out.println("done");
@@ -62,7 +62,7 @@ public class Listener {
     }
 
     public static void saveDuplicate(PrintStream out, Scanner scanner) {
-        out.println("salaamasaaav");
+        out.println("save duplicate called");
         DuplicateLinkHandler.getInstance().saveHashTable();
         out.println("done");
         out.flush();
@@ -70,8 +70,6 @@ public class Listener {
     }
 
     public static void stat(PrintStream out, Scanner scanner) {
-        out.println("salaamasaaav");
-        ;
         Metrics.stat(out);
         out.flush();
         out.close();

@@ -25,6 +25,8 @@ public class Metrics {
     private static int lastNumberOfUrlReceived = 0;
     private static int lastNumberOfPagesAddedToElastic = 0;
     private static int lastNumberOfPagesAddedToHBase = 0;
+    public static void loadStat(){
+    }
 
     public static void logStat() {
         int delta = (int) ((System.currentTimeMillis() - lastTime) / 1000);

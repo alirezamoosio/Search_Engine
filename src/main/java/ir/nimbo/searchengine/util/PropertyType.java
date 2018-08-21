@@ -1,8 +1,8 @@
 package ir.nimbo.searchengine.util;
 
 public enum PropertyType {
-    HBASE_FAMILY_1("hbase.family1"),HBASE_FAMILY_2("hbase.family2"), HBASE_COLUMN_OUTLINKS("hbase.column.outlinks"), HBASE_COLUMN_PAGERANK("hbase.column.pagerank"),
-    HBASE_TABLE("hbase.table");
+    H_BASE_FAMILY_1("hbase.family1"), H_BASE_FAMILY_2("hbase.family2"), H_BASE_COLUMN_OUT_LINKS("hbase.column.outlinks"), H_BASE_COLUMN_PAGE_RANK("hbase.column.pagerank"),
+    H_BASE_TABLE("hbase.table");
 
     private String type;
 

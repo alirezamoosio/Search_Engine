@@ -40,7 +40,8 @@ public class Parser {
         Parser.langDetector = langDetector;
     }
 
-    public WebDocument parse(String url) throws IllegalLanguageException, IOException, URLException, DuplicateLinkException, DomainFrequencyException {
+    public WebDocument parse(String url) throws IllegalLanguageException, IOException, URLException,
+            DuplicateLinkException, DomainFrequencyException {
         if (url == null) {
             errorLogger.error("number of null" + Metrics.numberOfNull++);
             throw new URLException();
@@ -50,12 +51,12 @@ public class Parser {
             throw new DomainFrequencyException();
         }
         String text = null;
+        if (duplicateLinkHandler.isDuplicate(url)) {
+            errorLogger.error(url + " is duplicate");
+            Metrics.numberOfDuplicate++;
+            throw new DuplicateLinkException();
+        }
         try {
-            if (duplicateLinkHandler.isDuplicate(url)) {
-                errorLogger.error(url + " is duplicate");
-                Metrics.numberOfDuplicate++;
-                throw new DuplicateLinkException();
-            }
             Document document = Jsoup.connect(url).validateTLSCertificates(false).get();
             duplicateLinkHandler.confirm(url);
             Metrics.numberOfUrlReceived++;

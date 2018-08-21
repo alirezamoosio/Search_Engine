@@ -23,8 +23,6 @@ public class Queue<T> implements RSSQueue<T> {
             }
         });
     }
-
-
     @Override
     public int size() {
         return queue.size();

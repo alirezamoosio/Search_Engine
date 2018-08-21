@@ -19,9 +19,9 @@ import java.util.*;
 
 public class HBaseWebDaoImp implements WebDao {
     private static Logger errorLogger = Logger.getLogger("error");
-    private TableName webPageTable = TableName.valueOf(ConfigManager.getInstance().getProperty(PropertyType.HBASE_TABLE));
-    private String contextFamily = ConfigManager.getInstance().getProperty(PropertyType.HBASE_FAMILY_1);
-    private String rankFamily = ConfigManager.getInstance().getProperty(PropertyType.HBASE_FAMILY_2);
+    private TableName webPageTable = TableName.valueOf(ConfigManager.getInstance().getProperty(PropertyType.H_BASE_TABLE));
+    private String contextFamily = ConfigManager.getInstance().getProperty(PropertyType.H_BASE_FAMILY_1);
+    private String rankFamily = ConfigManager.getInstance().getProperty(PropertyType.H_BASE_FAMILY_2);
     private Configuration configuration;
     private final List<Put> puts;
     private static int size = 0;
@@ -68,8 +68,8 @@ public class HBaseWebDaoImp implements WebDao {
 
     @Override
     public void put(WebDocument document) {
-        String outLinksColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_OUTLINKS);
-        String pageRankColumn = ConfigManager.getInstance().getProperty(PropertyType.HBASE_COLUMN_PAGERANK);
+        String outLinksColumn = ConfigManager.getInstance().getProperty(PropertyType.H_BASE_COLUMN_OUT_LINKS);
+        String pageRankColumn = ConfigManager.getInstance().getProperty(PropertyType.H_BASE_COLUMN_PAGE_RANK);
         Put put = new Put(Bytes.toBytes(generateRowKeyFromUrl(document.getPagelink())));
         byte[] outLinks = SerializationUtils.serialize(document.getLinks());
         put.addColumn(contextFamily.getBytes(), outLinksColumn.getBytes(), outLinks);
