@@ -3,6 +3,7 @@ package ir.nimbo.searchengine.util;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 public class ConfigManager {
     private static ConfigManager instance = new ConfigManager();
@@ -19,6 +20,7 @@ public class ConfigManager {
             e.printStackTrace();
         }
     }
+
 
     public String getProperty(PropertyType type) {
         return properties.getProperty(type.toString());

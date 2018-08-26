@@ -45,8 +45,6 @@ public class ElasticWebDaoImp implements WebDao {
     @Override
     public void put(WebDocument document) {
         try {
-            Gson gson=new Gson();
-
             XContentBuilder builder = XContentFactory.jsonBuilder();
             try {
                 builder.startObject();
@@ -54,10 +52,10 @@ public class ElasticWebDaoImp implements WebDao {
                     builder.field("pageLink", document.getPagelink());
                     builder.field("pageText", document.getTextDoc());
                 }
+
                 builder.endObject();
-                indexRequest.source(builder);
                 bulkRequest.add(indexRequest);
-                indexRequest = new IndexRequest(index, "_doc");
+                indexRequest = new IndexRequest(index);
                 added++;
             } catch (IOException e) {
                 errorLogger.error("ERROR! couldn't add " + document.getPagelink() + " to elastic");

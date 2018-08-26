@@ -2,6 +2,7 @@ package ir.nimbo.searchengine.kafka;
 
 import ir.nimbo.searchengine.crawler.URLQueue;
 import ir.nimbo.searchengine.crawler.domainvalidation.DuplicateLinkHandler;
+import ir.nimbo.searchengine.util.ConfigManager;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -18,6 +19,7 @@ import java.util.Collections;
 import java.util.Properties;
 
 public class KafkaManager implements URLQueue {
+    public static final int POLL_TIMEOUT = 10000;
     private final String topic;
     private KafkaConsumer<String, String> consumer;
     private Producer<String, String> producer;
@@ -44,6 +46,7 @@ public class KafkaManager implements URLQueue {
         try {
             duplicateLinkHandler.loadHashTable();
         } catch (IOException e) {
+            errorLogger.error("vay vay vay ,cant create kafka objects");
             System.exit(0);
         }
     }
@@ -51,7 +54,7 @@ public class KafkaManager implements URLQueue {
     @Override
     public synchronized ArrayList<String> getUrls() {
         ArrayList<String> result = new ArrayList<>();
-        ConsumerRecords<String, String> records = consumer.poll(10000);
+        ConsumerRecords<String, String> records = consumer.poll(POLL_TIMEOUT);
         consumer.commitSync();
         for (ConsumerRecord<String, String> record : records) {
             result.add(record.value());
